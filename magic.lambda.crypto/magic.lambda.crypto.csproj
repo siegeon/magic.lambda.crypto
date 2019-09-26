@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Thomas Hansen</Authors>
+    <Description>Crypto plugin for magic.lambda</Description>
+    <Copyright>Thomas Hansen, thomas@gaiasoul.com</Copyright>
+    <PackageProjectUrl>https://github.com/polterguy/magic.lambda.crypto</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\projects\personal\magic.lambda.crypto\magic.lambda.crypto\magic.lambda.crypto.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\projects\personal\magic.lambda.crypto\magic.lambda.crypto\magic.lambda.crypto.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+    <PackageReference Include="magic.node" Version="1.0.0" />
+    <PackageReference Include="magic.node.extensions" Version="1.0.0" />
+    <PackageReference Include="magic.signals.contracts" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>
