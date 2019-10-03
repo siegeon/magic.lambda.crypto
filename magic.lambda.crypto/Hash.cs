@@ -70,7 +70,7 @@ namespace magic.lambda.crypto
         string GenerateHash(HashAlgorithm algo, string text)
         {
             var bytes = algo.ComputeHash(Encoding.UTF8.GetBytes(text));
-            return BitConverter.ToString(bytes).Replace("-", "").ToUpperInvariant();
+            return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
         }
 
         #endregion
