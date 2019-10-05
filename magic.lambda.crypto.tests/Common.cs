@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using magic.node;
+using magic.signals.services;
 using magic.signals.contracts;
 using magic.node.extensions.hyperlambda;
-using magic.signals.services;
 
 namespace magic.lambda.crypto.tests
 {
