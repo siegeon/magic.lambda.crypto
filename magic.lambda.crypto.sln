@@ -9,7 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{0080EF1F-A
 		.travis.yml = .travis.yml
 		LICENSE = LICENSE
 		README.md = README.md
-		LICENSE-AFFERO = LICENSE-AFFERO
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "magic.lambda.crypto", "magic.lambda.crypto\magic.lambda.crypto.csproj", "{BED361FF-5F7A-432A-9954-63EDD47AACA6}"
