@@ -6,8 +6,18 @@
 Provides cryptographic services to [Magic](https://github.com/polterguy/magic). More specifically, it provides two slots, that helps you
 with storing passwords secured in your database.
 
+* __[crypto.hash]__ - Creates a hash of the specified string value/expression's value, using the specified **[algorithm]**.
 * __[crypto.password.hash]__ - Creates a cryptographically secure hash from the specified password, expected to be found in its value node.
 * __[crypto.password.verify]__ - Verifies a [hash] argument matches towards the password specified in its value.
+
+The above password slots will use BlowFish algorithm, through BCrypt, while the supported algorithms for the **[crypto.hash]**
+are as follows.
+
+* SHA1
+* SHA256
+* SHA384
+* SHA512
+* MD5
 
 ## License
 
