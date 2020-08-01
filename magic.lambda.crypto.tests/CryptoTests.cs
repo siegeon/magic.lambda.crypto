@@ -62,5 +62,16 @@ crypto.password.verify:WRONG
                 "BED2004780419D966327DA73A98BE04CB474AA36C92FD8AF970E49EA9AA05C5F68938E486E20326059CB0290472DEFFD03939C18CAC9364F29C69105CD4130D3",
                 lambda.Children.First().Get<string>().ToUpperInvariant());
         }
+
+        [Fact]
+        public void RandomCharacters()
+        {
+            var lambda = Common.Evaluate(@"crypto.random
+   min:50
+   max:100");
+            Assert.NotNull(lambda.Children.First().Value);
+            Assert.True(lambda.Children.First().Get<string>().Length >= 50);
+            Assert.True(lambda.Children.First().Get<string>().Length <= 100);
+        }
     }
 }
