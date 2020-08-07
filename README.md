@@ -8,7 +8,7 @@ with storing passwords secured in your database.
 
 * __[crypto.hash]__ - Creates a hash of the specified string value/expression's value, using the specified **[algorithm]**.
 * __[crypto.password.hash]__ - Creates a cryptographically secure hash from the specified password, expected to be found in its value node.
-* __[crypto.password.verify]__ - Verifies a [hash] argument matches towards the password specified in its value.
+* __[crypto.password.verify]__ - Verifies a **[hash]** argument matches towards the password specified in its value.
 * __[crypto.random]__ - Creates a cryptographically secured random string for you, with the characters [a-zA-Z] and '_' and '-'.
 
 The above password slots will use BlowFish algorithm, through BCrypt, while the supported algorithms for the **[crypto.hash]**
