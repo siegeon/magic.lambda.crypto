@@ -32,7 +32,7 @@ namespace magic.lambda.crypto
         {
             var hash = input.Children.FirstOrDefault(x => x.Name == "hash")?.GetEx<string>();
             if (hash == null)
-                throw new ApplicationException($"No [hash] value provided to [crypto.password.verify]");
+                throw new ArgumentException($"No [hash] value provided to [crypto.password.verify]");
 
             var value = input.GetEx<string>();
 
