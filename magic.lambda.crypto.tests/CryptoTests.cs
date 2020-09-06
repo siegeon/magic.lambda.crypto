@@ -3,9 +3,10 @@
  * See the enclosed LICENSE file for details.
  */
 
-using magic.node.extensions;
+using System;
 using System.Linq;
 using Xunit;
+using magic.node.extensions;
 
 namespace magic.lambda.crypto.tests
 {
@@ -27,6 +28,13 @@ crypto.password.verify:foo
 crypto.password.verify:WRONG
    hash:x:@crypto.password.hash");
             Assert.Equal(false, lambda.Children.Skip(1).First().Value);
+        }
+
+        [Fact]
+        public void VerifyHashPasswordThrows()
+        {
+            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"crypto.password.hash:foo
+crypto.password.verify:WRONG"));
         }
 
         [Fact]
@@ -64,6 +72,43 @@ crypto.password.verify:WRONG
         }
 
         [Fact]
+        public void HashSha1()
+        {
+            var lambda = Common.Evaluate(@"crypto.hash:some-input-string
+   algorithm:SHA1");
+            Assert.Equal(
+                "28955C056731173BC253CFDFAA4B0E8789333E7B",
+                lambda.Children.First().Get<string>().ToUpperInvariant());
+        }
+
+        [Fact]
+        public void HashSha384()
+        {
+            var lambda = Common.Evaluate(@"crypto.hash:some-input-string
+   algorithm:SHA384");
+            Assert.Equal(
+                "F0DBFDF28BB9DF25715EB129E2270366E3E73FB509AF1E196269450898AA38820D645DE072EF4434AF3A097A693C178B",
+                lambda.Children.First().Get<string>().ToUpperInvariant());
+        }
+
+        [Fact]
+        public void HashShaMD5()
+        {
+            var lambda = Common.Evaluate(@"crypto.hash:some-input-string
+   algorithm:MD5");
+            Assert.Equal(
+                "A6F2B140131A3C1EF598C624C53C32AE",
+                lambda.Children.First().Get<string>().ToUpperInvariant());
+        }
+
+        [Fact]
+        public void HashShaThrows()
+        {
+            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"crypto.hash:some-input-string
+   algorithm:Non-Existing"));
+        }
+
+        [Fact]
         public void RandomCharacters()
         {
             var lambda = Common.Evaluate(@"crypto.random
@@ -72,6 +117,15 @@ crypto.password.verify:WRONG
             Assert.NotNull(lambda.Children.First().Value);
             Assert.True(lambda.Children.First().Get<string>().Length >= 50);
             Assert.True(lambda.Children.First().Get<string>().Length <= 100);
+        }
+
+        [Fact]
+        public void RandomCharacters_DefaultLength()
+        {
+            var lambda = Common.Evaluate(@"crypto.random");
+            Assert.NotNull(lambda.Children.First().Value);
+            Assert.True(lambda.Children.First().Get<string>().Length >= 10);
+            Assert.True(lambda.Children.First().Get<string>().Length <= 20);
         }
     }
 }
