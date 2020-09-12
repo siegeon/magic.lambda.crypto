@@ -23,12 +23,3 @@ are as follows.
 The **[crypto.random]** can optionally take a **[min]** and **[max]** argument, which defines the min/max length of the
 string returned. If not supplied, the default values for these arguments are respectively 10 and 20. This slot is useful
 for creating random secrets, and similar types of random strings, where you need cryptographically secured random strings.
-
-## License
-
-Although most of Magic's source code is Open Source, you will need a license key to use it.
-[You can obtain a license key here](https://servergardens.com/buy/).
-Notice, 7 days after you put Magic into production, it will stop working, unless you have a valid
-license for it.
-
-* [Get licensed](https://servergardens.com/buy/)
