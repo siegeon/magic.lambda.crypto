@@ -39,6 +39,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BouncyCastle.NetCore" Version="1.8.6" />
     <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
     <PackageReference Include="magic.node.extensions" Version="8.4.*" />
     <PackageReference Include="magic.signals.contracts" Version="8.4.*" />
