@@ -178,7 +178,8 @@ as it's transmitted, and still being just a normal cryptographic hash string.
 The checksum is normally some prime number, but doesn't need to be too large, and its default value
 is in fact 10007. This implies that the user needs to type *two* wrong characters, and even if he does, he
 has a statistical probability of 1 in 10007 chances of erronously typing a valid fingerprint value.
-Below is an example of generating a fingerprint using SHA1 as base hash mechanism.
+Below is an example of generating a fingerprint using SHA1 as our base hash algorithm. But you can use
+any base hash algorithm you wish.
 
 ```
 crypto.fingerprint:This is some random text
