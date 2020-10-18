@@ -211,7 +211,7 @@ at some point, everybody breaks. Although there exist ways to counter this too, 
 lying immediately once the torture begins, and/or pretend to be insane - At which point as the torture
 victim breaks, he's lied so much, and acted so crazy, that it becomes impossible for the torturer to
 believe anything that his victim says - This is probably the simplest way of _"decryption"_ that exists,
-and is easily within the means of any gorilla having high enough IQ to open a door.
+and is easily within the means of any gorilla having enough IQ to open a door.
 
 Hence, there is no true privacy, only shades of privacy. This is true regardless of how strong encryption
 you are using. Hence ...
