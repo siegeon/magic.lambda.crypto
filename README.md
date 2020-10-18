@@ -44,7 +44,7 @@ it easily traversed using any string library.
 ## Cryptography
 
 This library supports several cryptographic services, allowing you to use the cryptography services you wish.
-But first a bit of cryptography theory might be in its place. Public key cryptography, or what's often referred
+But first a bit of cryptography theory. Public key cryptography, or what's often referred
 to as _"asymmetric cryptography"_ is based upon a *key pair*. One of your keys are intended for being
 publicly released, and is often referred to as _"your public key"_. This key can do two important things.
 
