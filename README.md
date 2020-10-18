@@ -175,7 +175,7 @@ its checksum.
 
 The checksum is normally some prime number, but doesn't need to be too large, and its default value
 is in fact 10007. This implies that the user needs to type *two* wrong characters, and even if he does, he
-has a statistical probability of 1 in 10007 chances of erronously typing a valid hash value.
+has a statistical probability of 1 in 10007 chances of erronously typing a valid fingerprint value.
 Below is an example of generating a fingerprint using SHA1 as base hash mechanism.
 
 ```
@@ -183,7 +183,7 @@ crypto.fingerprint:This is some random text
    algorithm:SHA1
 ```
 
-The above results in the following.
+The above results in the following fingerprint.
 
 ```
 82mm.hlao.wt9s.wvb4.8v96.6905
@@ -193,12 +193,16 @@ If the user types in the above string, to reference for instance a crypto wallet
 wrong character, such as _"82mn"_ as the first parts, instead of _"82mm"_, the checksum will not
 validate, and the computer can discard the input, assuming the entire input is invalid.
 
-This has a lot of nice advantages, such as being able to easily transmit complex checksums, to
+This has a lot of advantages, such as being able to easily communicate hash values, to
 for instance validate a public RSA key, etc - Allowing you to for instance have your public key's
 fingerprint on your business card, with a URL to download the key, allowing the user to validate
 the fingerprint of your public key, before he starts using it. If the user only checks for instance
 the last two entities, which for the above would be _"8v96.6905"_, then if these parts are correct,
-this implies that it's a 1 in 16 billion chance of that the key as a whole is the correct key.
+this implies that it's a 1 in 16.8 billion chance of that the key as a whole is the correct key.
+Implying somebody wanting to pre-compute all possible values for a _"main in the middle keypair"_,
+allowing him to act as an adversary, picking up the communication, has to precompute 16.8 billion
+keypairs to simply have them validate towards the last 8 digits of your fingerprint. This problem
+grows exponentially by the power of 36 for each additional character the user checks.
 
 This prohibits among other things _"man in the middle"_ attacks, assuming the user has access
 to the fingerprint, or at the very least *parts* of the fingerprint, allowing him to validate
