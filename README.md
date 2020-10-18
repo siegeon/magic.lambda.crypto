@@ -15,6 +15,7 @@ verifying signatures, creating encryption keypairs, etc.
 * __[crypto.rsa.verify]__ - Verifies a previously created RSA signature towards its message (provided as value), with the specified public **[key]**, optionally allowing the caller to provide a hashing **[algorithm]**, defaulting to SHA256. The slot will throw an exception if the signature is not matching the message passed in for security reasons.
 * __[crypto.rsa.encrypt]__ - Encrypts the specified message (provided as value) using the specified public **[key]**, and returns the encrypted message as a base64 encoded encrypted message. Assumes the data to encrypt is text/string.
 * __[crypto.rsa.decrypt]__ - Decrypts the specified message (provided as value) using the specified private **[key]**, and returns the decrypted message as its original plain text value. Assumes the encrypted message was base64 encoded, and the original message was some sort of text/string and not binary content.
+* __[crypto.fingerprint]__ - Creates a fingerprint of a piece of text.
 
 ## Supported hashing algorithms
 
@@ -163,6 +164,52 @@ implies that no encrypted text resulting of en encryption operation can be signi
 size of the (public) key used to encrypt the message. This is only relevant for small pieces of data, and have
 few implications for larger pieces of text being encrypted.
 
+## [crypto.fingerprint]
+
+This slot creates a hash, but in a base36 number system, consisting of the a-z and 1-9 characters, and
+also adds a checksum at the end, serving as a guarantee of that no characters have been changed in
+the main hash string. This results in a couple of advantages, such as prohibiting erronously manually
+typing a hash string, which we could imagine in for instance the case of crypto wallets, etc - Since
+if the user types one wrong character, the hash as a whole will invalidate, due to no longer matching
+its checksum.
+
+The checksum is normally some prime number, but doesn't need to be too large, and its default value
+is in fact 10007. This implies that the user needs to type *two* wrong characters, and even if he does, he
+has a statistical probability of 1 in 10007 chances of erronously typing a valid hash value.
+Below is an example of generating a fingerprint using SHA1 as base hash mechanism.
+
+```
+crypto.fingerprint:This is some random text
+   algorithm:SHA1
+```
+
+The above results in the following.
+
+```
+82mm.hlao.wt9s.wvb4.8v96.6905
+```
+
+If the user types in the above string, to reference for instance a crypto wallet, and he types one
+wrong character, such as _"82mn"_ as the first parts, instead of _"82mm"_, the checksum will not
+validate, and the computer can discard the input, assuming the entire input is invalid.
+
+This has a lot of nice advantages, such as being able to easily transmit complex checksums, to
+for instance validate a public RSA key, etc - Allowing you to for instance have your public key's
+fingerprint on your business card, with a URL to download the key, allowing the user to validate
+the fingerprint of your public key, before he starts using it. If the user only checks for instance
+the last two entities, which for the above would be _"8v96.6905"_, then if these parts are correct,
+this implies that it's a 1 in 16 billion chance of that the key as a whole is the correct key.
+
+This prohibits among other things _"man in the middle"_ attacks, assuming the user has access
+to the fingerprint, or at the very least *parts* of the fingerprint, allowing him to validate
+that the public key's fingerprint is in accordance to the fingerprint communicated previously,
+over for instance a business card, etc.
+
+The idea is that a fingerprint such as the above, is highly humanly readable, yet will always
+produce the exact same result given the same input, and almost completely eliminate typos
+by having the user manually typing in the characters, and possibly typing one or more characters
+wrong.
+
 ## Cryptography concerns
 
 Even assuming you can 100% perfectly communicate in privacy today, your privacy is only as good as a malicious
@@ -189,6 +236,19 @@ but have this in mind as you start out using cryptography, since there are no ce
 to this subject. And of course, even if you had access to 100% perfect privacy in your communication with
 others, you still need to trust the ones you're communicating with to not tell others about what you
 are communicating to them ...
+
+### Torture based decryption
+
+In addition to the above concerns, any shmuck with a baseball bat could probably _"decrypt"_ your
+private communication, by simply coercing and torturing the other party to spill the beans. Inevitably,
+at some point, everybody breaks. Although there exist ways to counter this too, by for instance start
+lying immediately once the torture begins - At which point as the torture victim breaks, he's lied
+so much, that it becomes impossible for the torturer to believe anything that his victim says - This is
+probably the simplest way of _"decryption"_ that exists, and is easily within the means of any gorilla
+having high enough IQ to open a door.
+
+Hence, there is no true privacy, only shades of privacy. This is true regardless of how strong encryption
+you are using. Hence ...
 
 > The only true privacy that exists, is never telling anybody anything!
 
