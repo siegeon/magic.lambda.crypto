@@ -160,7 +160,8 @@ Hence, the above decrypt slot assumes that it's given the encrypted data as base
 Also notice how the encrypted message is larger than its original string. This is because of something called _"padding"_
 in encryption, only being relevant for messages that are smaller in size than your original text. Padding
 implies that no encrypted text resulting of en encryption operation can be significantly smaller in size than the
-size of the (public) key used to encrypt the message.
+size of the (public) key used to encrypt the message. This is only relevant for small pieces of data, and have
+few implications for larger pieces of text being encrypted.
 
 ## Quality gates
 
