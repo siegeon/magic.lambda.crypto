@@ -51,12 +51,10 @@ publicly released, and is often referred to as _"your public key"_. This key can
 1. It can encrypt data such that *only* its private counterpart key can decrypt the data
 2. It can verify that a message originated from a party that has access to its private counterpart
 
-Hence, keeping your *private* key as just that, implying **private** is of outmost importance. If you can
-keep your private key private, and also securely distribute your public key to others wanting to encrypt
-messages sent to you, such that only you can read it, and they can verify that some message originated from you -
-You have a 100% secure channel to use for communication, preventing malicious individuals from both reading
-what others send to you, and also tampering with the content you send to others, before the other party
-receives it. Hence, cryptography is about two main subjects.
+Hence, keeping your *private* key as just that, implying **private**, is of outmost importance. If you can
+keep your private key private, you have a 100% secure channel to use for communication, preventing malicious
+individuals from both reading what others send to you, and also tampering with the content you send to others,
+before the other party receives it. Hence, cryptography is about two main subjects.
 
 1. Encrypting messages sent to *you*
 2. Allowing you to provide guarantees that a message originated from *you*
