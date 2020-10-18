@@ -41,7 +41,7 @@ crypto.random
 Notice, the **[crypto.random]** slot will _only_ return characters from a-z, A-Z, 0-9, \_ and -. Which makes
 it easily traversed using any string library.
 
-## Cryptography
+## RSA Cryptography
 
 This library supports several cryptographic services, allowing you to use the cryptography services you wish.
 
