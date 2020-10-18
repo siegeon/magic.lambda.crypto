@@ -41,9 +41,29 @@ crypto.random
 Notice, the **[crypto.random]** slot will _only_ return characters from a-z, A-Z, 0-9, \_ and -. Which makes
 it easily traversed using any string library.
 
-## RSA Cryptography
+## Cryptography
 
 This library supports several cryptographic services, allowing you to use the cryptography services you wish.
+But first a bit of cryptography theory might be in its place. Public key cryptography, or what's often referred
+to as _"asymmetric cryptography"_ is based upon a *key pair*. One of your keys are intended for being
+publicly released, and is often referred to as _"your public key"_. This key can do two important things.
+
+1. It can encrypt data such that *only* its private counterpart key can decrypt the data
+2. It can verify that a message originated from a part that has access to its private counterpart
+
+Hence, keeping your *private* key as just that, implying **private** is of outmost importance. If you can
+keep your private key private, and also securely distribute your public key to others wanting to encrypt
+messages sent to you, such that only you can read it, and they can verify that some message originated from you -
+You have a 100% secure channel to use for communication, preventing malicious individuals from both reading
+what others send to you, and also tampering with the content you send to others, before the other party
+receives it. Hence, cryptography is about two main subjects.
+
+1. Encrypting messages sent to *you*
+2. Allowing you to provide guarantees that a message originated from *you*
+
+Both of these concepts is 100% dependent upon your ability to keep your private key *private* though.
+There are several different ways to create a key pair, just have the above in mind as you do, and you
+start using cryptography in your Hyperlambda applications.
 
 ### Creating an RSA keypair
 
