@@ -11,7 +11,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.hash
 {
     /// <summary>
     /// [crypto.hash] slot to create a cryptographically secure hash of a piece of string.

@@ -15,11 +15,10 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.rsa
 {
     /// <summary>
-    /// [crypto.rsa.create-key] slot to cryptographically sign some piece of
-    /// data with some private RSA key.
+    /// [crypto.rsa.create-key] slot to create an RSA keypair.
     /// </summary>
     [Slot(Name = "crypto.rsa.create-key")]
     public class RsaKeyCreate : ISlot
@@ -35,13 +34,13 @@ namespace magic.lambda.crypto
             var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
             var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
 
-            // Creating keypair generator, seeding the SecureRandom if seed was given.
+            // Creating keypair generator, and seeding the SecureRandom if seed was given.
             var generator = new RsaKeyPairGenerator();
             var rnd = new SecureRandom();
             if (seed != null)
                 rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
-            var kgp = new KeyGenerationParameters(rnd, strength);
-            generator.Init(kgp);
+            var parameters = new KeyGenerationParameters(rnd, strength);
+            generator.Init(parameters);
 
             // Generating keypair.
             var keyPair = generator.GenerateKeyPair();

@@ -10,7 +10,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.hash
 {
     /// <summary>
     /// [crypto.password.verify] slot to verify a previously hashed password that was hashed with
