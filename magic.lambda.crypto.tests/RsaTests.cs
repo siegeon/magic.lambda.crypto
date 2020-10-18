@@ -3,6 +3,7 @@
  * See the enclosed LICENSE file for details.
  */
 
+using System;
 using System.Linq;
 using magic.node.extensions;
 using Xunit;
@@ -78,6 +79,17 @@ crypto.rsa.sign:x:@.data
         }
 
         [Fact]
+        public void SignText_Throws()
+        {
+            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
+.data:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data
+   key:x:@crypto.rsa.create-key/*/public"));
+        }
+
+        [Fact]
         public void SignAndVerifyText()
         {
             var lambda = Common.Evaluate(@"
@@ -90,6 +102,22 @@ crypto.rsa.verify:x:@.data
    key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 ");
+        }
+
+        [Fact]
+        public void SignAndVerifyText_Throws()
+        {
+            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
+.data1:This is some piece of text that should be signed
+.data2:ThiS is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data1
+   key:x:@crypto.rsa.create-key/*/private
+crypto.rsa.verify:x:@.data2
+   key:x:@crypto.rsa.create-key/*/public
+   signature:x:@crypto.rsa.sign
+"));
         }
     }
 }
