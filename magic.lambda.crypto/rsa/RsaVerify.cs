@@ -34,7 +34,7 @@ namespace magic.lambda.crypto.rsa
             var signature = Convert.FromBase64String(
                 input.Children.FirstOrDefault(x => x.Name == "signature")?.GetEx<string>()) ??
                 throw new ArgumentException("No [signature] supplied to [crypto.rsa.verify]");
-            var algo = input.Children.FirstOrDefault(x => x.Name == "algo")?.GetEx<string>() ?? "SHA256";
+            var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
 
             // Converting key from base64 encoded DER format.
             var key = PublicKeyFactory.CreateKey(Convert.FromBase64String(rawPublicKey));

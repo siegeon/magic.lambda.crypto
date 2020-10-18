@@ -31,7 +31,7 @@ namespace magic.lambda.crypto.rsa
             var message = Encoding.UTF8.GetBytes(input.GetEx<string>());
             var rawPrivateKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<string>() ??
                 throw new ArgumentException("No [key] supplied to [crypto.rsa.sign]");
-            var algo = input.Children.FirstOrDefault(x => x.Name == "algo")?.GetEx<string>() ?? "SHA256";
+            var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
 
             // Converting key from base64 encoded DER format.
             var privateKey = PrivateKeyFactory.CreateKey(Convert.FromBase64String(rawPrivateKey));

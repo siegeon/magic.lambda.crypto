@@ -86,7 +86,7 @@ crypto.rsa.sign:x:@.data
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
-   algo:SHA512
+   algorithm:SHA512
    key:x:@crypto.rsa.create-key/*/private");
             Assert.NotNull(lambda.Children.Skip(2).First().GetEx<string>());
             Assert.True(lambda.Children.Skip(2).First().Value.GetType() != typeof(Expression));
@@ -109,7 +109,7 @@ crypto.rsa.sign:x:@.data
         [Fact]
         public void SignAndVerifyText()
         {
-            var lambda = Common.Evaluate(@"
+            Common.Evaluate(@"
 .data:This is some piece of text that should be signed
 crypto.rsa.create-key
    strength:1024
@@ -124,15 +124,66 @@ crypto.rsa.verify:x:@.data
         [Fact]
         public void SignAndVerifyTextSha512()
         {
-            var lambda = Common.Evaluate(@"
+            Common.Evaluate(@"
 .data:This is some piece of text that should be signed
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
-   algo:SHA512
+   algorithm:SHA512
    key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data
-   algo:SHA512
+   algorithm:SHA512
+   key:x:@crypto.rsa.create-key/*/public
+   signature:x:@crypto.rsa.sign
+");
+        }
+
+        [Fact]
+        public void SignAndVerifyTextSHA1()
+        {
+            Common.Evaluate(@"
+.data:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data
+   algorithm:SHA1
+   key:x:@crypto.rsa.create-key/*/private
+crypto.rsa.verify:x:@.data
+   algorithm:SHA1
+   key:x:@crypto.rsa.create-key/*/public
+   signature:x:@crypto.rsa.sign
+");
+        }
+
+        [Fact]
+        public void SignAndVerifyTextSHA384()
+        {
+            Common.Evaluate(@"
+.data:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data
+   algorithm:SHA384
+   key:x:@crypto.rsa.create-key/*/private
+crypto.rsa.verify:x:@.data
+   algorithm:SHA384
+   key:x:@crypto.rsa.create-key/*/public
+   signature:x:@crypto.rsa.sign
+");
+        }
+
+        [Fact]
+        public void SignAndVerifyTextMD5()
+        {
+            Common.Evaluate(@"
+.data:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data
+   algorithm:MD5
+   key:x:@crypto.rsa.create-key/*/private
+crypto.rsa.verify:x:@.data
+   algorithm:MD5
    key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 ");
@@ -163,10 +214,10 @@ crypto.rsa.verify:x:@.data2
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data1
-   algo:SHA256
+   algorithm:SHA256
    key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data2
-   algo:SHA512
+   algorithm:SHA512
    key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 "));

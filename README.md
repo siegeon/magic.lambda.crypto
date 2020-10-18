@@ -3,12 +3,18 @@
 
 Provides cryptographic services to Magic. More specifically, this project provides the following slots, that
 among other things helps you with storing passwords securely in your database, in addition to other services,
-such as generating random strings of text, etc.
+such as generating cryptographically secured random strings of text, cryptographically signing messages,
+verifying signatures, creating encryption keypairs, etc.
 
 * __[crypto.hash]__ - Creates a hash of the specified string value/expression's value, using the specified **[algorithm]**, that defaults to SHA256
-* __[crypto.password.hash]__ - Creates a cryptographically secure hash from the specified password, expected to be found in its value node
-* __[crypto.password.verify]__ - Verifies a **[hash]** argument matches towards the password specified in its value
+* __[crypto.password.hash]__ - Creates a cryptographically secure hash from the specified password, expected to be found in its value node. Uses blowfish, or more specifically BCrypt internally, to create the hash with individual salts.
+* __[crypto.password.verify]__ - Verifies a **[hash]** argument matches towards the password specified in its value. The **[hash]** is expected to be in the format created by BCrypt, implying the hash was created with e.g. **[crypto.password.hash]**.
 * __[crypto.random]__ - Creates a cryptographically secured random string for you, with the characters [a-zA-Z], '_' and '-'
+* __[crypto.rsa.create-key]__ - Creates an RSA keypair for you, allowing you to pass in **[strength]**, and/or **[seed]** to override the default strength being 2048, and apply a custom seed to the random number generator. The private/public keypair will be returned to caller as **[public]** and **[private]** after invocation, which is the DER encoded keys, base64 encoded. Might require a lot of time to execute, depending upon your strength argument's value.
+* __[crypto.rsa.sign]__ - Cryptographically signs a message (provided as value) with the given private **[key]**, optionally using the specified hashing **[algorithm]**, defaulting to SHA256, and returns the signature for your content as value. The signature content will be returned as the base64 raw bytes being your signature.
+* __[crypto.rsa.verify]__ - Verifies a previously created RSA signature towards its message (provided as value), with the specified public **[key]**, optionally allowing the caller to provide a hashing **[algorithm]**, defaulting to SHA256. The slot will throw an exception if the signature is not matching the message passed in.
+
+## Supported hashing algorithms
 
 The above password slots will use BlowFish algorithm, through BCrypt, while the supported algorithms for the **[crypto.hash]**
 are as follows.
@@ -30,6 +36,55 @@ crypto.random
    min:50
    max:100
 ```
+
+Notice, the **[crypto.random]** slot will _only_ return characters from a-z, A-Z, 0-9, \_ and -. Which makes
+it easily traversed using any string library.
+
+## Cryptograpy
+
+This library supports several cryptographic services, allowing you to use the cryptography services you wish.
+
+### Creating an RSA keypair
+
+To create an RSA keypair that you can use for other cryptographic services later, you can use something as follows.
+
+```
+crypto.rsa.create-key
+   strength:2048
+   seed:some random jibberish text
+```
+
+Both the **[strength]** and **[seed]** is optional above. Strength will default to 2048, which might be too little
+for serious cryptography, but increasing your strength too much, might result in the function spending several
+seconds, possibly minutes to return if you set it too high. The **[seed]** is optional, and even if you don't provide
+a seed argument, the default seed should still be enough cryptographically strong to avoid predictions.
+
+### Cryptographically signing and verifying a message
+
+You can use a previously created RSA key to cryptographically sign some data or message, intended to be passed
+over an insecure context, allowing the caller to use your public key to verify the message was in fact created
+by the owner of the private key. To sign some arbitrary content using your private key, and also verify the message
+was correctly signed with a specific key, you can use something as follows.
+
+```
+.data:some piece of text you wish to sign
+
+crypto.rsa.create-key
+
+crypto.rsa.sign:x:@.data
+   key:x:@crypto.rsa.create-key/*/private
+
+// Uncommenting these lines, will make the verify process throw an exception
+// set-value:x:@.data
+//    .:Some piece of text you wish to sign - XXXX
+
+crypto.rsa.verify:x:@.data
+   key:x:@crypto.rsa.create-key/*/public
+```
+
+If somebody tampers with the content between the signing process and the verify process, an exception will
+be thrown, during the verify stage. Something you can verify yourself by uncommenting the above **[set-value]**
+invocation.
 
 ## Quality gates
 
