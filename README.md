@@ -67,9 +67,11 @@ with you have *that exact public key*. Depending upon your paranoia level, you m
 public key in an email, or you might need to physically meet the person whom you want to communicate with,
 and give him a USB stick with your public key. The latter might be important if you fear what's often
 referred to as a _"man in the middle attack"_, where some malicious agent, takes your public key,
-and gives a bogus and fake public key to the 3rd party. This results in that the man in the middle
-can intercept your communicate, decrypt it, and re-encrypt it with your public key, before he or she
-sends it to you.
+and gives a bogus and fake public key to the other party. This results in that the man in the middle
+can intercept your communication, decrypt it, and re-encrypt it with your public key, before he or she
+sends it to you - In addition to that he can use a similar mechanism to impersonate your signatures,
+allowing the other party to falsely believe some message originated from you, when it did indeed originate
+from a malicious _"man in the middle"_.
 
 There are several different ways to create a key pair, just have the above in mind as you do, and you
 start using cryptography in your Hyperlambda applications.
