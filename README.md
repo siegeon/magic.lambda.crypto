@@ -56,10 +56,19 @@ keep your private key private, you have a 100% secure channel to use for communi
 individuals from both reading what others send to you, and also tampering with the content you send to others,
 before the other party receives it. Hence, cryptography is about two main subjects.
 
-1. Encrypting messages sent to *you*
+1. Encrypting messages others send to *you*
 2. Allowing you to provide guarantees that a message originated from *you*
 
 Both of these concepts is 100% dependent upon your ability to keep your private key *private* though.
+In addition, it relies upon an ability to distribute your public key, such that those wanting to communicate
+with you have *that exact public key*. Depending upon your paranoia level, you might just send your
+public key in an email, or you might need to physically meet the person whom you want to communicate with,
+and give him a USB stick with your public key. The latter might be important if you fear what's often
+referred to as a _"man in the middle attack"_, where some malicious agent, takes your public key,
+and gives a bogus and fake public key to the 3rd party. This results in that the man in the middle
+can intercept your communicate, decrypt it, and re-encrypt it with your public key, before he or she
+sends it to you.
+
 There are several different ways to create a key pair, just have the above in mind as you do, and you
 start using cryptography in your Hyperlambda applications.
 
