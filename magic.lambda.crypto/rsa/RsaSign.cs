@@ -31,12 +31,13 @@ namespace magic.lambda.crypto.rsa
             var message = Encoding.UTF8.GetBytes(input.GetEx<string>());
             var rawPrivateKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<string>() ??
                 throw new ArgumentException("No [key] supplied to [crypto.rsa.sign]");
+            var algo = input.Children.FirstOrDefault(x => x.Name == "algo")?.GetEx<string>() ?? "SHA256";
 
             // Converting key from base64 encoded DER format.
             var privateKey = PrivateKeyFactory.CreateKey(Convert.FromBase64String(rawPrivateKey));
 
             // Creating our signer and associating it with the private key.
-            var sig = SignerUtilities.GetSigner("SHA256withRSA");
+            var sig = SignerUtilities.GetSigner($"{algo}withRSA");
             sig.Init(true, privateKey);
 
             // Signing the specified data, and returning to caller as base64.

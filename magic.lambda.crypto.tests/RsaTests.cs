@@ -79,6 +79,23 @@ crypto.rsa.sign:x:@.data
         }
 
         [Fact]
+        public void SignTextSha512()
+        {
+            var lambda = Common.Evaluate(@"
+.data:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data
+   algo:SHA512
+   key:x:@crypto.rsa.create-key/*/private");
+            Assert.NotNull(lambda.Children.Skip(2).First().GetEx<string>());
+            Assert.True(lambda.Children.Skip(2).First().Value.GetType() != typeof(Expression));
+            Assert.NotEqual(
+                "This is some piece of text that should be signed",
+                lambda.Children.Skip(1).First().GetEx<string>());
+        }
+
+        [Fact]
         public void SignText_Throws()
         {
             Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
@@ -105,7 +122,24 @@ crypto.rsa.verify:x:@.data
         }
 
         [Fact]
-        public void SignAndVerifyText_Throws()
+        public void SignAndVerifyTextSha512()
+        {
+            var lambda = Common.Evaluate(@"
+.data:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data
+   algo:SHA512
+   key:x:@crypto.rsa.create-key/*/private
+crypto.rsa.verify:x:@.data
+   algo:SHA512
+   key:x:@crypto.rsa.create-key/*/public
+   signature:x:@crypto.rsa.sign
+");
+        }
+
+        [Fact]
+        public void SignAndVerifyText_Throws_01()
         {
             Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
 .data1:This is some piece of text that should be signed
@@ -115,6 +149,24 @@ crypto.rsa.create-key
 crypto.rsa.sign:x:@.data1
    key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data2
+   key:x:@crypto.rsa.create-key/*/public
+   signature:x:@crypto.rsa.sign
+"));
+        }
+
+        [Fact]
+        public void SignAndVerifyText_Throws_02()
+        {
+            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
+.data1:This is some piece of text that should be signed
+.data2:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data1
+   algo:SHA256
+   key:x:@crypto.rsa.create-key/*/private
+crypto.rsa.verify:x:@.data2
+   algo:SHA512
    key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 "));
