@@ -202,7 +202,10 @@ this implies that it's a 1 in 16.8 billion chance of that the key as a whole is 
 Implying somebody wanting to pre-compute all possible values for a _"main in the middle keypair"_,
 allowing him to act as an adversary, picking up the communication, has to precompute 16.8 billion
 keypairs to simply have them validate towards the last 8 digits of your fingerprint. This problem
-grows exponentially by the power of 36 for each additional character the user checks.
+grows exponentially by the power of 36 for each additional character the user checks. Implying
+if the user only checks some few characters at the end of the fingerprint, he's for all practical
+concerns 100% safe, knowing that this is the correct public key, and not a _"man in the middle"_ key,
+created by a malicious adversary.
 
 This prohibits among other things _"man in the middle"_ attacks, assuming the user has access
 to the fingerprint, or at the very least *parts* of the fingerprint, allowing him to validate
