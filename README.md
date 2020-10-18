@@ -4,7 +4,7 @@
 Provides cryptographic services to Magic. More specifically, this project provides the following slots, that
 among other things helps you with storing passwords securely in your database, in addition to other services,
 such as generating cryptographically secured random strings of text, cryptographically signing messages,
-verifying signatures, creating encryption keypairs, etc.
+verifying signatures, creating encryption keypairs, encrypting and decrypting messages, etc.
 
 * __[crypto.hash]__ - Creates a hash of the specified string value/expression's value, using the specified **[algorithm]**, that defaults to SHA256
 * __[crypto.password.hash]__ - Creates a cryptographically secure hash from the specified password, expected to be found in its value node. Uses blowfish, or more specifically BCrypt internally, to create the hash with individual salts.
