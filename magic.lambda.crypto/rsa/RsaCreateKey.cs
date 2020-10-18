@@ -33,6 +33,7 @@ namespace magic.lambda.crypto.rsa
             // Retrieving arguments, if given, or supplying sane defaults if not.
             var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
             var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Creating keypair generator, and seeding the SecureRandom if seed was given.
             var generator = new RsaKeyPairGenerator();
@@ -50,8 +51,16 @@ namespace magic.lambda.crypto.rsa
             // Returning both private and public key to caller.
             input.Value = null;
             input.Clear();
-            input.Add(new Node("public", Convert.ToBase64String(publicInfo.GetDerEncoded())));
-            input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
+            if (raw)
+            {
+                input.Add(new Node("public", publicInfo.GetDerEncoded()));
+                input.Add(new Node("private", privateInfo.GetDerEncoded()));
+            }
+            else
+            {
+                input.Add(new Node("public", Convert.ToBase64String(publicInfo.GetDerEncoded())));
+                input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
+            }
         }
     }
 }

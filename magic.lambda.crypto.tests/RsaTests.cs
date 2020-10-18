@@ -25,6 +25,19 @@ crypto.rsa.create-key
         }
 
         [Fact]
+        public void GenerateKey1024Raw()
+        {
+            var lambda = Common.Evaluate(@"
+crypto.rsa.create-key
+   raw:true
+   strength:1024");
+            var priv = lambda.Children.First().Children.Skip(1).First().Value as byte[];
+            var publ = lambda.Children.First().Children.First().Value as byte[];
+            Assert.True(priv.Length > 500 && priv.Length < 700);
+            Assert.True(publ.Length > 100 && publ.Length < 250);
+        }
+
+        [Fact]
         public void GenerateKey1024ExplicitSeed()
         {
             var lambda = Common.Evaluate(@"
