@@ -186,9 +186,11 @@ with higher and higher bit strength. However, in the case quantum computing shou
 even such strategies are futile for traditional cryptography, such as EC and RSA. If these are no concerns
 of you, you can still use cryptography to have a _"practical form of privacy"_ in your communication,
 but have this in mind as you start out using cryptography, since there are no certainties when it comes
-to this subject.
+to this subject. And of course, even if you had access to 100% perfect privacy in your communication with
+others, you still need to trust the ones you're communicating with to not tell others about what you
+are communicating to them ...
 
-> The only true privacy that exists, is never telling anybody anything
+> The only true privacy that exists, is never telling anybody anything!
 
 ## Quality gates
 
