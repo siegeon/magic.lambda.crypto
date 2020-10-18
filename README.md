@@ -164,66 +164,6 @@ implies that no encrypted text resulting of en encryption operation can be signi
 size of the (public) key used to encrypt the message. This is only relevant for small pieces of data, and have
 few implications for larger pieces of text being encrypted.
 
-## [crypto.fingerprint]
-
-This slot creates a hash, but in a base36 number system, consisting of the a-z and 1-9 characters, and
-also adds a checksum at the end, serving as a guarantee of that no characters have been changed in
-the main hash string. This results in a couple of advantages, such as prohibiting erronously manually
-typing a hash string, which we could imagine in for instance the case of crypto wallets, etc - Since
-if the user types *one* wrong character, the hash as a whole will invalidate, due to no longer matching
-its checksum. Hence, it's created such that it should be easy to transfer from human to human, by for
-instance reading it out loud over the telephone, or something similar - Yet provide guarantees of typos
-as it's transmitted, and still being just a normal cryptographic hash string.
-
-The checksum is normally some prime number, but doesn't need to be too large, and its default value
-is in fact 10007. This implies that the user needs to type *two* wrong characters, and even if he does, he
-has a statistical probability of 1 in 10007 chances of erronously typing a valid fingerprint value.
-Below is an example of generating a fingerprint using SHA1 as our base hash algorithm. But you can use
-any base hash algorithm you wish.
-
-```
-crypto.fingerprint:This is some random text
-   algorithm:SHA1
-```
-
-The above results in the following fingerprint.
-
-```
-82mm.hlao.wt9s.wvb4.8v96.6905
-```
-
-If the user types in the above string, to reference for instance a crypto wallet, and he types one
-wrong character, such as _"82mn"_ as the first parts, instead of _"82mm"_, the checksum will not
-validate, and the computer can discard the input, assuming the entire input is invalid.
-
-This has a lot of advantages, such as being able to easily communicate hash values, to
-for instance validate a public RSA key, etc - Allowing you to for instance have your public key's
-fingerprint on your business card, with a URL to download the key, allowing the user to validate
-the fingerprint of your public key, before he starts using it. If the user only checks for instance
-the last two entities, which for the above would be _"8v96.6905"_, then if these parts are correct,
-this implies that it's a 1 in 16.8 billion chance of that the key as a whole is the correct key.
-Implying somebody wanting to pre-compute all possible values for a _"main in the middle keypair"_,
-allowing him to act as an adversary, picking up the communication, has to precompute 16.8 billion
-keypairs to simply have them validate towards the last 8 digits of your fingerprint. This problem
-grows exponentially by the power of 36 for each additional character the user checks. Implying
-if the user only checks some few characters at the end of the fingerprint, he's for all practical
-concerns 100% safe, knowing that this is the correct public key, and not a _"man in the middle"_ key,
-created by a malicious adversary.
-
-This prohibits among other things _"man in the middle"_ attacks, assuming the user has access
-to the fingerprint, or at the very least *parts* of the fingerprint, allowing him to validate
-that the public key's fingerprint is in accordance to the fingerprint communicated previously,
-over for instance a business card, etc. Since the character set used, and the format created
-by this slot, is also explicitly created such that it's easily remembered by the human mind,
-yet incredibly difficult to fake - This provides an alternative to the _"web of trust"_
-mechanisms that PGP provides. Assuming you can somehow transmit your public key's fingerprint
-to those you want to communicate with.
-
-The idea is that a fingerprint such as the above, is highly humanly readable, yet will always
-produce the exact same result given the same input, and almost completely eliminate typos
-by having the user manually typing in the characters, and possibly typing one or more characters
-wrong.
-
 ## Cryptography concerns
 
 Even assuming you can 100% perfectly communicate in privacy today, your privacy is only as good as a malicious
