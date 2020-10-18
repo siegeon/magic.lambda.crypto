@@ -78,7 +78,9 @@ cryptography in your Hyperlambda applications. Most of the cryptography function
 using Bouncy Castle, which is a thoroughly tested library for doing cryptography. Bouncy Castle is
 owned by a foundation originating from Australia, so they don't need to obey by American laws, reducing
 American intelligence services ability to lawfully force them to build backdoors and similar constructs
-into their code. Bouncy Castle is Open Source.
+into their code. Bouncy Castle is also Open Source, allowing others to scrutinise their code for such
+backdoors. However, with cryptography, there *are no guarantees*, only a _"general feeling and concent"_
+amongst developers that it's secure.
 
 ### Creating an RSA keypair
 
