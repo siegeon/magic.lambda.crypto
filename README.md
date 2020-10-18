@@ -141,6 +141,10 @@ in your code might have, creating a false positive if you erronously invert an *
 this is technically _"using exceptions for control flow"_, it has been an explicit and conscious design choice
 as the library was created, to avoid false positives during the verification process of a signature.
 
+Notice, if you want the signature back as raw bytes, you can supply a **[raw]** argument, and set its value to boolean
+true, at which point the returned signature will be returned as a raw `byte[]`. This might be
+useful, if you for instance need to persist the signature to disc, as a binary file, etc.
+
 ### Encrypting and decrypting a message
 
 To encrypt a message, you can use something as follows.

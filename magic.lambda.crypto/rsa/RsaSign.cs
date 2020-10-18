@@ -32,6 +32,7 @@ namespace magic.lambda.crypto.rsa
             var rawPrivateKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<string>() ??
                 throw new ArgumentException("No [key] supplied to [crypto.rsa.sign]");
             var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Converting key from base64 encoded DER format.
             var privateKey = PrivateKeyFactory.CreateKey(Convert.FromBase64String(rawPrivateKey));
@@ -43,7 +44,10 @@ namespace magic.lambda.crypto.rsa
             // Signing the specified data, and returning to caller as base64.
             sig.BlockUpdate(message, 0, message.Length);
             byte[] signature = sig.GenerateSignature();
-            input.Value = Convert.ToBase64String(signature);
+            if (raw)
+                input.Value = signature;
+            else
+                input.Value = Convert.ToBase64String(signature);
             input.Clear();
         }
     }

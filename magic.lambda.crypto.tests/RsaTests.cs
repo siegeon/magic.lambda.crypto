@@ -92,6 +92,21 @@ crypto.rsa.sign:x:@.data
         }
 
         [Fact]
+        public void SignTextRaw()
+        {
+            var lambda = Common.Evaluate(@"
+.data:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data
+   raw:true
+   key:x:@crypto.rsa.create-key/*/private");
+            var sign = lambda.Children.Skip(2).First().Value as byte[];
+            Assert.NotNull(sign);
+            Assert.True(sign.Length > 70 && sign.Length < 200);
+        }
+
+        [Fact]
         public void SignTextSha512()
         {
             var lambda = Common.Evaluate(@"
@@ -250,6 +265,21 @@ crypto.rsa.encrypt:x:@.data
             Assert.NotEqual(
                 "This is some piece of text that should be encrypted",
                 lambda.Children.Skip(2).First().GetEx<string>());
+        }
+
+        [Fact]
+        public void EncryptTextRaw()
+        {
+            var lambda = Common.Evaluate(@"
+.data:This is some piece of text that should be encrypted
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.encrypt:x:@.data
+   raw:true
+   key:x:@crypto.rsa.create-key/*/public");
+            var val = lambda.Children.Skip(2).First().Value as byte[];
+            Assert.NotNull(val);
+            Assert.True(val.Length > 70 && val.Length < 200);
         }
 
         [Fact]
