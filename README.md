@@ -172,6 +172,10 @@ implies that no encrypted text resulting of en encryption operation can be signi
 size of the (public) key used to encrypt the message. This is only relevant for small pieces of data, and have
 few implications for larger pieces of text being encrypted.
 
+Notice, if you want the message back as raw bytes, you can supply a **[raw]** argument, and set its value to boolean
+true, at which point the returned encrypted message will be returned as a raw `byte[]`. This might be
+useful, if you for instance need to persist the message to disc, as a binary file, etc.
+
 ## Cryptography concerns
 
 Even assuming you can 100% perfectly communicate in privacy today, your privacy is only as good as a malicious
