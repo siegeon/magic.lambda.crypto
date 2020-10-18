@@ -105,7 +105,7 @@ to avoid brute force _"guessing"_ of your private key. If you're *very* paranoid
 8192, in addition to providing a manual salt as you create your keys. If you're just playing around with cryptography
 to learn the ideas, 1024 is probably more than enough.
 
-### Cryptographically signing a message
+### Cryptographically signing and verifying the signature of a message
 
 You can use a previously created private RSA key to cryptographically sign some data or message, intended to be passed
 over an insecure context, allowing the caller to use your public key to verify the message was in fact created
@@ -136,7 +136,7 @@ in your code might have, creating a false positive if you erronously invert an *
 this is technically _"using exceptions for control flow"_, it has been an explicit and conscious design choice
 as the library was created, to avoid false positives during the verification process of a signature.
 
-### Encrypting a message
+### Encrypting and decrypting a message
 
 To encrypt a message, you can use something as follows.
 
