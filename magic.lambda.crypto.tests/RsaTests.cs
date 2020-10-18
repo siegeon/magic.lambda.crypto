@@ -75,7 +75,7 @@ crypto.rsa.sign:x:@.data
             Assert.True(lambda.Children.Skip(2).First().Value.GetType() != typeof(Expression));
             Assert.NotEqual(
                 "This is some piece of text that should be signed",
-                lambda.Children.Skip(1).First().GetEx<string>());
+                lambda.Children.Skip(2).First().GetEx<string>());
         }
 
         [Fact]
@@ -221,6 +221,23 @@ crypto.rsa.verify:x:@.data2
    key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 "));
+        }
+
+        [Fact]
+        public void EncryptText()
+        {
+            var lambda = Common.Evaluate(@"
+.data:This is some piece of text that should be encrypted
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.encrypt:x:@.data
+   key:x:@crypto.rsa.create-key/*/public");
+            Assert.NotNull(lambda.Children.Skip(2).First().GetEx<string>());
+            Assert.True(lambda.Children.Skip(2).First().Value.GetType() != typeof(Expression));
+            System.Console.WriteLine(lambda.ToHyperlambda());
+            Assert.NotEqual(
+                "This is some piece of text that should be encrypted",
+                lambda.Children.Skip(2).First().GetEx<string>());
         }
     }
 }

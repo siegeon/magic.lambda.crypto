@@ -98,9 +98,10 @@ seconds, possibly minutes to return if you set it too high. The **[seed]** is op
 a seed argument, the default seed should still be strong enough to avoid predictions. Internally all of these slots uses
 Bouncy Castle.
 
-A good strength, is considered to be 4096, which developers around the world feels are secure enough to avoid
-brute force _"guessing"_ of your private key. If you're *very* paranoid, you might want to increase it to
-8192, in addition to providing a manual salt as you create your keys.
+A good strength for an RSA key, is considered to be 4096, which developers around the world feels are secure enough
+to avoid brute force _"guessing"_ of your private key. If you're *very* paranoid, you might want to increase it to
+8192, in addition to providing a manual salt as you create your keys. If you're just playing around with cryptography
+to learn the ideas, 1024 is probably more than enough.
 
 ### Cryptographically signing and verifying a message
 
