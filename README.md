@@ -14,8 +14,7 @@ verifying signatures, creating encryption keypairs, etc.
 * __[crypto.rsa.sign]__ - Cryptographically signs a message (provided as value) with the given private **[key]**, optionally using the specified hashing **[algorithm]**, defaulting to SHA256, and returns the signature for your content as value. The signature content will be returned as the base64 encoded raw bytes being your signature.
 * __[crypto.rsa.verify]__ - Verifies a previously created RSA signature towards its message (provided as value), with the specified public **[key]**, optionally allowing the caller to provide a hashing **[algorithm]**, defaulting to SHA256. The slot will throw an exception if the signature is not matching the message passed in for security reasons.
 * __[crypto.rsa.encrypt]__ - Encrypts the specified message (provided as value) using the specified public **[key]**, and returns the encrypted message as a base64 encoded encrypted message.
-* __[crypto.rsa.decrypt]__ - Decrypts the specified message (provided as value) using the specified private **[key]**, and returns the decrypted message as its original plain text value. Assumes the message was base64 encoded, and the original
-message was some sort of text/string and not binary content.
+* __[crypto.rsa.decrypt]__ - Decrypts the specified message (provided as value) using the specified private **[key]**, and returns the decrypted message as its original plain text value. Assumes the encrypted message was base64 encoded, and the original message was some sort of text/string and not binary content.
 
 ## Supported hashing algorithms
 
