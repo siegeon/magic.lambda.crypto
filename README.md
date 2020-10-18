@@ -73,8 +73,8 @@ sends it to you - In addition to that he can use a similar mechanism to imperson
 allowing the other party to falsely believe some message originated from you, when it did indeed originate
 from a malicious _"man in the middle"_.
 
-There are several different ways to create a key pair, just have the above in mind as you do, and you
-start using cryptography in your Hyperlambda applications.
+There are several different ways to create a key pair, just have the above in mind as you start using
+cryptography in your Hyperlambda applications.
 
 ### Creating an RSA keypair
 
