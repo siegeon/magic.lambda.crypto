@@ -58,7 +58,7 @@ crypto.rsa.create-key
 Both the **[strength]** and **[seed]** is optional above. Strength will default to 2048, which might be too little
 for serious cryptography, but increasing your strength too much, might result in the function spending several
 seconds, possibly minutes to return if you set it too high. The **[seed]** is optional, and even if you don't provide
-a seed argument, the default seed should still be enough cryptographically strong to avoid predictions.
+a seed argument, the default seed should still be strong enough to avoid predictions.
 
 ### Cryptographically signing and verifying a message
 
