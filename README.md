@@ -179,7 +179,7 @@ useful, if you for instance need to persist the message to disc, as a binary fil
 ## Cryptography concerns
 
 Even assuming you can 100% perfectly communicate in privacy today, your privacy is only as good as a malicious
-agent's ability to brute force prime numbers, in the case of RSA, and similar techniques with Elliptic Curve.
+agent's ability to brute force prime numbers in the case of RSA, and similar techniques with Elliptic Curve.
 This means that even though you create an extremely strong keypair according to today's standard - Due to
 Moore's law, some 5-10 years down the road, the NSA and the CIA will probably be able to reproduce your private
 key, using nothing but your public key as input. And some 10-20 years later, some kid with a pocket calculator,
@@ -208,10 +208,10 @@ are communicating to them ...
 In addition to the above concerns, any shmuck with a baseball bat could probably _"decrypt"_ your
 private communication, by simply coercing and torturing the other party to spill the beans. Inevitably,
 at some point, everybody breaks. Although there exist ways to counter this too, by for instance start
-lying immediately once the torture begins - At which point as the torture victim breaks, he's lied
-so much, that it becomes impossible for the torturer to believe anything that his victim says - This is
-probably the simplest way of _"decryption"_ that exists, and is easily within the means of any gorilla
-having high enough IQ to open a door.
+lying immediately once the torture begins, and/or pretend to be insane - At which point as the torture
+victim breaks, he's lied so much, and acted so crazy, that it becomes impossible for the torturer to
+believe anything that his victim says - This is probably the simplest way of _"decryption"_ that exists,
+and is easily within the means of any gorilla having high enough IQ to open a door.
 
 Hence, there is no true privacy, only shades of privacy. This is true regardless of how strong encryption
 you are using. Hence ...
