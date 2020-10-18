@@ -48,7 +48,7 @@ namespace magic.lambda.crypto.rsa
             if (!sig.VerifySignature(signature))
                 throw new ArgumentException("Signature mismatch in [crypto.rsa.verify]");
             input.Clear();
-            input.Value = true;
+            input.Value = null;
         }
     }
 }

@@ -125,12 +125,16 @@ crypto.rsa.sign:x:@.data
 //    .:Some piece of text you wish to sign - XXXX
 
 crypto.rsa.verify:x:@.data
+   signature:x:@crypto.rsa.sign
    key:x:@crypto.rsa.create-key/*/public
 ```
 
 If somebody tampers with the content between the signing process and the verify process, an exception will
 be thrown during the verify stage. Something you can verify yourself by uncommenting the above **[set-value]**
-invocation.
+invocation. Throwing an exception is a conscious choice, due to the potential security breaches an error
+in your code might have, creating a false positive if you erronously invert an **[if]** statement. Even though
+this is technically _"using exceptions for control flow"_, it has been an explicit and conscious design choice
+as the library was created, to avoid false positives during the verification process of a signature.
 
 ### Encrypting a message
 
