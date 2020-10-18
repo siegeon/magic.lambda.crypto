@@ -13,6 +13,8 @@ verifying signatures, creating encryption keypairs, etc.
 * __[crypto.rsa.create-key]__ - Creates an RSA keypair for you, allowing you to pass in **[strength]**, and/or **[seed]** to override the default strength being 2048, and apply a custom seed to the random number generator. The private/public keypair will be returned to caller as **[public]** and **[private]** after invocation, which is the DER encoded keys, base64 encoded. Might require a lot of time to execute, depending upon your strength argument's value.
 * __[crypto.rsa.sign]__ - Cryptographically signs a message (provided as value) with the given private **[key]**, optionally using the specified hashing **[algorithm]**, defaulting to SHA256, and returns the signature for your content as value. The signature content will be returned as the base64 encoded raw bytes being your signature.
 * __[crypto.rsa.verify]__ - Verifies a previously created RSA signature towards its message (provided as value), with the specified public **[key]**, optionally allowing the caller to provide a hashing **[algorithm]**, defaulting to SHA256. The slot will throw an exception if the signature is not matching the message passed in for security reasons.
+* __[crypto.rsa.encrypt]__ - Encrypts the specified message (provided as value) using the specified public **[key]**, and returns the encrypted message as a base64 encoded encrypted message.
+* __[crypto.rsa.decrypt]__ - Decrypts the specified message (provided as value) using the specified private **[key]**, and returns the decrypted message as its original plain text value. Assumes the message was base64 encoded.
 
 ## Supported hashing algorithms
 
@@ -103,7 +105,7 @@ to avoid brute force _"guessing"_ of your private key. If you're *very* paranoid
 8192, in addition to providing a manual salt as you create your keys. If you're just playing around with cryptography
 to learn the ideas, 1024 is probably more than enough.
 
-### Cryptographically signing and verifying a message
+### Cryptographically signing a message
 
 You can use a previously created private RSA key to cryptographically sign some data or message, intended to be passed
 over an insecure context, allowing the caller to use your public key to verify the message was in fact created
@@ -129,6 +131,27 @@ crypto.rsa.verify:x:@.data
 If somebody tampers with the content between the signing process and the verify process, an exception will
 be thrown during the verify stage. Something you can verify yourself by uncommenting the above **[set-value]**
 invocation.
+
+### Encrypting a message
+
+To encrypt a message, you can use something as follows.
+
+```
+.data:some piece of text you wish to encrypt
+
+crypto.rsa.create-key
+
+crypto.rsa.encrypt:x:@.data
+   key:x:@crypto.rsa.create-key/*/public
+
+crypto.rsa.decrypt:x:@crypto.rsa.encrypt
+   key:x:@crypto.rsa.create-key/*/private
+```
+
+Notice how the encryption above is using the *public key*, and the decryption is using the *private key*. The encrypt slot
+will internally base64 encode the encrypted data for simplicity reasons, allowing you to immediately inspect it as text,
+since encryption will result in a byte array, which is inconvenient to handle and easily pass around to others.
+Hence, the above decrypt slot assumes that it's given the encrypted data as base64 encoded text, and will fail if not.
 
 ## Quality gates
 

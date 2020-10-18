@@ -16,10 +16,10 @@ using magic.signals.contracts;
 namespace magic.lambda.crypto.rsa
 {
     /// <summary>
-    /// [crypto.rsa.encrypt] slot to encrypt some content using a public key.
+    /// [crypto.rsa.decrypt] slot to decrypt some content using a private key.
     /// </summary>
-    [Slot(Name = "crypto.rsa.encrypt")]
-    public class RsaEncrypt : ISlot
+    [Slot(Name = "crypto.rsa.decrypt")]
+    public class RsaDecrypt : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -29,16 +29,16 @@ namespace magic.lambda.crypto.rsa
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
-            var message = Encoding.UTF8.GetBytes(input.GetEx<string>());
-            var rawPublicKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<string>() ??
-                throw new ArgumentException("No [key] supplied to [crypto.rsa.encrypt]");
+            var message = Convert.FromBase64String(input.GetEx<string>());
+            var rawPrivateKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<string>() ??
+                throw new ArgumentException("No [key] supplied to [crypto.rsa.decrypt]");
 
             // Converting key from base64 encoded DER format.
-            var publicKey = PublicKeyFactory.CreateKey(Convert.FromBase64String(rawPublicKey));
+            var privateKey = PrivateKeyFactory.CreateKey(Convert.FromBase64String(rawPrivateKey));
 
             var encryptEngine = new Pkcs1Encoding(new RsaEngine());
-            encryptEngine.Init(true, publicKey);
-            input.Value = Convert.ToBase64String(encryptEngine.ProcessBlock(message, 0, message.Length));
+            encryptEngine.Init(false, privateKey);
+            input.Value = Encoding.UTF8.GetString(encryptEngine.ProcessBlock(message, 0, message.Length));
         }
     }
 }

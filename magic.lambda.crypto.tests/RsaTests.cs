@@ -234,10 +234,26 @@ crypto.rsa.encrypt:x:@.data
    key:x:@crypto.rsa.create-key/*/public");
             Assert.NotNull(lambda.Children.Skip(2).First().GetEx<string>());
             Assert.True(lambda.Children.Skip(2).First().Value.GetType() != typeof(Expression));
-            System.Console.WriteLine(lambda.ToHyperlambda());
             Assert.NotEqual(
                 "This is some piece of text that should be encrypted",
                 lambda.Children.Skip(2).First().GetEx<string>());
+        }
+
+        [Fact]
+        public void EncryptAndDecryptText()
+        {
+            var lambda = Common.Evaluate(@"
+.data:This is some piece of text that should be encrypted
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.encrypt:x:@.data
+   key:x:@crypto.rsa.create-key/*/public
+crypto.rsa.decrypt:x:@crypto.rsa.encrypt
+   key:x:@crypto.rsa.create-key/*/private
+");
+            Assert.Equal(
+                "This is some piece of text that should be encrypted",
+                lambda.Children.Skip(3).First().GetEx<string>());
         }
     }
 }
