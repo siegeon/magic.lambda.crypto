@@ -172,7 +172,8 @@ the main hash string. This results in a couple of advantages, such as prohibitin
 typing a hash string, which we could imagine in for instance the case of crypto wallets, etc - Since
 if the user types *one* wrong character, the hash as a whole will invalidate, due to no longer matching
 its checksum. Hence, it's created such that it should be easy to transfer from human to human, by for
-instance reading it out loud over the telephone, or something similar.
+instance reading it out loud over the telephone, or something similar - Yet provide guarantees of typos
+as it's transmitted, and still being just a normal cryptographic hash string.
 
 The checksum is normally some prime number, but doesn't need to be too large, and its default value
 is in fact 10007. This implies that the user needs to type *two* wrong characters, and even if he does, he
