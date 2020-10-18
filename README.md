@@ -210,7 +210,11 @@ created by a malicious adversary.
 This prohibits among other things _"man in the middle"_ attacks, assuming the user has access
 to the fingerprint, or at the very least *parts* of the fingerprint, allowing him to validate
 that the public key's fingerprint is in accordance to the fingerprint communicated previously,
-over for instance a business card, etc.
+over for instance a business card, etc. Since the character set used, and the format created
+by this slot, is also explicitly created such that it's easily remembered by the human mind,
+yet incredibly difficult to fake - This provides an alternative to the _"web of trust"_
+mechanisms that PGP provides. Assuming you can somehow transmit your public key's fingerprint
+to those you want to communicate with.
 
 The idea is that a fingerprint such as the above, is highly humanly readable, yet will always
 produce the exact same result given the same input, and almost completely eliminate typos
