@@ -63,7 +63,7 @@ Bouncy Castle.
 
 ### Cryptographically signing and verifying a message
 
-You can use a previously created RSA key to cryptographically sign some data or message, intended to be passed
+You can use a previously created private RSA key to cryptographically sign some data or message, intended to be passed
 over an insecure context, allowing the caller to use your public key to verify the message was in fact created
 by the owner of the private key. To sign some arbitrary content using your private key, and also verify the message
 was correctly signed with a specific key, you can use something as follows.
@@ -85,7 +85,7 @@ crypto.rsa.verify:x:@.data
 ```
 
 If somebody tampers with the content between the signing process and the verify process, an exception will
-be thrown, during the verify stage. Something you can verify yourself by uncommenting the above **[set-value]**
+be thrown during the verify stage. Something you can verify yourself by uncommenting the above **[set-value]**
 invocation.
 
 ## Quality gates
