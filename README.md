@@ -74,7 +74,11 @@ allowing the other party to falsely believe some message originated from you, wh
 from a malicious _"man in the middle"_.
 
 There are several different ways to create a key pair, just have the above in mind as you start using
-cryptography in your Hyperlambda applications.
+cryptography in your Hyperlambda applications. Most of the cryptography functions in this library is
+using Bouncy Castle, which is a thoroughly tested library for doing cryptography. Bouncy Castle is
+owned by a foundation originating from Australia, so they don't need to obey by American laws, reducing
+American intelligence services ability to lawfully force them to build backdoors and similar constructs
+into their code. Bouncy Castle is Open Source.
 
 ### Creating an RSA keypair
 
