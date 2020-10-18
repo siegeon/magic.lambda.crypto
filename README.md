@@ -157,6 +157,11 @@ will internally base64 encode the encrypted data for simplicity reasons, allowin
 since encryption will result in a byte array, which is inconvenient to handle and easily pass around to others.
 Hence, the above decrypt slot assumes that it's given the encrypted data as base64 encoded text, and will fail if not.
 
+Also notice how the encrypted message is larger than its original string. This is because of something called _"padding"_
+in encryption, only being relevant for messages that are smaller in size than your original text. Padding
+implies that no encrypted text resulting of en encryption operation can be significantly smaller in size than the
+size of the (public) key used to encrypt the message.
+
 ## Quality gates
 
 - [![Build status](https://travis-ci.com/polterguy/magic.lambda.crypto.svg?master)](https://travis-ci.com/polterguy/magic.lambda.crypto)
