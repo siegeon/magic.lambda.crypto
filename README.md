@@ -163,6 +163,33 @@ implies that no encrypted text resulting of en encryption operation can be signi
 size of the (public) key used to encrypt the message. This is only relevant for small pieces of data, and have
 few implications for larger pieces of text being encrypted.
 
+## Cryptography concerns
+
+Even assuming you can 100% perfectly communicate in privacy today, your privacy is only as good as a malicious
+agent's ability to brute force prime numbers, in the case of RSA, and similar techniques with Elliptic Curve.
+This means that even though you create an extremely strong keypair according to today's standard - Due to
+Moore's law, some 5-10 years down the road, the NSA and the CIA will probably be able to reproduce your private
+key, using nothing but your public key as input. And some 10-20 years later, some kid with a pocket calculator,
+will also easily do the same. Since these agencies also happens to vacum clean the internet, for everything
+transmitted through your ISP, this implies that 5-10 years from now, they'll be able to read your communication,
+and figure out what you were talking about some 5-10 years ago.
+
+Also, as quantum computing becomes practical to implement, today's cryptography based upon _"hard problems"_,
+will effectively prove useless towards a serious quantum computer's ability to perform multiple math
+operations simultaneously, allowing a malicious agent to reproduce your private key in milliseconds.
+So far, we don't know about such quantum computers, but it is assumed they will become available in the
+not too distant future for organisations with very deep pockets.
+
+This implies that privacy is like fruit and vegetables, it rots over time. If you can live with this,
+you can eliminate most of its concerns, by making sure you periodically create stronger and stronger keypairs,
+with higher and higher bit strength. However, in the case quantum computing should somehow be practical,
+even such strategies are futile for traditional cryptography, such as EC and RSA. If these are no concerns
+of you, you can still use cryptography to have a _"practical form of privacy"_ in your communication,
+but have this in mind as you start out using cryptography, since there are no certainties when it comes
+to this subject.
+
+> The only true privacy that exists, is never telling anybody anything
+
 ## Quality gates
 
 - [![Build status](https://travis-ci.com/polterguy/magic.lambda.crypto.svg?master)](https://travis-ci.com/polterguy/magic.lambda.crypto)
