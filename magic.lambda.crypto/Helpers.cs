@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using magic.node;
@@ -53,6 +54,52 @@ namespace magic.lambda.crypto
 
             // Raw byte[] key.
             return PrivateKeyFactory.CreateKey(key as byte[]);
+        }
+
+        /*
+         * Returns the message according to the given arguments, message her
+         * is something the caller wants to encrypt.
+         */
+        internal static byte[] GetEncryptionMessage(Node input)
+        {
+            var message = input.GetEx<object>();
+            if (message is string strMessage)
+                return Encoding.UTF8.GetBytes(strMessage);
+            return message as byte[];
+        }
+
+        /*
+         * Returns the message according to the given arguments, message her
+         * is something the caller wants to decrypt.
+         */
+        internal static byte[] GetDecryptionMessage(Node input)
+        {
+            var message = input.GetEx<object>();
+            if (message is string strMessage)
+                return Convert.FromBase64String(strMessage);
+            return message as byte[];
+        }
+
+        /*
+         * Returns result to caller according to the specified arguments.
+         */
+        internal static void CreateEncryptionResult(Node input, byte[] result)
+        {
+            if (input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false)
+                input.Value = result;
+            else
+                input.Value = Convert.ToBase64String(result);
+        }
+
+        /*
+         * Returns result to caller according to the specified arguments.
+         */
+        internal static void CreateDecryptionResult(Node input, byte[] result)
+        {
+            if (input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false)
+                input.Value = result;
+            else
+                input.Value = Encoding.UTF8.GetString(result);
         }
     }
 }
