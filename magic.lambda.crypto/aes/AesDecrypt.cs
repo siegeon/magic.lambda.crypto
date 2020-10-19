@@ -6,11 +6,11 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Linq;
 using System.Security.Cryptography;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using System.Linq;
 
 namespace magic.lambda.crypto.aes
 {

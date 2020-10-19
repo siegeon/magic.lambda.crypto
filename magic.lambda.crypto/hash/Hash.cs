@@ -5,8 +5,8 @@
 
 using System;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
+using System.Security.Cryptography;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
