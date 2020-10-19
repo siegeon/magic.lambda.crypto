@@ -24,6 +24,7 @@ namespace magic.lambda.crypto.aes
     public class AesDecrypt : ISlot
     {
         const int MAC_SIZE = 128;
+        const int NONCE_SIZE = 12;
 
         /// <summary>
         /// Implementation of slot.
@@ -62,7 +63,7 @@ namespace magic.lambda.crypto.aes
                 using (var reader = new BinaryReader(stream))
                 {
                     // Reading and discarding nonce.
-                    var nonce = reader.ReadBytes(MAC_SIZE / 8);
+                    var nonce = reader.ReadBytes(NONCE_SIZE);
 
                     // Creating and initializing AES engine.
                     var cipher = new GcmBlockCipher(new AesEngine());

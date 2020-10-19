@@ -24,6 +24,7 @@ namespace magic.lambda.crypto.aes
     public class AesEncrypt : ISlot
     {
         const int MAC_SIZE = 128;
+        const int NONCE_SIZE = 12;
 
         /// <summary>
         /// Implementation of slot.
@@ -59,7 +60,7 @@ namespace magic.lambda.crypto.aes
         {
             // Creating our nonce, or Initial Vector (IV).
             var rnd = new SecureRandom();
-            var nonce = new byte[MAC_SIZE / 8];
+            var nonce = new byte[NONCE_SIZE];
             rnd.NextBytes(nonce, 0, nonce.Length);
 
             // Initializing AES engine.
