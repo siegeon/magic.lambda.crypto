@@ -213,6 +213,13 @@ such as securely sharing the public key, etc. Of course, sharing a symmetric key
 and/or making adversaries also get a hold of it, is practically *very difficult* for obvious reasons,
 unless you can asymmetrically encrypt the symmetric key.
 
+**Notice** - Even though the **[password]** argument feels like a _"password"_, you should in general *not*
+use alphanumeric characters, at least not only 16 or 32 of them, but either use a passphrase that
+is much longer, and then hash it using some algorithm that returns the correct number of bytes - For
+then to pass your raw hash into the slots as a `byte[]` instance. Alternatively, use a random number
+generator to generate a random number of bytes. The reasons for this, is that only having 16, 24 or
+32 characters in a password, reduces the entropy of your encrypted data, making it easier to brute force it.
+
 ## Cryptography concerns
 
 Even assuming you can 100% perfectly communicate in privacy today, your privacy is only as good as a malicious
