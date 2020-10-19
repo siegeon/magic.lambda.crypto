@@ -13,7 +13,6 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Encodings;
 using magic.node;
 using magic.node.extensions;
-using Org.BouncyCastle.Crypto.Paddings;
 
 namespace magic.lambda.crypto
 {
@@ -70,6 +69,7 @@ namespace magic.lambda.crypto
             // Retrieving message and other arguments.
             var rawMessage = input.GetEx<object>();
             var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
+
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var publicKey = GetPublicKey(input);
             input.Clear();
@@ -95,6 +95,7 @@ namespace magic.lambda.crypto
             // Retrieving message and other arguments.
             var rawMessage = input.GetEx<object>();
             var message = rawMessage is string strMsg ? Convert.FromBase64String(strMsg) : rawMessage as byte[];
+
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var privateKey = GetPrivateKey(input);
             input.Clear();
@@ -119,6 +120,7 @@ namespace magic.lambda.crypto
             // Retrieving arguments.
             var rawMessage = input.GetEx<object>();
             var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
+
             var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var privateKey = GetPrivateKey(input);
@@ -145,8 +147,10 @@ namespace magic.lambda.crypto
             // Retrieving arguments.
             var rawMessage = input.GetEx<object>();
             var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
+
             var rawSignature = input.Children.FirstOrDefault(x => x.Name == "signature")?.GetEx<object>();
             var signature = rawSignature is string strSign ? Convert.FromBase64String(strSign) : rawSignature as byte[];
+
             var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
             var key = GetPublicKey(input);
             input.Clear();
