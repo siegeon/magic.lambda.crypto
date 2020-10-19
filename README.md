@@ -188,7 +188,8 @@ array, instead of its base64 encoded version.
 RSA is asymmetric cryptography, implying a different key is used for decrypting some data, than that which
 was used to encrypt the data. This project also supports symmetric cryptography, more specifically the AES
 encryption algorithm. This algorithm requires the *same key* to decrypt some content that was used to encrypt
-the data. Below is an example.
+the data, and the key must either be 128, 192 or 256 bits long. Below is an example. This example uses a
+128 bits key, implying 16 characters. You can also provide a 24 bytes long key, or a 32 bytes long key.
 
 ```
 crypto.aes.encrypt:Howdy, this is cool
@@ -197,16 +198,20 @@ crypto.aes.decrypt:x:-
    password:abcdefghij123456
 ```
 
-By default the AES slots will default their strength to 128, but this can be overridden by applying
-a **[strength]** argument.
+The length of the key argument you provide, becomes the bit strength of the encryption, ranging from
+128 through 192 to 256 bits. Even though AES has low bit strength, it's still considered one of the
+strongest forms of cryptography that exists. For the record, this library does *not* use the built in
+AES library from .Net, which has several security issues, due to the way it handles padding among other
+things. Instead Magic uses Bouncy Castle, which does not have these security holes.
 
-Due to its blistering speed, and strength, it's often wise to combine asymmetric cryptography with
+Due to its blistering speed and strength, it's often wise to combine asymmetric cryptography with
 symmetric cryptography, which can be used by generating a random symmetric key/passphrase, then encrypt
 this passphrase using asymmetric cryptography, such as for instance RSA, for then to use the passphrase
 to encrypt the actual main data the caller wants to transmit. This has several advantages, such as
 reducing the size of the data sent, while still providing the benefits from asymmetric cryptography,
 such as securely sharing the public key, etc. Of course, sharing a symmetric key without major hassle,
-and/or making adversaries also get a hold of it, is practically *very difficult* for obvious reasons.
+and/or making adversaries also get a hold of it, is practically *very difficult* for obvious reasons,
+unless you can asymmetrically encrypt the symmetric key.
 
 ## Cryptography concerns
 
