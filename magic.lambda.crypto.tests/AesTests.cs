@@ -24,6 +24,7 @@ crypto.aes.decrypt:x:-
    strength:128
    password:abcdefghij123456
 ");
+            Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
             Assert.Equal("Howdy, this is cool", lambda.Children.Skip(1).First().Value);
         }
 
@@ -38,6 +39,7 @@ crypto.aes.decrypt:x:-
    strength:256
    password:abcdefghij123456
 ");
+            Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
             Assert.Equal("Howdy, this is cool", lambda.Children.Skip(1).First().Value);
         }
     }
