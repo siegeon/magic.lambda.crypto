@@ -33,16 +33,10 @@ namespace magic.lambda.crypto.rsa
             var message = rawMessage is string strMsg ?
                 Convert.FromBase64String(strMsg) :
                 rawMessage as byte[];
-            var rawPrivateKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<object>() ??
-                throw new ArgumentException("No [key] supplied to [crypto.rsa.decrypt]");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Converting key from base64 encoded DER format.
-            var privateKey = PrivateKeyFactory
-                .CreateKey(
-                    rawPrivateKey is string strKey ?
-                        Convert.FromBase64String(strKey) :
-                        rawPrivateKey as byte[]);
+            var privateKey = Helpers.GetPrivateKey(input);
 
             var encryptEngine = new Pkcs1Encoding(new RsaEngine());
             encryptEngine.Init(false, privateKey);

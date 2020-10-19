@@ -29,15 +29,13 @@ namespace magic.lambda.crypto.rsa
         {
             // Retrieving arguments.
             var message = Encoding.UTF8.GetBytes(input.GetEx<string>());
-            var rawPublicKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<string>() ??
-                throw new ArgumentException("No [key] supplied to [crypto.rsa.verify]");
             var signature = Convert.FromBase64String(
                 input.Children.FirstOrDefault(x => x.Name == "signature")?.GetEx<string>()) ??
                 throw new ArgumentException("No [signature] supplied to [crypto.rsa.verify]");
             var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
 
             // Converting key from base64 encoded DER format.
-            var key = PublicKeyFactory.CreateKey(Convert.FromBase64String(rawPublicKey));
+            var key = Helpers.GetPublicKey(input);
 
             // Creating our signer and associating it with the private key.
             var sig = SignerUtilities.GetSigner($"{algo}withRSA");
