@@ -32,8 +32,7 @@ namespace magic.lambda.crypto.misc
             var max = input.Children.FirstOrDefault(x => x.Name == "max")?.GetEx<int>() ?? 20;
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
-            // Creating random string, or byte array
-            var result = new StringBuilder();
+            // Creating random string, or byte array.
             var rnd = new SecureRandom();
             var bytes = SecureRandom.GetNextBytes(rnd, rnd.Next(min, max));
             if (raw)
@@ -42,9 +41,10 @@ namespace magic.lambda.crypto.misc
                 input.Value = bytes;
                 return;
             }
+            var result = new StringBuilder();
             foreach (var idx in bytes)
             {
-                result.Append(_valid[idx % (_valid.Length - 1)]);
+                result.Append(_valid[idx % (_valid.Length)]);
             }
             input.Value = result.ToString();
         }
