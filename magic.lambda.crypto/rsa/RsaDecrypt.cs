@@ -11,7 +11,8 @@ using magic.signals.contracts;
 namespace magic.lambda.crypto.rsa
 {
     /// <summary>
-    /// [crypto.rsa.decrypt] slot to decrypt some content using a private key.
+    /// [crypto.rsa.decrypt] slot to decrypt some content using a private key that was previously
+    /// encrypted using a public key.
     /// </summary>
     [Slot(Name = "crypto.rsa.decrypt")]
     public class RsaDecrypt : ISlot

@@ -14,8 +14,8 @@ using Org.BouncyCastle.Security;
 namespace magic.lambda.crypto.rsa
 {
     /// <summary>
-    /// [crypto.rsa.sign] slot to cryptographically sign some piece of
-    /// data with some private RSA key.
+    /// [crypto.rsa.sign] slot to cryptographically sign some piece of data with some
+    /// private key.
     /// </summary>
     [Slot(Name = "crypto.rsa.sign")]
     public class RsaSign : ISlot

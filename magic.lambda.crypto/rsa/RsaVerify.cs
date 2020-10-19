@@ -14,8 +14,8 @@ using Org.BouncyCastle.Security;
 namespace magic.lambda.crypto.rsa
 {
     /// <summary>
-    /// [crypto.rsa.verify] slot to verify that some piece of text
-    /// was cryptographically signed with a specific private key.
+    /// [crypto.rsa.verify] slot to verify that some piece of text was cryptographically
+    /// signed with a specific private key.
     /// </summary>
     [Slot(Name = "crypto.rsa.verify")]
     public class RsaVerify : ISlot

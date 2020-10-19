@@ -6,6 +6,8 @@
 using System;
 using System.Linq;
 using System.Text;
+using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using magic.node;
@@ -23,18 +25,7 @@ namespace magic.lambda.crypto
          */
         internal static AsymmetricKeyParameter GetPublicKey(Node input)
         {
-            // Sanity checking invocation.
-            var keys = input.Children.Where(x => x.Name == "public-key" || x.Name == "key");
-            if (keys.Count() != 1)
-                throw new ArgumentException("You must provide exactly one key, either as [public-key] or as [key]");
-            
-            // Making sure we support both raw keys and base64 encoded keys.
-            var key = keys.First()?.GetEx<object>();
-            if (key is string strKey)
-                return PublicKeyFactory.CreateKey(Convert.FromBase64String(strKey)); // base64
-
-            // Raw byte[] key.
-            return PublicKeyFactory.CreateKey(key as byte[]);
+            return PublicKeyFactory.CreateKey(GetKeyFromArguments(input, "public-key"));
         }
 
         /*
@@ -42,18 +33,7 @@ namespace magic.lambda.crypto
          */
         internal static AsymmetricKeyParameter GetPrivateKey(Node input)
         {
-            // Sanity checking invocation.
-            var keys = input.Children.Where(x => x.Name == "private-key" || x.Name == "key");
-            if (keys.Count() != 1)
-                throw new ArgumentException("You must provide exactly one key, either as [private-key] or as [key]");
-            
-            // Making sure we support both raw keys and base64 encoded keys.
-            var key = keys.First()?.GetEx<object>();
-            if (key is string strKey)
-                return PrivateKeyFactory.CreateKey(Convert.FromBase64String(strKey)); // base64
-
-            // Raw byte[] key.
-            return PrivateKeyFactory.CreateKey(key as byte[]);
+            return PrivateKeyFactory.CreateKey(GetKeyFromArguments(input, "private-key"));
         }
 
         /*
@@ -101,5 +81,49 @@ namespace magic.lambda.crypto
             else
                 input.Value = Encoding.UTF8.GetString(result);
         }
+
+        internal static void ReturnKeyPair(Node input, AsymmetricCipherKeyPair keyPair)
+        {
+            // Retrieving arguments.
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+
+            // Returning keypair.
+            input.Value = null;
+            input.Clear();
+            var privateInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private);
+            var publicInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public);
+            if (raw)
+            {
+                input.Add(new Node("public", publicInfo.GetDerEncoded()));
+                input.Add(new Node("private", privateInfo.GetDerEncoded()));
+            }
+            else
+            {
+                input.Add(new Node("public", Convert.ToBase64String(publicInfo.GetDerEncoded())));
+                input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
+            }
+        }
+
+        #region [ -- Private helper methods -- ]
+
+        /*
+         * Private helper method to return byte[] representation of key.
+         */
+        static byte[] GetKeyFromArguments(Node input, string keyType)
+        {
+            // Sanity checking invocation.
+            var keys = input.Children.Where(x => x.Name == keyType || x.Name == "key");
+            if (keys.Count() != 1)
+                throw new ArgumentException($"You must provide exactly one key, either as [{keyType}] or as [key]");
+
+            // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.
+            var key = keys.First()?.GetEx<object>();
+            if (key is string strKey)
+                return Convert.FromBase64String(strKey); // base64 encoded.
+
+            return key as byte[]; // Assuming raw byte[] key.
+        }
+
+        #endregion
     }
 }
