@@ -11,6 +11,10 @@ using System.Security.Cryptography;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Security;
 
 namespace magic.lambda.crypto.aes
 {
@@ -52,27 +56,26 @@ namespace magic.lambda.crypto.aes
          */
         static byte[] Encrypt(byte[] password, byte[] data, int strength)
         {
-            using (var stream = new MemoryStream())
+            var nonce = new byte[strength / 8];
+
+            var rnd = new SecureRandom();
+            rnd.NextBytes(nonce, 0, nonce.Length);
+
+            var cipher = new GcmBlockCipher(new AesEngine());
+
+            var parameters = new AeadParameters(new KeyParameter(password), strength, nonce, null);
+            cipher.Init(true, parameters);
+            var cipherText = new byte[cipher.GetOutputSize(data.Length)];
+            var len = cipher.ProcessBytes(data, 0, data.Length, cipherText, 0);
+            cipher.DoFinal(cipherText, len);
+            using (var combinedStream = new MemoryStream())
             {
-                using (var aes = new AesManaged())
+                using (var binaryWriter = new BinaryWriter(combinedStream))
                 {
-                    aes.Mode = CipherMode.CBC;
-                    aes.Padding = PaddingMode.PKCS7;
-                    aes.KeySize = strength;
-                    aes.BlockSize = 128;
-
-                    byte[] vector = aes.IV;
-
-                    using (var cryptoStream = new CryptoStream(stream, aes.CreateEncryptor(password, vector), CryptoStreamMode.Write))
-                    {
-                        cryptoStream.Write(data, 0, data.Length);
-                    }
-                    byte[] encryptedData = stream.ToArray();
-                    byte[] result = new byte[vector.Length + encryptedData.Length];
-                    Buffer.BlockCopy(vector, 0, result, 0, vector.Length);
-                    Buffer.BlockCopy(encryptedData, 0, result, vector.Length, encryptedData.Length);
-                    return result;
+                    binaryWriter.Write(nonce);
+                    binaryWriter.Write(cipherText);
                 }
+                return combinedStream.ToArray();
             }
         }
 

@@ -72,32 +72,12 @@ crypto.password.verify:WRONG"));
         }
 
         [Fact]
-        public void HashSha1()
-        {
-            var lambda = Common.Evaluate(@"crypto.hash:some-input-string
-   algorithm:SHA1");
-            Assert.Equal(
-                "28955C056731173BC253CFDFAA4B0E8789333E7B",
-                lambda.Children.First().Get<string>().ToUpperInvariant());
-        }
-
-        [Fact]
         public void HashSha384()
         {
             var lambda = Common.Evaluate(@"crypto.hash:some-input-string
    algorithm:SHA384");
             Assert.Equal(
                 "F0DBFDF28BB9DF25715EB129E2270366E3E73FB509AF1E196269450898AA38820D645DE072EF4434AF3A097A693C178B",
-                lambda.Children.First().Get<string>().ToUpperInvariant());
-        }
-
-        [Fact]
-        public void HashShaMD5()
-        {
-            var lambda = Common.Evaluate(@"crypto.hash:some-input-string
-   algorithm:MD5");
-            Assert.Equal(
-                "A6F2B140131A3C1EF598C624C53C32AE",
                 lambda.Children.First().Get<string>().ToUpperInvariant());
         }
 

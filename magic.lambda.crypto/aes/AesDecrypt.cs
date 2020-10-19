@@ -11,6 +11,10 @@ using System.Security.Cryptography;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Security;
 
 namespace magic.lambda.crypto.aes
 {
@@ -53,28 +57,18 @@ namespace magic.lambda.crypto.aes
          */
         static byte[] Decrypt(byte[] password, byte[] data, int strength)
         {
-            byte[] vector = new byte[16];
-            byte[] encryptedContent = new byte[data.Length - 16];
-
-            // TODO: Optimise, no need to block copy here, just read from stream before instantiating CryptoStream (I think).
-            Buffer.BlockCopy(data, 0, vector, 0, vector.Length);
-            Buffer.BlockCopy(data, vector.Length, encryptedContent, 0, encryptedContent.Length);
-
-            using (var stream = new MemoryStream())
+            using (var cipherStream = new MemoryStream(data))
+            using (var cipherReader = new BinaryReader(cipherStream))
             {
-                using (var aes = new AesManaged())
-                {
-                    aes.Mode = CipherMode.CBC;
-                    aes.Padding = PaddingMode.PKCS7;
-                    aes.KeySize = strength;
-                    aes.BlockSize = 128;
-
-                    using (var cryptoStream = new CryptoStream(stream, aes.CreateDecryptor(password, vector), CryptoStreamMode.Write))
-                    {
-                        cryptoStream.Write(encryptedContent, 0, encryptedContent.Length);
-                    }
-                    return stream.ToArray();
-                }
+                var nonce = cipherReader.ReadBytes(strength / 8);
+                var cipher = new GcmBlockCipher(new AesEngine());
+                var parameters = new AeadParameters(new KeyParameter(password), strength, nonce, null);
+                cipher.Init(false, parameters);
+                var cipherText = cipherReader.ReadBytes(data.Length - nonce.Length);
+                var plainText = new byte[cipher.GetOutputSize(cipherText.Length)];
+                var len = cipher.ProcessBytes(cipherText, 0, cipherText.Length, plainText, 0);
+                cipher.DoFinal(plainText, len);
+                return plainText;
             }
         }
 

@@ -34,10 +34,10 @@ crypto.aes.decrypt:x:-
             var lambda = Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
    strength:256
-   password:abcdefghij123456
+   password:098765432109876543210987654321qw098765432109876543210987654321qw
 crypto.aes.decrypt:x:-
    strength:256
-   password:abcdefghij123456
+   password:098765432109876543210987654321qw098765432109876543210987654321qw
 ");
             Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
             Assert.Equal("Howdy, this is cool", lambda.Children.Skip(1).First().Value);
