@@ -12,6 +12,8 @@ Provides cryptographic services to Magic. More specifically, this project provid
 * __[crypto.rsa.verify]__ - Verifies a previously created RSA signature towards its message (provided as value), with the specified public **[public-key]**, optionally allowing the caller to provide a hashing **[algorithm]**, defaulting to SHA256. The slot will throw an exception if the signature is not matching the message passed in for security reasons.
 * __[crypto.rsa.encrypt]__ - Encrypts the specified message (provided as value) using the specified public **[public-key]**, and returns the encrypted message as a base64 encoded encrypted message by default.
 * __[crypto.rsa.decrypt]__ - Decrypts the specified message (provided as value) using the specified private **[private-key]**, and returns the decrypted message as its original value.
+* __[crypto.aes.encrypt]__ - Encrypts a piece of data using the AES encryption algorithm
+* __[crypto.aes.decrypt]__ - Decrypts a piece of data previously encrypted using AES encryption
 
 ## Supported hashing algorithms
 
@@ -181,6 +183,31 @@ You can also supply **[raw]** as you invoke **[crypto.rsa.decrypt]** if you know
 not a string, but rather an array of `byte[]`. Base64 encoding a byte array normally makes it larger in size,
 and also require CPU resources in both ends of the communication, making it sometimes important to have the raw byte
 array, instead of its base64 encoded version.
+
+### Symmetric cryptography
+
+RSA is asymmetric cryptography, implying a different key is used for decrypting some data, than that which
+was used to encrypt the data. This project also supports symmetric cryptography, more specifically the AES
+encryption algorithm. This algorithm requires the *same key* to decrypt some content that was used to encrypt
+the data. Below is an example.
+
+```
+crypto.aes.encrypt:Howdy, this is cool
+   password:abcdefghij123456
+crypto.aes.decrypt:x:-
+   password:abcdefghij123456
+```
+
+By default the AES slots will default their strength to 128, but this can be overridden by applying
+a **[strength]** argument.
+
+Due to its blistering speed, and strength, it's often wise to combine asymmetric cryptography with
+symmetric cryptography, which can be used by generating a random symmetric key/passphrase, then encrypt
+this passphrase using asymmetric cryptography, such as for instance RSA, for then to use the passphrase
+to encrypt the actual main data the caller wants to transmit. This has several advantages, such as
+reducing the size of the data sent, while still providing the benefits from asymmetric cryptography,
+such as securely sharing the public key, etc. Of course, sharing a symmetric key without major hassle,
+and/or making adversaries also get a hold of it, is practically *very difficult* for obvious reasons.
 
 ## Cryptography concerns
 
