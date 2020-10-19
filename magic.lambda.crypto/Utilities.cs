@@ -10,9 +10,10 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Crypto.Encodings;
 using magic.node;
 using magic.node.extensions;
-using Org.BouncyCastle.Crypto.Encodings;
+using Org.BouncyCastle.Crypto.Paddings;
 
 namespace magic.lambda.crypto
 {
@@ -108,6 +109,57 @@ namespace magic.lambda.crypto
                 input.Value = result;
             else
                 input.Value = Encoding.UTF8.GetString(result);
+        }
+
+        /*
+         * Cryptographically signs the specified message, according to caller's specifications.
+         */
+        internal static void SignMessage(Node input)
+        {
+            // Retrieving arguments.
+            var rawMessage = input.GetEx<object>();
+            var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
+            var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+            var privateKey = GetPrivateKey(input);
+            input.Clear();
+
+            // Creating our signer and associating it with the private key.
+            var sig = SignerUtilities.GetSigner($"{algo}withRSA");
+            sig.Init(true, privateKey);
+
+            // Signing the specified data, and returning to caller according to specifications.
+            sig.BlockUpdate(message, 0, message.Length);
+            byte[] signature = sig.GenerateSignature();
+            if (raw)
+                input.Value = signature;
+            else
+                input.Value = Convert.ToBase64String(signature);
+        }
+
+        /*
+         * Verifies a cryptographic signature, according to caller's specifications.
+         */
+        internal static void VerifySignature(Node input)
+        {
+            // Retrieving arguments.
+            var rawMessage = input.GetEx<object>();
+            var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
+            var rawSignature = input.Children.FirstOrDefault(x => x.Name == "signature")?.GetEx<object>();
+            var signature = rawSignature is string strSign ? Convert.FromBase64String(strSign) : rawSignature as byte[];
+            var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
+            var key = GetPublicKey(input);
+            input.Clear();
+            input.Value = null;
+
+            // Creating our signer and associating it with the private key.
+            var sig = SignerUtilities.GetSigner($"{algo}withRSA");
+            sig.Init(false, key);
+
+            // Signing the specified data, and returning to caller as base64.
+            sig.BlockUpdate(message, 0, message.Length);
+            if (!sig.VerifySignature(signature))
+                throw new ArgumentException("Signature mismatch in [crypto.rsa.verify]");
         }
 
         /*
