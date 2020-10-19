@@ -30,12 +30,16 @@ namespace magic.lambda.crypto.rsa
         {
             // Retrieving arguments.
             var message = Encoding.UTF8.GetBytes(input.GetEx<string>());
-            var rawPublicKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<string>() ??
+            var rawPublicKey = input.Children.FirstOrDefault(x => x.Name == "key")?.GetEx<object>() ??
                 throw new ArgumentException("No [key] supplied to [crypto.rsa.encrypt]");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Converting key from base64 encoded DER format.
-            var publicKey = PublicKeyFactory.CreateKey(Convert.FromBase64String(rawPublicKey));
+            var publicKey = PublicKeyFactory
+                .CreateKey(
+                    rawPublicKey is string strKey ?
+                        Convert.FromBase64String(strKey) :
+                        rawPublicKey as byte[]);
 
             var encryptEngine = new Pkcs1Encoding(new RsaEngine());
             encryptEngine.Init(true, publicKey);

@@ -173,8 +173,10 @@ size of the (public) key used to encrypt the message. This is only relevant for 
 few implications for larger pieces of text being encrypted.
 
 Notice, if you want the message back as raw bytes, you can supply a **[raw]** argument, and set its value to boolean
-true, at which point the returned encrypted message will be returned as a raw `byte[]`. This might be
-useful, if you for instance need to persist the message to disc, as a binary file, etc.
+true as you invoke **[crypto.rsa.encrypt]**, at which point the returned encrypted message will be returned as a
+raw `byte[]`. This might be useful, if you for instance need to persist the message to disc, as a binary file, etc.
+You can also supply **[raw]** as you invoke **[crypto.rsa.decrypt]** if you know the content in the message is
+not a string, but rather an array of `byte[]`.
 
 ## Cryptography concerns
 
