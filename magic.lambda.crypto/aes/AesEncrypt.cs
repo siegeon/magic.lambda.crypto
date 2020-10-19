@@ -36,8 +36,9 @@ namespace magic.lambda.crypto.aes
             // Retrieving arguments.
             var rawMessage = input.GetEx<object>();
             var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
-            var password = Encoding.UTF8.GetBytes(input.Children.FirstOrDefault(x => x.Name == "password")?.GetEx<string>() ??
-                throw new ArgumentException("No [password] provided to [crypto.aes.encrypt]"));
+            var rawPassword = input.Children.FirstOrDefault(x => x.Name == "password")?.GetEx<object>() ??
+                throw new ArgumentException("No [password] provided to [crypto.aes.encrypt]");
+            var password = rawPassword is string strPwd ? Encoding.UTF8.GetBytes(strPwd) : rawPassword as byte[];
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
 
