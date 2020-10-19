@@ -22,7 +22,7 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            Utilities.SignMessage(input);
+            Utilities.SignMessage(input, "RSA");
         }
     }
 }

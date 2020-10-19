@@ -114,7 +114,7 @@ namespace magic.lambda.crypto
         /*
          * Cryptographically signs the specified message, according to caller's specifications.
          */
-        internal static void SignMessage(Node input)
+        internal static void SignMessage(Node input, string encryptionAlgorithm)
         {
             // Retrieving arguments.
             var rawMessage = input.GetEx<object>();
@@ -125,12 +125,12 @@ namespace magic.lambda.crypto
             input.Clear();
 
             // Creating our signer and associating it with the private key.
-            var sig = SignerUtilities.GetSigner($"{algo}withRSA");
-            sig.Init(true, privateKey);
+            var signer = SignerUtilities.GetSigner($"{algo}with{encryptionAlgorithm}");
+            signer.Init(true, privateKey);
 
             // Signing the specified data, and returning to caller according to specifications.
-            sig.BlockUpdate(message, 0, message.Length);
-            byte[] signature = sig.GenerateSignature();
+            signer.BlockUpdate(message, 0, message.Length);
+            byte[] signature = signer.GenerateSignature();
             if (raw)
                 input.Value = signature;
             else
@@ -140,7 +140,7 @@ namespace magic.lambda.crypto
         /*
          * Verifies a cryptographic signature, according to caller's specifications.
          */
-        internal static void VerifySignature(Node input)
+        internal static void VerifySignature(Node input, string encryptionAlgorithm)
         {
             // Retrieving arguments.
             var rawMessage = input.GetEx<object>();
@@ -153,13 +153,13 @@ namespace magic.lambda.crypto
             input.Value = null;
 
             // Creating our signer and associating it with the private key.
-            var sig = SignerUtilities.GetSigner($"{algo}withRSA");
-            sig.Init(false, key);
+            var signer = SignerUtilities.GetSigner($"{algo}with{encryptionAlgorithm}");
+            signer.Init(false, key);
 
             // Signing the specified data, and returning to caller as base64.
-            sig.BlockUpdate(message, 0, message.Length);
-            if (!sig.VerifySignature(signature))
-                throw new ArgumentException("Signature mismatch in [crypto.rsa.verify]");
+            signer.BlockUpdate(message, 0, message.Length);
+            if (!signer.VerifySignature(signature))
+                throw new ArgumentException("Signature mismatch");
         }
 
         /*
