@@ -75,7 +75,7 @@ namespace magic.lambda.crypto.aes
                     var len = cipher.ProcessBytes(encrypted, 0, encrypted.Length, result, 0);
                     cipher.DoFinal(result, len);
 
-                    // Returning result being byte[].
+                    // Returning result as byte[].
                     return result;
                 }
             }
