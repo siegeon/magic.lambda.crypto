@@ -3,10 +3,7 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
 using System.Linq;
-using System.Text;
-using magic.node.extensions;
 using Xunit;
 
 namespace magic.lambda.crypto.tests
@@ -34,10 +31,10 @@ crypto.aes.decrypt:x:-
             var lambda = Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
    strength:256
-   password:098765432109876543210987654321qw098765432109876543210987654321qw
+   password:abcdefghij123456abcdefghij123456
 crypto.aes.decrypt:x:-
    strength:256
-   password:098765432109876543210987654321qw098765432109876543210987654321qw
+   password:abcdefghij123456abcdefghij123456
 ");
             Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
             Assert.Equal("Howdy, this is cool", lambda.Children.Skip(1).First().Value);

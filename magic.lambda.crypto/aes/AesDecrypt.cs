@@ -7,14 +7,12 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
-using System.Security.Cryptography;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using Org.BouncyCastle.Crypto.Modes;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Security;
 
 namespace magic.lambda.crypto.aes
 {
@@ -25,6 +23,8 @@ namespace magic.lambda.crypto.aes
     [Slot(Name = "crypto.aes.decrypt")]
     public class AesDecrypt : ISlot
     {
+        const int MAC_SIZE = 128;
+
         /// <summary>
         /// Implementation of slot.
         /// </summary>
@@ -57,18 +57,27 @@ namespace magic.lambda.crypto.aes
          */
         static byte[] Decrypt(byte[] password, byte[] data, int strength)
         {
-            using (var cipherStream = new MemoryStream(data))
-            using (var cipherReader = new BinaryReader(cipherStream))
+            using (var stream = new MemoryStream(data))
             {
-                var nonce = cipherReader.ReadBytes(strength / 8);
-                var cipher = new GcmBlockCipher(new AesEngine());
-                var parameters = new AeadParameters(new KeyParameter(password), strength, nonce, null);
-                cipher.Init(false, parameters);
-                var cipherText = cipherReader.ReadBytes(data.Length - nonce.Length);
-                var plainText = new byte[cipher.GetOutputSize(cipherText.Length)];
-                var len = cipher.ProcessBytes(cipherText, 0, cipherText.Length, plainText, 0);
-                cipher.DoFinal(plainText, len);
-                return plainText;
+                using (var reader = new BinaryReader(stream))
+                {
+                    // Reading and discarding nonce.
+                    var nonce = reader.ReadBytes(MAC_SIZE / 8);
+
+                    // Creating and initializing AES engine.
+                    var cipher = new GcmBlockCipher(new AesEngine());
+                    var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
+                    cipher.Init(false, parameters);
+
+                    // Reading encrypted parts, and decrypting into result.
+                    var encrypted = reader.ReadBytes(data.Length - nonce.Length);
+                    var result = new byte[cipher.GetOutputSize(encrypted.Length)];
+                    var len = cipher.ProcessBytes(encrypted, 0, encrypted.Length, result, 0);
+                    cipher.DoFinal(result, len);
+
+                    // Returning result being byte[].
+                    return result;
+                }
             }
         }
 

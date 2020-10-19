@@ -7,14 +7,13 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
-using System.Security.Cryptography;
-using magic.node;
-using magic.node.extensions;
-using magic.signals.contracts;
+using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Security;
+using magic.node;
+using magic.node.extensions;
+using magic.signals.contracts;
 
 namespace magic.lambda.crypto.aes
 {
@@ -24,6 +23,8 @@ namespace magic.lambda.crypto.aes
     [Slot(Name = "crypto.aes.encrypt")]
     public class AesEncrypt : ISlot
     {
+        const int MAC_SIZE = 128;
+
         /// <summary>
         /// Implementation of slot.
         /// </summary>
@@ -56,26 +57,30 @@ namespace magic.lambda.crypto.aes
          */
         static byte[] Encrypt(byte[] password, byte[] data, int strength)
         {
-            var nonce = new byte[strength / 8];
-
+            // Creating our nonce, or Initial Vector (IV).
             var rnd = new SecureRandom();
+            var nonce = new byte[MAC_SIZE / 8];
             rnd.NextBytes(nonce, 0, nonce.Length);
 
+            // Initializing AES engine.
             var cipher = new GcmBlockCipher(new AesEngine());
-
-            var parameters = new AeadParameters(new KeyParameter(password), strength, nonce, null);
+            var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
             cipher.Init(true, parameters);
-            var cipherText = new byte[cipher.GetOutputSize(data.Length)];
-            var len = cipher.ProcessBytes(data, 0, data.Length, cipherText, 0);
-            cipher.DoFinal(cipherText, len);
-            using (var combinedStream = new MemoryStream())
+
+            // Creating buffer to hold encrypted content, and encrypting into buffer.
+            var encrypted = new byte[cipher.GetOutputSize(data.Length)];
+            var len = cipher.ProcessBytes(data, 0, data.Length, encrypted, 0);
+            cipher.DoFinal(encrypted, len);
+
+            // Writing nonce and encrypted data, and returning as byte[] to caller.
+            using (var stream = new MemoryStream())
             {
-                using (var binaryWriter = new BinaryWriter(combinedStream))
+                using (var writer = new BinaryWriter(stream))
                 {
-                    binaryWriter.Write(nonce);
-                    binaryWriter.Write(cipherText);
+                    writer.Write(nonce);
+                    writer.Write(encrypted);
                 }
-                return combinedStream.ToArray();
+                return stream.ToArray();
             }
         }
 
