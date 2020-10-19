@@ -38,17 +38,14 @@ namespace magic.lambda.crypto.aes
             var message = rawMessage is string strMsg ? Convert.FromBase64String(strMsg) : rawMessage as byte[];
             var password = Encoding.UTF8.GetBytes(input.Children.FirstOrDefault(x => x.Name == "password")?.GetEx<string>() ??
                 throw new ArgumentException("No [password] provided to [crypto.aes.encrypt]"));
-            var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 128;
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
 
             // Performing actual decryption.
-            var result = Decrypt(password, message, strength);
+            var result = Decrypt(password, message);
 
-            if (raw)
-                input.Value = result;
-            else
-                input.Value = Encoding.UTF8.GetString(result);
+            // Returning results to caller according to specifications.
+            input.Value = raw ? (object)result : Encoding.UTF8.GetString(result);
         }
 
         #region [ -- Internal helper methods -- ]
@@ -56,7 +53,7 @@ namespace magic.lambda.crypto.aes
         /*
          * AES decrypts the specified data, using the specified password.
          */
-        static byte[] Decrypt(byte[] password, byte[] data, int strength)
+        static byte[] Decrypt(byte[] password, byte[] data)
         {
             using (var stream = new MemoryStream(data))
             {

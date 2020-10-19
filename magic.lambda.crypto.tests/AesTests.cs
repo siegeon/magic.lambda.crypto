@@ -16,10 +16,8 @@ namespace magic.lambda.crypto.tests
         {
             var lambda = Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
-   strength:128
    password:abcdefghij123456
 crypto.aes.decrypt:x:-
-   strength:128
    password:abcdefghij123456
 ");
             Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
@@ -31,10 +29,8 @@ crypto.aes.decrypt:x:-
         {
             var lambda = Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
-   strength:256
    password:abcdefghij123456abcdefghij123456
 crypto.aes.decrypt:x:-
-   strength:256
    password:abcdefghij123456abcdefghij123456
 ");
             Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
@@ -46,7 +42,6 @@ crypto.aes.decrypt:x:-
         {
             Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
-   strength:256
 "));
         }
 

@@ -38,17 +38,14 @@ namespace magic.lambda.crypto.aes
             var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
             var password = Encoding.UTF8.GetBytes(input.Children.FirstOrDefault(x => x.Name == "password")?.GetEx<string>() ??
                 throw new ArgumentException("No [password] provided to [crypto.aes.encrypt]"));
-            var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 128;
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
 
             // Performing actual encryption.
-            var result = Encrypt(password, message, strength);
+            var result = Encrypt(password, message);
 
-            if (raw)
-                input.Value = result;
-            else
-                input.Value = Convert.ToBase64String(result);
+            // Returning results to caller according to specifications.
+            input.Value = raw ? (object)result : Convert.ToBase64String(result);
         }
 
         #region [ -- Internal helper methods -- ]
@@ -56,7 +53,7 @@ namespace magic.lambda.crypto.aes
         /*
          * AES encrypts the specified data, using the specified password, and bit strength.
          */
-        static byte[] Encrypt(byte[] password, byte[] data, int strength)
+        static byte[] Encrypt(byte[] password, byte[] data)
         {
             // Creating our nonce, or Initial Vector (IV).
             var rnd = new SecureRandom();
