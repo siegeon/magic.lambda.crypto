@@ -30,32 +30,20 @@ namespace magic.lambda.crypto.hash
             var algorithm = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
             switch (algorithm)
             {
-                case "SHA1":
-                    using (var algo = SHA1.Create())
-                    {
-                        input.Value = GenerateHash(algo, text);
-                    }
-                    break;
                 case "SHA256":
-                    using (var algo = SHA256.Create())
+                    using (var algo = SHA256Managed.Create())
                     {
                         input.Value = GenerateHash(algo, text);
                     }
                     break;
                 case "SHA384":
-                    using (var algo = SHA384.Create())
+                    using (var algo = SHA384Managed.Create())
                     {
                         input.Value = GenerateHash(algo, text);
                     }
                     break;
                 case "SHA512":
-                    using (var algo = SHA512.Create())
-                    {
-                        input.Value = GenerateHash(algo, text);
-                    }
-                    break;
-                case "MD5":
-                    using (var algo = MD5.Create())
+                    using (var algo = SHA512Managed.Create())
                     {
                         input.Value = GenerateHash(algo, text);
                     }

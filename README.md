@@ -17,13 +17,12 @@ Provides cryptographic services to Magic. More specifically, this project provid
 
 ## Supported hashing algorithms
 
-All slots above requiring an **[algorithm]** argument, can use these hashing algorithms by default.
+All slots above requiring an **[algorithm]** argument, can use these hashing algorithms by default. Notice, some unsafe hashing
+algorithms have been explicitly removed, due to the high risks of creating collisions with them. These includes SHA1 and MD5.
 
-* SHA1
 * SHA256
 * SHA384
 * SHA512
-* MD5
 
 ## [crypto.random]
 
