@@ -25,14 +25,14 @@ namespace magic.lambda.crypto.rsa
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
-            var message = Helpers.GetDecryptionMessage(input);
+            var message = Utilities.GetDecryptionMessage(input);
 
             // Converting key from base64 encoded DER format.
-            var privateKey = Helpers.GetPrivateKey(input);
+            var privateKey = Utilities.GetPrivateKey(input);
 
             var encryptEngine = new Pkcs1Encoding(new RsaEngine());
             encryptEngine.Init(false, privateKey);
-            Helpers.CreateDecryptionResult(input, encryptEngine.ProcessBlock(message, 0, message.Length));
+            Utilities.CreateDecryptionResult(input, encryptEngine.ProcessBlock(message, 0, message.Length));
         }
     }
 }

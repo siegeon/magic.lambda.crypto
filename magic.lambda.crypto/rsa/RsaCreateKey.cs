@@ -11,6 +11,7 @@ using Org.BouncyCastle.Crypto.Generators;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
+using System.Runtime.CompilerServices;
 
 namespace magic.lambda.crypto.rsa
 {
@@ -27,20 +28,12 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Retrieving arguments, if given, or supplying sane defaults if not.
-            var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
-            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
-
             // Creating keypair generator, and seeding the SecureRandom if seed was given.
             var generator = new RsaKeyPairGenerator();
-            var rnd = new SecureRandom();
-            if (seed != null)
-                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
-            var parameters = new KeyGenerationParameters(rnd, strength);
-            generator.Init(parameters);
+            generator.Init(Utilities.CreateKeyGenerateParameters(input));
 
             // Returning key pair to caller.
-            Helpers.ReturnKeyPair(input, generator.GenerateKeyPair());
+            Utilities.ReturnKeyPair(input, generator.GenerateKeyPair());
         }
     }
 }

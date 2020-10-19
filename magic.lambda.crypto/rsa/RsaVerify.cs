@@ -35,7 +35,7 @@ namespace magic.lambda.crypto.rsa
             var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
 
             // Converting key from base64 encoded DER format.
-            var key = Helpers.GetPublicKey(input);
+            var key = Utilities.GetPublicKey(input);
 
             // Creating our signer and associating it with the private key.
             var sig = SignerUtilities.GetSigner($"{algo}withRSA");

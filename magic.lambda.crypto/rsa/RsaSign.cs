@@ -33,7 +33,7 @@ namespace magic.lambda.crypto.rsa
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Converting key from base64 encoded DER format.
-            var privateKey = Helpers.GetPrivateKey(input);
+            var privateKey = Utilities.GetPrivateKey(input);
 
             // Creating our signer and associating it with the private key.
             var sig = SignerUtilities.GetSigner($"{algo}withRSA");
