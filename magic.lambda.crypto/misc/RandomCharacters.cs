@@ -19,7 +19,7 @@ namespace magic.lambda.crypto.misc
     [Slot(Name = "crypto.random")]
     public class RandomCharacters : ISlot
     {
-        const string _valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+        const string _valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         /// <summary>
         /// Implementation of slot.
