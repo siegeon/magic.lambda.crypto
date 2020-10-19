@@ -11,7 +11,7 @@ namespace magic.lambda.crypto.rsa
 {
     /// <summary>
     /// [crypto.rsa.create-key] slot to create an RSA keypair and return as DER encoded,
-    /// optionally base64 encoding results.
+    /// .
     /// </summary>
     [Slot(Name = "crypto.rsa.create-key")]
     public class RsaCreateKey : ISlot
