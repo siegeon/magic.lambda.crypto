@@ -3,10 +3,9 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
 using System.Text;
 using System.Linq;
-using System.Security.Cryptography;
+using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -28,24 +27,24 @@ namespace magic.lambda.crypto.misc
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
+            // Retrieving arguments.
             var min = input.Children.FirstOrDefault(x => x.Name == "min")?.GetEx<int>() ?? 10;
             var max = input.Children.FirstOrDefault(x => x.Name == "max")?.GetEx<int>() ?? 20;
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+
+            // Creating random string, or byte array
             var result = new StringBuilder();
-            using (var rng = new RNGCryptoServiceProvider())
+            var rnd = new SecureRandom();
+            var bytes = SecureRandom.GetNextBytes(rnd, rnd.Next(min, max));
+            if (raw)
             {
-                var bytes = new byte[new Random().Next(min, max)];
-                rng.GetBytes(bytes);
-                if (raw)
-                {
-                    // Caller wants raw bytes.
-                    input.Value = bytes;
-                    return;
-                }
-                foreach (var idx in bytes)
-                {
-                    result.Append(_valid[idx % (_valid.Length - 1)]);
-                }
+                // Caller wants raw bytes.
+                input.Value = bytes;
+                return;
+            }
+            foreach (var idx in bytes)
+            {
+                result.Append(_valid[idx % (_valid.Length - 1)]);
             }
             input.Value = result.ToString();
         }
