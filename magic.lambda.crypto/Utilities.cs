@@ -12,6 +12,7 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
+using Org.BouncyCastle.Crypto.Encodings;
 
 namespace magic.lambda.crypto
 {
@@ -20,6 +21,95 @@ namespace magic.lambda.crypto
      */
     internal static class Utilities
     {
+        /*
+         * Creates a new keypair using the specified key pair generator, and returns the key pair to caller.
+         */
+        internal static void CreateNewKeyPair(Node input, IAsymmetricCipherKeyPairGenerator generator)
+        {
+            // Retrieving arguments, if given, or supplying sane defaults if not.
+            var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
+            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+
+            // Clearing existing node, to avoid returning garbage back to caller.
+            input.Clear();
+
+            // Initializing our generator according to caller's specifications.
+            var rnd = new SecureRandom();
+            if (seed != null)
+                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
+            generator.Init(new KeyGenerationParameters(rnd, strength));
+
+            // Creating keypair.
+            var keyPair = generator.GenerateKeyPair();
+            var privateInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private);
+            var publicInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public);
+
+            // Returning key pair according to caller's specifications.
+            if (raw)
+            {
+                // Returning as DER encoded raw byte[].
+                input.Add(new Node("public", publicInfo.GetDerEncoded()));
+                input.Add(new Node("private", privateInfo.GetDerEncoded()));
+            }
+            else
+            {
+                // Returning as base64 encoded DER format.
+                input.Add(new Node("public", Convert.ToBase64String(publicInfo.GetDerEncoded())));
+                input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
+            }
+        }
+
+        /*
+         * Encrypts a message using the specified engine, and returns result to
+         * caller, according to caller's specifications.
+         */
+        internal static void EncryptMessage(Node input, IAsymmetricBlockCipher engine)
+        {
+            // Retrieving message and other arguments.
+            var rawMessage = input.GetEx<object>();
+            var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+            var publicKey = GetPublicKey(input);
+            input.Clear();
+
+            // Creating our encryption engine, and decorating according to caller's specifications.
+            var encryptionEngine = new Pkcs1Encoding(engine);
+            encryptionEngine.Init(true, publicKey);
+
+            // Encrypting message, and returning results to according to caller's specifications.
+            var result = encryptionEngine.ProcessBlock(message, 0, message.Length);
+            if (raw)
+                input.Value = result;
+            else
+                input.Value = Convert.ToBase64String(result);
+        }
+
+        /*
+         * Decrypts a message using the specified engine, and returns result to
+         * caller, according to caller's specifications.
+         */
+        internal static void DecryptMessage(Node input, IAsymmetricBlockCipher engine)
+        {
+            // Retrieving message and other arguments.
+            var rawMessage = input.GetEx<object>();
+            var message = rawMessage is string strMsg ? Convert.FromBase64String(strMsg) : rawMessage as byte[];
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+            var privateKey = GetPrivateKey(input);
+            input.Clear();
+
+            // Creating our encryption engine, and decorating according to caller's specifications.
+            var encryptEngine = new Pkcs1Encoding(engine);
+            encryptEngine.Init(false, privateKey);
+
+            // Decrypting message, and returning results to according to caller's specifications.
+            var result = encryptEngine.ProcessBlock(message, 0, message.Length);
+            if (raw)
+                input.Value = result;
+            else
+                input.Value = Encoding.UTF8.GetString(result);
+        }
+
         /*
          * Returns a public key according to the given arguments.
          */
@@ -34,97 +124,6 @@ namespace magic.lambda.crypto
         internal static AsymmetricKeyParameter GetPrivateKey(Node input)
         {
             return PrivateKeyFactory.CreateKey(GetKeyFromArguments(input, "private-key"));
-        }
-
-        /*
-         * Returns the message caller wants to encrypt as a byte[], converting
-         * from string if necessary.
-         */
-        internal static byte[] GetEncryptionMessage(Node input)
-        {
-            var message = input.GetEx<object>();
-            if (message is string strMessage)
-                return Encoding.UTF8.GetBytes(strMessage); // Returning byte[] representation of string.
-
-            return message as byte[]; // Assuming raw byte[] message.
-        }
-
-        /*
-         * Returns the message caller wants to decrypt as a byte[], converting
-         * from base64 encoding if necessary.
-         */
-        internal static byte[] GetDecryptionMessage(Node input)
-        {
-            var message = input.GetEx<object>();
-            if (message is string strMessage)
-                return Convert.FromBase64String(strMessage); // Assuming encrypted message was base64 encoded.
-
-            return message as byte[]; // Assuming raw byte[] encrypted message.
-        }
-
-        /*
-         * Encrypts specified message, using specified key, and specified encryption engine,
-         * and returns results to caller according to specifications.
-         */
-        internal static void CreateEncryptionResult(
-            Node input,
-            IAsymmetricBlockCipher encryptionEngine,
-            AsymmetricKeyParameter publicKey,
-            byte[] message)
-        {
-            encryptionEngine.Init(true, publicKey);
-            var encryptedMessage = encryptionEngine.ProcessBlock(message, 0, message.Length);
-            if (input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false)
-                input.Value = encryptedMessage; // Caller wants the raw byte[] result.
-            else
-                input.Value = Convert.ToBase64String(encryptedMessage); // Caller wants the base64 encoded version of the result.
-        }
-
-        /*
-         * Returns result to caller according to the specified arguments.
-         */
-        internal static void CreateDecryptionResult(Node input, byte[] result)
-        {
-            if (input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false)
-                input.Value = result;
-            else
-                input.Value = Encoding.UTF8.GetString(result);
-        }
-
-        internal static void ReturnKeyPair(Node input, AsymmetricCipherKeyPair keyPair)
-        {
-            // Retrieving arguments.
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-
-            // Returning keypair.
-            input.Value = null;
-            input.Clear();
-            var privateInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private);
-            var publicInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public);
-            if (raw)
-            {
-                input.Add(new Node("public", publicInfo.GetDerEncoded()));
-                input.Add(new Node("private", privateInfo.GetDerEncoded()));
-            }
-            else
-            {
-                input.Add(new Node("public", Convert.ToBase64String(publicInfo.GetDerEncoded())));
-                input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
-            }
-        }
-
-        /*
-         * Creates parameters for a key pair generator according to specified arguments.
-         */
-        internal static KeyGenerationParameters CreateKeyGenerateParameters(Node input)
-        {
-            // Retrieving arguments, if given, or supplying sane defaults if not.
-            var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
-            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
-            var rnd = new SecureRandom();
-            if (seed != null)
-                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
-            return new KeyGenerationParameters(rnd, strength);
         }
 
         #region [ -- Private helper methods -- ]

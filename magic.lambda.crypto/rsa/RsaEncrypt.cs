@@ -4,7 +4,6 @@
  */
 
 using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Encodings;
 using magic.node;
 using magic.signals.contracts;
 
@@ -24,18 +23,7 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Retrieving arguments.
-            var message = Utilities.GetEncryptionMessage(input);
-
-            // Converting key from base64 encoded DER format.
-            var publicKey = Utilities.GetPublicKey(input);
-
-            // Performing actual encryption, and returning results to caller.
-            Utilities.CreateEncryptionResult(
-                input,
-                new Pkcs1Encoding(new RsaEngine()),
-                publicKey,
-                message);
+            Utilities.EncryptMessage(input, new RsaEngine());
         }
     }
 }
