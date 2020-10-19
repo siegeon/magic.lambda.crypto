@@ -17,7 +17,7 @@ namespace magic.lambda.crypto.misc
     /// [crypto.random] slot to create a bunch of cryptographically secured random characters.
     /// </summary>
     [Slot(Name = "crypto.random")]
-    public class RandomCharacters : ISlot
+    public class RandomBytes : ISlot
     {
         const string _valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -30,11 +30,18 @@ namespace magic.lambda.crypto.misc
         {
             var min = input.Children.FirstOrDefault(x => x.Name == "min")?.GetEx<int>() ?? 10;
             var max = input.Children.FirstOrDefault(x => x.Name == "max")?.GetEx<int>() ?? 20;
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var result = new StringBuilder();
             using (var rng = new RNGCryptoServiceProvider())
             {
                 var bytes = new byte[new Random().Next(min, max)];
                 rng.GetBytes(bytes);
+                if (raw)
+                {
+                    // Caller wants raw bytes.
+                    input.Value = bytes;
+                    return;
+                }
                 foreach (var idx in bytes)
                 {
                     result.Append(_valid[idx % (_valid.Length - 1)]);

@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Security.Cryptography;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Crypto;
@@ -57,6 +58,17 @@ namespace magic.lambda.crypto
                 // Returning as base64 encoded DER format.
                 input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
                 input.Add(new Node("public", Convert.ToBase64String(publicInfo.GetDerEncoded())));
+            }
+        }
+
+        /*
+         * Helper method to generate a 256 bits 32 byte[] long key from a passphrase.
+         */
+        internal static byte[] Generate256BitKey(string password)
+        {
+            using (var hash = SHA256.Create())
+            {
+                return hash.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
         }
 

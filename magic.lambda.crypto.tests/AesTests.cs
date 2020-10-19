@@ -17,9 +17,9 @@ namespace magic.lambda.crypto.tests
         {
             var lambda = Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
-   password:abcdefghij123456
+   password:This is a test of a passphrase
 crypto.aes.decrypt:x:-
-   password:abcdefghij123456
+   password:This is a test of a passphrase
 ");
             Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
             Assert.Equal("Howdy, this is cool", lambda.Children.Skip(1).First().Value);
@@ -30,9 +30,9 @@ crypto.aes.decrypt:x:-
         {
             var lambda = Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
-   password:abcdefghij123456abcdefghij123456
+   password:This is another password
 crypto.aes.decrypt:x:-
-   password:abcdefghij123456abcdefghij123456
+   password:This is another password
 ");
             Assert.True(lambda.Children.First().Value is string);
             Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
@@ -44,10 +44,10 @@ crypto.aes.decrypt:x:-
         {
             var lambda = Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
-   password:abcdefghij123456abcdefghij123456
+   password:Howdy world
    raw:true
 crypto.aes.decrypt:x:-
-   password:abcdefghij123456abcdefghij123456
+   password:Howdy world
    raw:true
 ");
             Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
@@ -60,7 +60,7 @@ crypto.aes.decrypt:x:-
         {
             Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
-   password:abcdefghij123456abcdefghij123456
+   password:Jo dude!
 crypto.aes.decrypt:x:-
 "));
         }
@@ -78,9 +78,9 @@ crypto.aes.encrypt:Howdy, this is cool
         {
             var lambda = Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
-   password:abcdefghij123456abcdefghij123456
+   password:Heisann teisann
 crypto.aes.decrypt:x:-
-   password:abcdefghij123456abcdefghij123456
+   password:Heisann teisann
 ");
             Assert.NotEqual("Howdy, this is cool", lambda.Children.First().Value);
             Assert.Equal("Howdy, this is cool", lambda.Children.Skip(1).First().Value);
