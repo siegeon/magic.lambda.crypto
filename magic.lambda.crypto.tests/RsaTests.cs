@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using magic.node.extensions;
 using Xunit;
 
@@ -18,23 +19,23 @@ namespace magic.lambda.crypto.tests
             var lambda = Common.Evaluate(@"
 crypto.rsa.create-key
    strength:1024");
-            var privateLength = lambda.Children.First().Children.Skip(1).First().GetEx<string>().Length;
-            var publicLength = lambda.Children.First().Children.First().GetEx<string>().Length;
+            var privateLength = lambda.Children.First().Children.First().GetEx<string>().Length;
+            var publicLength = lambda.Children.First().Children.Skip(1).First().GetEx<string>().Length;
             Assert.True(privateLength > 800 && privateLength < 900);
             Assert.True(publicLength > 180 && publicLength < 250);
         }
 
         [Fact]
-        public void GenerateKey1024Raw()
+        public void GenerateKey1024_Raw()
         {
             var lambda = Common.Evaluate(@"
 crypto.rsa.create-key
    raw:true
    strength:1024");
-            var priv = lambda.Children.First().Children.Skip(1).First().Value as byte[];
-            var publ = lambda.Children.First().Children.First().Value as byte[];
-            Assert.True(priv.Length > 500 && priv.Length < 700);
-            Assert.True(publ.Length > 100 && publ.Length < 250);
+            var privateKey = lambda.Children.First().Children.First().Value as byte[];
+            var publicKey = lambda.Children.First().Children.Skip(1).First().Value as byte[];
+            Assert.True(privateKey.Length > 500 && privateKey.Length < 700);
+            Assert.True(publicKey.Length > 100 && publicKey.Length < 250);
         }
 
         [Fact]
@@ -44,8 +45,8 @@ crypto.rsa.create-key
 crypto.rsa.create-key
    seed:Thomas Hansen is cool
    strength:1024");
-            var privateLength = lambda.Children.First().Children.Skip(1).First().GetEx<string>().Length;
-            var publicLength = lambda.Children.First().Children.First().GetEx<string>().Length;
+            var privateLength = lambda.Children.First().Children.First().GetEx<string>().Length;
+            var publicLength = lambda.Children.First().Children.Skip(1).First().GetEx<string>().Length;
             Assert.True(privateLength > 800 && privateLength < 900);
             Assert.True(publicLength > 180 && publicLength < 250);
         }
@@ -56,8 +57,8 @@ crypto.rsa.create-key
             var lambda = Common.Evaluate(@"
 crypto.rsa.create-key
    strength:2048");
-            var privateLength = lambda.Children.First().Children.Skip(1).First().GetEx<string>().Length;
-            var publicLength = lambda.Children.First().Children.First().GetEx<string>().Length;
+            var privateLength = lambda.Children.First().Children.First().GetEx<string>().Length;
+            var publicLength = lambda.Children.First().Children.Skip(1).First().GetEx<string>().Length;
             Assert.True(privateLength > 1550 && privateLength < 1800);
             Assert.True(publicLength > 350 && publicLength < 400);
         }
@@ -92,7 +93,7 @@ crypto.rsa.sign:x:@.data
         }
 
         [Fact]
-        public void SignTextRaw()
+        public void SignText_Raw()
         {
             var lambda = Common.Evaluate(@"
 .data:This is some piece of text that should be signed
@@ -101,6 +102,24 @@ crypto.rsa.create-key
 crypto.rsa.sign:x:@.data
    raw:true
    key:x:@crypto.rsa.create-key/*/private");
+            var sign = lambda.Children.Skip(2).First().Value as byte[];
+            Assert.NotNull(sign);
+            Assert.True(sign.Length > 70 && sign.Length < 200);
+        }
+
+        [Fact]
+        public void SignAndVerifyText_Raw()
+        {
+            var lambda = Common.Evaluate(@"
+.data:This is some piece of text that should be signed
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.sign:x:@.data
+   raw:true
+   key:x:@crypto.rsa.create-key/*/private
+crypto.rsa.verify:x:@.data
+   signature:x:@crypto.rsa.sign
+   key:x:@crypto.rsa.create-key/*/public");
             var sign = lambda.Children.Skip(2).First().Value as byte[];
             Assert.NotNull(sign);
             Assert.True(sign.Length > 70 && sign.Length < 200);
@@ -268,7 +287,7 @@ crypto.rsa.encrypt:x:@.data
         }
 
         [Fact]
-        public void EncryptTextRaw()
+        public void EncryptText_Raw()
         {
             var lambda = Common.Evaluate(@"
 .data:This is some piece of text that should be encrypted
@@ -297,6 +316,26 @@ crypto.rsa.decrypt:x:@crypto.rsa.encrypt
             Assert.Equal(
                 "This is some piece of text that should be encrypted",
                 lambda.Children.Skip(3).First().GetEx<string>());
+        }
+
+        [Fact]
+        public void EncryptAndDecryptText_Raw()
+        {
+            var lambda = Common.Evaluate(@"
+.data:This is some piece of text that should be encrypted
+crypto.rsa.create-key
+   strength:1024
+crypto.rsa.encrypt:x:@.data
+   key:x:@crypto.rsa.create-key/*/public
+   raw:true
+crypto.rsa.decrypt:x:@crypto.rsa.encrypt
+   key:x:@crypto.rsa.create-key/*/private
+   raw:true
+");
+            Assert.Equal(
+                "This is some piece of text that should be encrypted",
+                Encoding.UTF8.GetString(lambda.Children.Skip(3).First().Get<byte[]>()));
+            Assert.True(lambda.Children.Skip(2).First().Value is byte[]);
         }
     }
 }
