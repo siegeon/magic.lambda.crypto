@@ -3,7 +3,6 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System.Text;
 using System.Linq;
 using Org.BouncyCastle.Security;
 using magic.node;
