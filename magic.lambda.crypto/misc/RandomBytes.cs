@@ -35,18 +35,7 @@ namespace magic.lambda.crypto.misc
             // Creating random string, or byte array.
             var rnd = new SecureRandom();
             var bytes = SecureRandom.GetNextBytes(rnd, rnd.Next(min, max));
-            if (raw)
-            {
-                // Caller wants raw bytes.
-                input.Value = bytes;
-                return;
-            }
-            var result = new StringBuilder();
-            foreach (var idx in bytes)
-            {
-                result.Append(_valid[idx % (_valid.Length)]);
-            }
-            input.Value = result.ToString();
+            input.Value = raw ? (object)bytes : string.Concat(bytes.Select(x => _valid[x % (_valid.Length)]));
         }
     }
 }

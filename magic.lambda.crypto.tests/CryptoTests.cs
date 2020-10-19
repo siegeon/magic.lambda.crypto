@@ -100,6 +100,7 @@ crypto.random
    min:50
    max:100");
             Assert.NotNull(lambda.Children.First().Value);
+            Assert.True(lambda.Children.First().Value.GetType() == typeof(string));
             Assert.True(lambda.Children.First().Get<string>().Length >= 50);
             Assert.True(lambda.Children.First().Get<string>().Length <= 100);
         }
