@@ -44,6 +44,24 @@ value to boolean true, at which point the slot will return the raw bytes as a `b
 larger amount of entropy than simply using alphanumeric characters, for the same bit size - Which is
 important as you start creating keys for AES encryption, etc.
 
+## [crypto.hash]
+
+The **[crypto.hash]** slot can be used to generate hash values. When you invoke it, you can choose
+between having the hash returned as raw a `byte[]`, as a _"fingerprint"_ or as its bit encoded hex
+version. Below is an example of all three of these formats.
+
+```
+.data:Some data to hash
+crypto.hash:x:@.data
+   format:fingerprint
+crypto.hash:x:@.data
+   format:text
+
+// Commented out since Magic can't display byte[] as Hyperlambda
+.crypto.hash:x:@.data
+   format:raw
+```
+
 ## Cryptography
 
 This library also supports several cryptographic services, but first a bit of cryptography theory.

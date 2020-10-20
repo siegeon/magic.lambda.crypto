@@ -28,24 +28,25 @@ namespace magic.lambda.crypto.hash
         {
             var text = input.GetEx<string>();
             var algorithm = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
+            var format = input.Children.FirstOrDefault(x => x.Name == "format")?.GetEx<string>() ?? "text";
             switch (algorithm)
             {
                 case "SHA256":
                     using (var algo = SHA256Managed.Create())
                     {
-                        input.Value = GenerateHash(algo, text);
+                        input.Value = GenerateHash(algo, text, format);
                     }
                     break;
                 case "SHA384":
                     using (var algo = SHA384Managed.Create())
                     {
-                        input.Value = GenerateHash(algo, text);
+                        input.Value = GenerateHash(algo, text, format);
                     }
                     break;
                 case "SHA512":
                     using (var algo = SHA512Managed.Create())
                     {
-                        input.Value = GenerateHash(algo, text);
+                        input.Value = GenerateHash(algo, text, format);
                     }
                     break;
                 default:
@@ -55,10 +56,28 @@ namespace magic.lambda.crypto.hash
 
         #region [ -- Private helper methods -- ]
 
-        string GenerateHash(HashAlgorithm algo, string text)
+        object GenerateHash(HashAlgorithm algo, string text, string format)
         {
             var bytes = algo.ComputeHash(Encoding.UTF8.GetBytes(text));
-            return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+            switch (format)
+            {
+                case "text":
+                    return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+                case "raw":
+                    return bytes;
+                case "fingerprint":
+                    var result = new StringBuilder();
+                    var idxNo = 0;
+                    foreach (var idx in bytes)
+                    {
+                        result.Append(BitConverter.ToString(new byte[] { idx }));
+                        if (++idxNo % 2 == 0)
+                            result.Append("-");
+                    }
+                    return result.ToString().TrimEnd('-').ToLowerInvariant();
+                default:
+                    throw new ArgumentException($"I don't understand {format} as format for my hash");
+            }
         }
 
         #endregion
