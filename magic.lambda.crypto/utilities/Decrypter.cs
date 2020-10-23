@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
+using magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto
 {

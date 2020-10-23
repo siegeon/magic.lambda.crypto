@@ -5,6 +5,7 @@
 
 using magic.node;
 using magic.signals.contracts;
+using magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.rsa
 {

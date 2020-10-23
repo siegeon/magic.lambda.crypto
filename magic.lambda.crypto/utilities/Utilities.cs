@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
@@ -11,15 +12,14 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Encodings;
+using Org.BouncyCastle.Crypto.Parameters;
 using magic.node;
 using magic.node.extensions;
-using Org.BouncyCastle.Crypto.Modes;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto.Engines;
-using System.IO;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.utilities
 {
     /*
      * Utility class to provide common functions for other classes and methods.
