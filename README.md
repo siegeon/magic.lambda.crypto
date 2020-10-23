@@ -297,6 +297,9 @@ crypto.decrypt:x:-
    decryption-key:x:././*/crypto.rsa.create-key/[0,1]/*/private
 ```
 
+**Notice** - We're using only 512 bit strength in the above example. Make sure you (at least) use
+2048, preferably 4096 in real world usage.
+
 To understand what occurs in the above Hyperlambda example, let's walk through it step by step, starting from
 the **[crypto.encrypt]** invocation.
 
@@ -335,6 +338,9 @@ crypto.rsa.verify:x:-
    signature:x:@crypto.decrypt/*/signature
    public-key:x:././*/crypto.rsa.create-key/[1,2]/*/public
 ```
+
+**Notice** - We're using only 512 bit strength in the above example. Make sure you (at least) use
+2048, preferably 4096 in real world usage.
 
 If the above invocation to **[crypto.rsa.verify]** does not throw an exception, we know for a fact that
 the message was cryptographically signed with the private key that matches its **[public-key]** argument.
@@ -379,6 +385,11 @@ the **[crypto.get-key]** slot on the package, since the RSA encryption key's fin
 AES key is the *only* thing that is passed in plain sight. Then the receiver can use his private RSA key to decrypt
 the AES key, and use the decrypted AES key to decrypt the rest of the package - Which will result in getting the
 package's plain text content, plus the signature, in addition to the fingerprint of the key used to sign the package. However, all of these steps are done automatically if you use the **[crypto.decrypt]** slot.
+
+The AES key is generated using Bouncy Castle's `SecureRandom` implementation, resulting in a 256 bit
+cryptography key. This key again is encrypted using whatever bit strength you selected as you created
+your RSA key pair. Hence, the message as a whole, is not stronger than whatever key strength you use
+as you supply a **[strength]** argument to the **[crypto.rsa.create-key]**.
 
 ## Cryptography concerns
 
