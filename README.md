@@ -375,10 +375,10 @@ Logically it becomes as follows; SHA256(RSA_encryption_key) + length_of_encrypte
 encrypted_AES_key + AES_encrypted(plain_text_content).
 
 Hence, the other party can retrieve the encryption key used for encrypting the package, using for instance
-the **[crypto.get-key]** slot on the package, since the RSA encryption key's fingerprint is the *only* thing
-passed in plain sight. Then it can use the private key to decrypt the AES key, and use the decrypted
-AES key to decrypt the package - Which will result in getting the package's plain text content back,
-plus the signature, in addition to the fingerprint of the key used to sign the package. However, all
+the **[crypto.get-key]** slot on the package, since the RSA encryption key's fingerprint and length of the encrypted
+AES key is the *only* thing that is passed in plain sight. Then it can use the private key to decrypt the AES key,
+and use the decrypted AES key to decrypt the package - Which will result in getting the package's plain text
+content back, plus the signature, in addition to the fingerprint of the key used to sign the package. However, all
 of these steps are done automatically if you use the **[crypto.decrypt]** slot.
 
 ## Cryptography concerns
