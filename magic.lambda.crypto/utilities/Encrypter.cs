@@ -3,6 +3,7 @@
  * See the enclosed LICENSE file for details.
  */
 
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Security;
@@ -27,6 +28,10 @@ namespace magic.lambda.crypto
             byte[] signingKey,
             byte[] signingKeyFingerprint)
         {
+            // Sanity checking invocation, fingerprint should be SHA256 of signing key's public sibling.
+            if (signingKeyFingerprint.Length != 32)
+                throw new ArgumentException("Signing key's fingerprint was not valid");
+
             _encryptionKey = encryptionKey;
             _signingKey = signingKey;
             _signingKeyFingerprint = signingKeyFingerprint;
@@ -38,27 +43,23 @@ namespace magic.lambda.crypto
         public byte[] SignAndEncrypt(byte[] content)
         {
             // Signing content.
-            var rawPlain = Sign(
+            var signed = Sign(
                 content,
                 _signingKeyFingerprint,
                 _signingKey);
 
             // Encrypting content, and returning to caller.
-            return Encrypt(
-                rawPlain,
-                _encryptionKey);
+            return Encrypt(signed, _encryptionKey);
         }
 
         #region [ -- Private helper methods -- ]
 
         /*
-         * Creates and returns plain text content of message.
-         *
-         * Returns an array of f(signing_key_fingerprint + signature + content).
+         * Creates and returns signed plain content of message.
          */
         static byte[] Sign(
             byte[] content,
-            byte[] fingerprint,
+            byte[] signingKeyFingerprint,
             byte[] signingKey)
         {
             // Creating plain text stream.
@@ -68,7 +69,7 @@ namespace magic.lambda.crypto
                 var writer = new BinaryWriter(stream);
 
                 // Writing SHA256 of fingerprint key.
-                writer.Write(fingerprint);
+                writer.Write(signingKeyFingerprint);
 
                 // Writing signature.
                 var signer = SignerUtilities.GetSigner($"SHA256withRSA");
@@ -89,7 +90,7 @@ namespace magic.lambda.crypto
          * Creates encrypted content from the given argument.
          */
         static byte[] Encrypt(
-            byte[] plain,
+            byte[] content,
             byte[] encryptionKey)
         {
             // Creating encryption stream.
@@ -102,7 +103,7 @@ namespace magic.lambda.crypto
                 encWriter.Write(CreateSha256(encryptionKey));
 
                 // Writing encrypted AES key.
-                var aesKey = CreateSymmetricEncryptionKey();
+                var aesKey = CreateAesKey();
                 var encryptedAesKey = Utilities.EncryptMessage(
                     new RsaEngine(),
                     aesKey,
@@ -111,7 +112,7 @@ namespace magic.lambda.crypto
                 encWriter.Write(encryptedAesKey);
 
                 // Writing encrypted content.
-                var encrypted = Utilities.AesEncrypt(aesKey, plain);
+                var encrypted = Utilities.AesEncrypt(aesKey, content);
                 encWriter.Write(encrypted);
                 return encStream.ToArray();
             }
@@ -120,7 +121,7 @@ namespace magic.lambda.crypto
         /*
          * Creates a symmetric AES encryption key, to encrypt payload.
          */
-        static byte[] CreateSymmetricEncryptionKey()
+        static byte[] CreateAesKey()
         {
             var rnd = new SecureRandom();
             var bytes = new byte[32];

@@ -9,14 +9,14 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 
-namespace magic.lambda.crypto.misc
+namespace magic.lambda.crypto
 {
     /// <summary>
-    /// [crypto.sign-and-encrypt] slot that signs and encrypts the specified
+    /// [crypto.encrypt] slot that signs and encrypts the specified
     /// content using the spcified arguments.
     /// </summary>
-    [Slot(Name = "crypto.sign-and-encrypt")]
-    public class SignAndEncrypt : ISlot
+    [Slot(Name = "crypto.encrypt")]
+    public class Encrypt : ISlot
     {
         /// <summary>
         /// Implementation of slot.

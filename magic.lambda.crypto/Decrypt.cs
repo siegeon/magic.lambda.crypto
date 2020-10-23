@@ -10,14 +10,14 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 
-namespace magic.lambda.crypto.misc
+namespace magic.lambda.crypto
 {
     /// <summary>
-    /// [crypto.decrypt-and-verify] slot that decrypts and verifies the
+    /// [crypto.decrypt] slot that decrypts and verifies the
     /// specified content using the specified arguments.
     /// </summary>
-    [Slot(Name = "crypto.decrypt-and-verify")]
-    public class DecryptAndVerify : ISlot
+    [Slot(Name = "crypto.decrypt")]
+    public class Decrypt : ISlot
     {
         public void Signal(ISignaler signaler, Node input)
         {

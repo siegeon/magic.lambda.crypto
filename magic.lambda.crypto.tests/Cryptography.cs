@@ -27,7 +27,7 @@ crypto.rsa.create-key
 crypto.hash:x:@crypto.rsa.create-key/*/public
    format:raw
 
-crypto.sign-and-encrypt:This is some super secret!
+crypto.encrypt:This is some super secret!
    encryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
    signing-key:x:@crypto.rsa.create-key/*/private
    signing-key-fingerprint:x:@crypto.hash
@@ -56,7 +56,7 @@ crypto.rsa.create-key
 crypto.hash:x:@crypto.rsa.create-key/*/public
    format:raw
 
-crypto.sign-and-encrypt:This is some super secret!
+crypto.encrypt:This is some super secret!
    encryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
    signing-key:x:@crypto.rsa.create-key/*/private
    signing-key-fingerprint:x:@crypto.hash
@@ -85,14 +85,14 @@ crypto.hash:x:@crypto.rsa.create-key/*/public
    format:raw
 
 // Signing and encrypting.
-crypto.sign-and-encrypt:This is some super secret!
+crypto.encrypt:This is some super secret!
    encryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
    signing-key:x:@crypto.rsa.create-key/*/private
    signing-key-fingerprint:x:@crypto.hash
    raw:true
 
 // Decrypting and verifying signature.
-crypto.decrypt-and-verify:x:-
+crypto.decrypt:x:-
    decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
 ");
             var msg = lambda.Children.Skip(4).First().Value as string;
