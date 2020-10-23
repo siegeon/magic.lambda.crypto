@@ -4,6 +4,7 @@
  */
 
 using System.Linq;
+using System.Text;
 using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
@@ -17,7 +18,7 @@ namespace magic.lambda.crypto.misc
     [Slot(Name = "crypto.random")]
     public class RandomBytes : ISlot
     {
-        const string _valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const string _alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         /// <summary>
         /// Implementation of slot.
@@ -30,11 +31,19 @@ namespace magic.lambda.crypto.misc
             var min = input.Children.FirstOrDefault(x => x.Name == "min")?.GetEx<int>() ?? 10;
             var max = input.Children.FirstOrDefault(x => x.Name == "max")?.GetEx<int>() ?? 20;
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
 
-            // Creating random string, or byte array.
+            // Creating a new CSRNG, seeding it if caller provided a [seed].
             var rnd = new SecureRandom();
-            var bytes = SecureRandom.GetNextBytes(rnd, rnd.Next(min, max));
-            input.Value = raw ? (object)bytes : string.Concat(bytes.Select(x => _valid[x % (_valid.Length)]));
+            if (!string.IsNullOrEmpty(seed))
+                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
+
+            // Retrieving a random number of bytes, between min/max values provided by caller.
+            var bytes = new byte[rnd.Next(min, max)];
+            rnd.NextBytes(bytes);
+
+            // Returning in the format requested by caller.
+            input.Value = raw ? (object)bytes : string.Concat(bytes.Select(x => _alphabet[x % (_alphabet.Length)]));
         }
     }
 }

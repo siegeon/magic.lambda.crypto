@@ -26,7 +26,8 @@ namespace magic.lambda.crypto.hash
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            var text = input.GetEx<string>();
+            var contentRaw = input.GetEx<object>();
+            var data = contentRaw is string strContent ? Encoding.UTF8.GetBytes(strContent) : contentRaw as byte[];
             var algorithm = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
             var format = input.Children.FirstOrDefault(x => x.Name == "format")?.GetEx<string>() ?? "text";
             switch (algorithm)
@@ -34,19 +35,19 @@ namespace magic.lambda.crypto.hash
                 case "SHA256":
                     using (var algo = SHA256Managed.Create())
                     {
-                        input.Value = GenerateHash(algo, text, format);
+                        input.Value = GenerateHash(algo, data, format);
                     }
                     break;
                 case "SHA384":
                     using (var algo = SHA384Managed.Create())
                     {
-                        input.Value = GenerateHash(algo, text, format);
+                        input.Value = GenerateHash(algo, data, format);
                     }
                     break;
                 case "SHA512":
                     using (var algo = SHA512Managed.Create())
                     {
-                        input.Value = GenerateHash(algo, text, format);
+                        input.Value = GenerateHash(algo, data, format);
                     }
                     break;
                 default:
@@ -56,9 +57,9 @@ namespace magic.lambda.crypto.hash
 
         #region [ -- Private helper methods -- ]
 
-        object GenerateHash(HashAlgorithm algo, string text, string format)
+        object GenerateHash(HashAlgorithm algo, byte[] data, string format)
         {
-            var bytes = algo.ComputeHash(Encoding.UTF8.GetBytes(text));
+            var bytes = algo.ComputeHash(data);
             switch (format)
             {
                 case "text":

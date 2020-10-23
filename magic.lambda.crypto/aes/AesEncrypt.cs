@@ -23,9 +23,6 @@ namespace magic.lambda.crypto.aes
     [Slot(Name = "crypto.aes.encrypt")]
     public class AesEncrypt : ISlot
     {
-        const int MAC_SIZE = 128;
-        const int NONCE_SIZE = 12;
-
         /// <summary>
         /// Implementation of slot.
         /// </summary>
@@ -43,46 +40,10 @@ namespace magic.lambda.crypto.aes
             input.Clear();
 
             // Performing actual encryption.
-            var result = Encrypt(password, message);
+            var result = Utilities.AesEncrypt(password, message);
 
             // Returning results to caller according to specifications.
             input.Value = raw ? (object)result : Convert.ToBase64String(result);
         }
-
-        #region [ -- Internal helper methods -- ]
-
-        /*
-         * AES encrypts the specified data, using the specified password, and bit strength.
-         */
-        static byte[] Encrypt(byte[] password, byte[] data)
-        {
-            // Creating our nonce, or Initial Vector (IV).
-            var rnd = new SecureRandom();
-            var nonce = new byte[NONCE_SIZE];
-            rnd.NextBytes(nonce, 0, nonce.Length);
-
-            // Initializing AES engine.
-            var cipher = new GcmBlockCipher(new AesEngine());
-            var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
-            cipher.Init(true, parameters);
-
-            // Creating buffer to hold encrypted content, and encrypting into buffer.
-            var encrypted = new byte[cipher.GetOutputSize(data.Length)];
-            var len = cipher.ProcessBytes(data, 0, data.Length, encrypted, 0);
-            cipher.DoFinal(encrypted, len);
-
-            // Writing nonce and encrypted data, and returning as byte[] to caller.
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(stream))
-                {
-                    writer.Write(nonce);
-                    writer.Write(encrypted);
-                }
-                return stream.ToArray();
-            }
-        }
-
-        #endregion
     }
 }

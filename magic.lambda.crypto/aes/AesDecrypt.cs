@@ -43,43 +43,10 @@ namespace magic.lambda.crypto.aes
             input.Clear();
 
             // Performing actual decryption.
-            var result = Decrypt(password, message);
+            var result = Utilities.Decrypt(password, message);
 
             // Returning results to caller according to specifications.
             input.Value = raw ? (object)result : Encoding.UTF8.GetString(result);
         }
-
-        #region [ -- Internal helper methods -- ]
-
-        /*
-         * AES decrypts the specified data, using the specified password.
-         */
-        static byte[] Decrypt(byte[] password, byte[] data)
-        {
-            using (var stream = new MemoryStream(data))
-            {
-                using (var reader = new BinaryReader(stream))
-                {
-                    // Reading and discarding nonce.
-                    var nonce = reader.ReadBytes(NONCE_SIZE);
-
-                    // Creating and initializing AES engine.
-                    var cipher = new GcmBlockCipher(new AesEngine());
-                    var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
-                    cipher.Init(false, parameters);
-
-                    // Reading encrypted parts, and decrypting into result.
-                    var encrypted = reader.ReadBytes(data.Length - nonce.Length);
-                    var result = new byte[cipher.GetOutputSize(encrypted.Length)];
-                    var len = cipher.ProcessBytes(encrypted, 0, encrypted.Length, result, 0);
-                    cipher.DoFinal(result, len);
-
-                    // Returning result as byte[].
-                    return result;
-                }
-            }
-        }
-
-        #endregion
     }
 }

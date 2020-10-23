@@ -14,6 +14,10 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Encodings;
 using magic.node;
 using magic.node.extensions;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Engines;
+using System.IO;
 
 namespace magic.lambda.crypto
 {
@@ -22,6 +26,9 @@ namespace magic.lambda.crypto
      */
     internal static class Utilities
     {
+        const int MAC_SIZE = 128;
+        const int NONCE_SIZE = 12;
+
         /*
          * Creates a new keypair using the specified key pair generator, and returns the key pair to caller.
          */
@@ -83,19 +90,56 @@ namespace magic.lambda.crypto
             var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
 
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var publicKey = GetPublicKey(input);
+            var key = GetPublicKey(input);
+            var cipher = EncryptMessage(engine, message, key);
+            input.Value = raw ? cipher : (object)Convert.ToBase64String(cipher);
             input.Clear();
+        }
 
+        internal static byte[] EncryptMessage(
+            IAsymmetricBlockCipher engine,
+            byte[] message,
+            AsymmetricKeyParameter key)
+        {
             // Creating our encryption engine, and decorating according to caller's specifications.
             var encryptionEngine = new Pkcs1Encoding(engine);
-            encryptionEngine.Init(true, publicKey);
+            encryptionEngine.Init(true, key);
 
             // Encrypting message, and returning results to according to caller's specifications.
             var result = encryptionEngine.ProcessBlock(message, 0, message.Length);
-            if (raw)
-                input.Value = result;
-            else
-                input.Value = Convert.ToBase64String(result);
+            return result;
+        }
+
+        /*
+         * AES encrypts the specified data, using the specified password, and bit strength.
+         */
+        internal static byte[] AesEncrypt(byte[] password, byte[] data)
+        {
+            // Creating our nonce, or Initial Vector (IV).
+            var rnd = new SecureRandom();
+            var nonce = new byte[NONCE_SIZE];
+            rnd.NextBytes(nonce, 0, nonce.Length);
+
+            // Initializing AES engine.
+            var cipher = new GcmBlockCipher(new AesEngine());
+            var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
+            cipher.Init(true, parameters);
+
+            // Creating buffer to hold encrypted content, and encrypting into buffer.
+            var encrypted = new byte[cipher.GetOutputSize(data.Length)];
+            var len = cipher.ProcessBytes(data, 0, data.Length, encrypted, 0);
+            cipher.DoFinal(encrypted, len);
+
+            // Writing nonce and encrypted data, and returning as byte[] to caller.
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(stream))
+                {
+                    writer.Write(nonce);
+                    writer.Write(encrypted);
+                }
+                return stream.ToArray();
+            }
         }
 
         /*
@@ -112,16 +156,55 @@ namespace magic.lambda.crypto
             var privateKey = GetPrivateKey(input);
             input.Clear();
 
-            // Creating our encryption engine, and decorating according to caller's specifications.
-            var encryptEngine = new Pkcs1Encoding(engine);
-            encryptEngine.Init(false, privateKey);
-
             // Decrypting message, and returning results to according to caller's specifications.
-            var result = encryptEngine.ProcessBlock(message, 0, message.Length);
+            var result = DecryptMessage(message, privateKey, new RsaEngine());
             if (raw)
                 input.Value = result;
             else
                 input.Value = Encoding.UTF8.GetString(result);
+        }
+
+        internal static byte[] DecryptMessage(
+            byte[] message,
+            AsymmetricKeyParameter key,
+            IAsymmetricBlockCipher engine)
+        {
+            // Creating our encryption engine, and decorating according to caller's specifications.
+            var encryptEngine = new Pkcs1Encoding(engine);
+            encryptEngine.Init(false, key);
+
+            // Decrypting message, and returning results to according to caller's specifications.
+            var result = encryptEngine.ProcessBlock(message, 0, message.Length);
+            return result;
+        }
+
+        /*
+         * AES decrypts the specified data, using the specified password.
+         */
+        internal static byte[] Decrypt(byte[] password, byte[] data)
+        {
+            using (var stream = new MemoryStream(data))
+            {
+                using (var reader = new BinaryReader(stream))
+                {
+                    // Reading and discarding nonce.
+                    var nonce = reader.ReadBytes(NONCE_SIZE);
+
+                    // Creating and initializing AES engine.
+                    var cipher = new GcmBlockCipher(new AesEngine());
+                    var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
+                    cipher.Init(false, parameters);
+
+                    // Reading encrypted parts, and decrypting into result.
+                    var encrypted = reader.ReadBytes(data.Length - nonce.Length);
+                    var result = new byte[cipher.GetOutputSize(encrypted.Length)];
+                    var len = cipher.ProcessBytes(encrypted, 0, encrypted.Length, result, 0);
+                    cipher.DoFinal(result, len);
+
+                    // Returning result as byte[].
+                    return result;
+                }
+            }
         }
 
         /*
@@ -135,20 +218,25 @@ namespace magic.lambda.crypto
 
             var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var privateKey = GetPrivateKey(input);
-            input.Clear();
-
-            // Creating our signer and associating it with the private key.
+            var key = GetPrivateKey(input);
             var signer = SignerUtilities.GetSigner($"{algo}with{encryptionAlgorithm}");
-            signer.Init(true, privateKey);
+            var cipher = SignMessage(signer, message, key);
+            input.Value = raw ? cipher : (object)Convert.ToBase64String(cipher);
+            input.Clear();
+        }
 
-            // Signing the specified data, and returning to caller according to specifications.
+        /*
+         * Cryptographically signs the specified message.
+         */
+        internal static byte[] SignMessage(
+            ISigner signer,
+            byte[] message,
+            AsymmetricKeyParameter key)
+        {
+            signer.Init(true, key);
             signer.BlockUpdate(message, 0, message.Length);
             byte[] signature = signer.GenerateSignature();
-            if (raw)
-                input.Value = signature;
-            else
-                input.Value = Convert.ToBase64String(signature);
+            return signature;
         }
 
         /*
@@ -199,7 +287,7 @@ namespace magic.lambda.crypto
         /*
          * Private helper method to return byte[] representation of key.
          */
-        static byte[] GetKeyFromArguments(Node input, string keyType)
+        internal static byte[] GetKeyFromArguments(Node input, string keyType)
         {
             // Sanity checking invocation.
             var keys = input.Children.Where(x => x.Name == keyType || x.Name == "key");
@@ -212,6 +300,35 @@ namespace magic.lambda.crypto
                 return Convert.FromBase64String(strKey); // base64 encoded.
 
             return key as byte[]; // Assuming raw byte[] key.
+        }
+
+        /*
+         * Private helper method to return byte[] representation of key.
+         */
+        internal static byte[] GetFingerprintFromArguments(Node input, string nodeName)
+        {
+            // Sanity checking invocation.
+            var nodes = input.Children.Where(x => x.Name == nodeName);
+            if (nodes.Count() != 1)
+                throw new ArgumentException($"You must provide [{nodeName}]");
+
+            // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.
+            var result = nodes.First()?.GetEx<byte[]>();
+            if (result.Length != 32)
+                throw new ArgumentException("Fingerprint is not 32 bytes long");
+            return result;
+        }
+
+        /*
+         * Returns content of node as byte[] for encryption/decryption.
+         */
+        internal static byte[] GetContent(Node input)
+        {
+            var contentObject = input.GetEx<object>() ??
+                throw new ArgumentException("No content for cryptography operation");
+            return contentObject is string strContent ?
+                Encoding.UTF8.GetBytes(strContent) :
+                contentObject as byte[];
         }
 
         #endregion
