@@ -63,7 +63,7 @@ crypto.encrypt:This is some super secret!
    signing-key-fingerprint:x:@crypto.hash
 
 // Getting encrypted content's fingerprint.
-crypto.get-encryption-key:x:@crypto.encrypt
+crypto.get-key:x:@crypto.encrypt
 
 // Getting encryption key's fingerprint.
 crypto.hash:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public

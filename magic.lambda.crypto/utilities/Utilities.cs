@@ -54,28 +54,52 @@ namespace magic.lambda.crypto.utilities
             var publicInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public);
 
             // Returning key pair according to caller's specifications.
+            var publicKey = publicInfo.GetDerEncoded();
+            var fingerprint = CreateFingerprint(publicKey);
             if (raw)
             {
                 // Returning as DER encoded raw byte[].
                 input.Add(new Node("private", privateInfo.GetDerEncoded()));
-                input.Add(new Node("public", publicInfo.GetDerEncoded()));
+                input.Add(new Node("public", publicKey));
+                input.Add(new Node("fingerprint", fingerprint));
             }
             else
             {
                 // Returning as base64 encoded DER format.
                 input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
-                input.Add(new Node("public", Convert.ToBase64String(publicInfo.GetDerEncoded())));
+                input.Add(new Node("public", Convert.ToBase64String(publicKey)));
+                input.Add(new Node("fingerprint", fingerprint));
+            }
+        }
+
+        /*
+         * Creates a fingerprint from the specified content.
+         */
+        internal static string CreateFingerprint(byte[] content)
+        {
+            using (var hash = SHA256.Create())
+            {
+                var hashed = hash.ComputeHash(content);
+                var result = new StringBuilder();
+                var idxNo = 0;
+                foreach (var idx in hashed)
+                {
+                    result.Append(BitConverter.ToString(new byte[] { idx }));
+                    if (++idxNo % 2 == 0)
+                        result.Append("-");
+                }
+                return result.ToString().TrimEnd('-').ToLowerInvariant();
             }
         }
 
         /*
          * Helper method to generate a 256 bits 32 byte[] long key from a passphrase.
          */
-        internal static byte[] Generate256BitKey(string content)
+        internal static byte[] Generate256BitKey(string passphrase)
         {
             using (var hash = SHA256.Create())
             {
-                return hash.ComputeHash(Encoding.UTF8.GetBytes(content));
+                return hash.ComputeHash(Encoding.UTF8.GetBytes(passphrase));
             }
         }
 
@@ -307,7 +331,7 @@ namespace magic.lambda.crypto.utilities
         }
 
         /*
-         * Private helper method to return byte[] representation of key.
+         * Private helper method to return byte[] from fingerprint.
          */
         internal static byte[] GetFingerprint(Node input, string nodeName)
         {
@@ -317,10 +341,24 @@ namespace magic.lambda.crypto.utilities
                 throw new ArgumentException($"You must provide [{nodeName}]");
 
             // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.
-            var result = nodes.First()?.GetEx<byte[]>();
-            if (result.Length != 32)
-                throw new ArgumentException("Fingerprint is not 32 bytes long");
-            return result;
+            var result = nodes.First()?.GetEx<object>();
+            if (result is byte[] resultRaw)
+            {
+                if (resultRaw.Length != 32)
+                    throw new ArgumentException("Fingerprint is not 32 bytes long");
+                return resultRaw;
+            }
+            else
+            {
+                var resultFingerprint = (result as string).Replace("-", "");
+                int noChars = resultFingerprint.Length;
+                byte[] bytes = new byte[noChars / 2];
+                for (int i = 0; i < noChars; i += 2)
+                {
+                    bytes[i / 2] = Convert.ToByte(resultFingerprint.Substring(i, 2), 16);
+                }
+                return bytes;
+            }
         }
 
         /*

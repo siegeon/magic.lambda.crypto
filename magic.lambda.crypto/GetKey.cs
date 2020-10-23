@@ -14,11 +14,11 @@ using magic.lambda.crypto.utilities;
 namespace magic.lambda.crypto
 {
     /// <summary>
-    /// [crypto.get-encryption-key] slot that returns the fingerprint of the encryption key
+    /// [crypto.get-key] slot that returns the fingerprint of the encryption key
     /// that was used to encrypt a message.
     /// </summary>
-    [Slot(Name = "crypto.get-encryption-key")]
-    public class GetEncryptionKey : ISlot
+    [Slot(Name = "crypto.get-key")]
+    public class GetKey : ISlot
     {
         public void Signal(ISignaler signaler, Node input)
         {
