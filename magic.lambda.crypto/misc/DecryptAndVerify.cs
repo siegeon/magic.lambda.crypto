@@ -4,11 +4,8 @@
  */
 
 using System;
-using System.IO;
-using System.Linq;
 using System.Text;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Crypto.Engines;
+using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -24,6 +21,7 @@ namespace magic.lambda.crypto.misc
     {
         public void Signal(ISignaler signaler, Node input)
         {
+            // Retrieving arguments.
             var content = Utilities.GetContent(input);
             var decryptionKey = Utilities.GetKeyFromArguments(input, "decryption-key");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
@@ -33,9 +31,8 @@ namespace magic.lambda.crypto.misc
             input.Value = null;
 
             // Decrypting content and returning to caller.
-            var result = DecryptContentRawContent(
-                content,
-                decryptionKey);
+            var decrypter = new Decrypter(decryptionKey);
+            var result = decrypter.Decrypt(content);
             if (raw)
             {
                 input.Value = result.Content;
@@ -48,81 +45,5 @@ namespace magic.lambda.crypto.misc
             }
             input.Add(new Node("fingerprint", result.Fingerprint));
         }
-
-        #region [ -- Private helper methods -- ]
-
-        (byte[] Content, byte[] Signature, string Fingerprint) DecryptContentRawContent(
-            byte[] content,
-            byte[] privateKey)
-        {
-            // The first 32 bytes is the fingerprint of our self public key.
-            using (var encStream = new MemoryStream(content))
-            {
-                // Simplifying life.
-                var encReader = new BinaryReader(encStream);
-
-                var messageFingerprint = encReader.ReadBytes(32);
-
-                // Reading AES key.
-                var encryptedAesKeyLength = encReader.ReadInt32();
-                var encryptedAesKey = encReader.ReadBytes(encryptedAesKeyLength);
-
-                // Decrypting AES key.
-                var decryptedAesKey = DecryptAesKey(encryptedAesKey, privateKey);
-
-                // Decrypting main body of message.
-                using (var encContentStream = new MemoryStream())
-                {
-                    encStream.CopyTo(encContentStream);
-                    var encryptedBytes = encContentStream.ToArray();
-                    var decryptedContent = DecryptContent(encryptedBytes, decryptedAesKey);
-                    using (var decryptedContentStream = new MemoryStream(decryptedContent))
-                    {
-                        var decryptedReader = new BinaryReader(decryptedContentStream);
-                        var sendersPublicKeySha256 = decryptedReader.ReadBytes(32);
-                        var lengthOfSignature = decryptedReader.ReadInt32();
-                        var signature = decryptedReader.ReadBytes(lengthOfSignature);
-                        var fingerprint = CreateFingerprint(sendersPublicKeySha256);
-                        var lengthOfPlainTextContent = decryptedReader.ReadInt32();
-                        var result = decryptedReader.ReadBytes(lengthOfPlainTextContent);
-                        return (result, signature, fingerprint);
-                    }
-                }
-            }
-        }
-
-        /*
-         * Creates a fingerprint from a raw byte[] array.
-         */
-        string CreateFingerprint(byte[] raw)
-        {
-            var result = new StringBuilder();
-            var idxNo = 0;
-            foreach (var idx in raw)
-            {
-                result.Append(BitConverter.ToString(new byte[] { idx }));
-                if (++idxNo % 2 == 0)
-                    result.Append("-");
-            }
-            return result.ToString().TrimEnd('-').ToLowerInvariant();
-        }
-
-        /*
-         * Decrypts the specified AES key using the specified private RSA key.
-         */
-        byte[] DecryptAesKey(byte[] encryptedAesKey, byte[] privateRsaKey)
-        {
-            return Utilities.DecryptMessage(
-                encryptedAesKey,
-                PrivateKeyFactory.CreateKey(privateRsaKey),
-                new RsaEngine());
-        }
-
-        byte[] DecryptContent(byte[] aesEncryptedContent, byte[] aesKey)
-        {
-            return Utilities.Decrypt(aesKey, aesEncryptedContent);
-        }
-
-        #endregion
     }
 }
