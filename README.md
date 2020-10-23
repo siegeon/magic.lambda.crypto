@@ -391,6 +391,14 @@ cryptography key. This key again is encrypted using whatever bit strength you se
 your RSA key pair. Hence, the message as a whole, is not stronger than whatever key strength you use
 as you supply a **[strength]** argument to the **[crypto.rsa.create-key]**.
 
+The above format results in that the only _"meta information"_ an adversary can possibly pick up, is
+the fingerprint of the public RSA key used to encrypt the AES key, in addition to also the bit strength
+of this RSA key, since the bit strength of an RSA key will result in differences in the length of the
+encrypted AES key. An adversary will not have access to who encrypted/transmitted the package, he will
+not know who, if any signed the package - Or any other parts of the message - Assuming he is not able
+to somehow crack the AES encryption, and/or somehow retrieve the private RSA key the AES package's
+encryption key was encrypted with.
+
 ## Cryptography concerns
 
 Even assuming you can 100% perfectly communicate in privacy today, your privacy is only as good as a malicious
