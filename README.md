@@ -265,10 +265,9 @@ crypto.random
    raw:true
 ```
 
-## Combininbg RSA and AES cryptography
+## Combining RSA and AES cryptography
 
-AES and RSA are only really useful when combined. Hence, there exists the following convenience slots
-in this project.
+AES and RSA are only really useful when combined. Hence, this project contains the following convenience slots.
 
 * __[crypto.encrypt]__ - Encrypts some message using AES + RSA
 * __[crypto.decrypt]__ - Decrypts some message using AES + RSA
@@ -309,8 +308,8 @@ the **[crypto.encrypt]** invocation.
 Hence, the *only* thing that is in plain sight in the above encrypted message, is the fingerprint of the public
 key that was used to encrypt the message. Only after the message is decrypted, the signature for the message
 can be retrieved, together with the fingerprint of the key that was used to sign the message. Hence, what would
-normally be a more complete process, is the after decrypting the message, also verify that the signature originates
-from some trusted party - Such as illustrated below.
+normally be a more complete process, is that after the receiver decrypts the message, he should also verify that
+the signature originates from some trusted party - Such as illustrated below.
 
 ```
 // Recipient's key.
@@ -339,40 +338,48 @@ crypto.rsa.verify:x:-
 
 If the above invocation to **[crypto.rsa.verify]** does not throw an exception, we know for a fact that
 the message was cryptographically signed with the private key that matches its **[public-key]** argument.
+Normally the fingerprint of the sender's key is asssociated with some sort of _"authorisation object"_
+to elevate the rights of the user, only *after* having verified the message originated from a trusted
+party.
 
 Hence, from the caller's perspective it's *one* invocation to encrypt and sign a message. From the receiver's
 perspective it's *two* steps to both decrypt and verify the integrity of a message. The reasons for this,
-is because we do *not know* who signed the message, before the message has been *decrypted* using the receiver's
-private key. This prevents any part of the message, except its *bare minimum* to be provided over your insecure
-channel - Giving spoofers and malicious hackers literally *nothing* to work with, except the fingerprint
+is because we do *not know* who signed the message, before the message has been decrypted using the receiver's
+private key. This prevents any part of the message, except its bare minimum to be provided over your insecure
+channel - Giving spoofers and malicious hackers literally nothing to work with, except the fingerprint
 of the public key the message was encrypted with.
 
 Hence, malicious adversaries in the middle of the communication, will not know who the message originated from,
-only to whom it was addressed.
+only to whom it was addressed - In addition to of course also not being able to read the content of the message.
 
 ### The encryption format
 
-The encrypted package has the following format.
+The encrypted package has the following format. Notice, the encryption and signing is a two step process.
+Hence, the steps for the first process is as follows.
 
-1. Signing key's fingerprint in SHA256 byte[] format, 32 bytes long
-2. The length of the signature as `int`
+1. Signing key's fingerprint in SHA256 `byte[]` format, 32 bytes long
+2. The length of the signature as `int`, 4 bytes long
 3. The actual signature of the message, where the signature is generated from the plain text content of the message
-4. The content of the message in `byte[]` format
+4. The content of the message in `byte[]` format, possibly converted from a string as UTF8 content
 
 Logically it becomes as follows; SHA256(signing_key) + signature_length + signature + plain_text_content.
-
 Then the result from the above steps is encrypted using AES, with a random generated session key 
 32 bytes long. And another package is created which is the final package, that is structured as follows.
 
-1. Encryption key's fingerprint in SHA256 byte[] format, 32 bytes long
-2. The AES encrypted content from the above signing step
+1. Encryption key's fingerprint in SHA256 `byte[]` format, 32 bytes long
+2. The length of the encrypted session key as `int`, 4 bytes long
+3. The encrypted session key, encrypted using the recipient's public RSA key
+4. The AES encrypted content from the above signing step
 
-Logically it becomes as follows; SHA256(encryption_key) + AES_encrypted(plain_text_content).
+Logically it becomes as follows; SHA256(RSA_encryption_key) + length_of_encrypted_AES_key +
+encrypted_AES_key + AES_encrypted(plain_text_content).
 
 Hence, the other party can retrieve the encryption key used for encrypting the package, using for instance
-the **[crypto.get-key]** slot on the package. Then it can use the private key to decrypt the package,
-which will result in getting the package's plain text content back, plus the signature, in addition
-to the fingerprint of the key used to sign the package.
+the **[crypto.get-key]** slot on the package, since the RSA encryption key's fingerprint is the *only* thing
+passed in plain sight. Then it can use the private key to decrypt the AES key, and use the decrypted
+AES key to decrypt the package - Which will result in getting the package's plain text content back,
+plus the signature, in addition to the fingerprint of the key used to sign the package. However, all
+of these steps are done automatically if you use the **[crypto.decrypt]** slot.
 
 ## Cryptography concerns
 
