@@ -6,8 +6,8 @@
 using System;
 using System.Linq;
 using System.Text;
-using magic.node.extensions;
 using Xunit;
+using magic.node.extensions;
 
 namespace magic.lambda.crypto.tests
 {
@@ -84,7 +84,7 @@ crypto.rsa.create-key
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
-   key:x:@crypto.rsa.create-key/*/private");
+   private-key:x:@crypto.rsa.create-key/*/private");
             Assert.NotNull(lambda.Children.Skip(2).First().GetEx<string>());
             Assert.True(lambda.Children.Skip(2).First().Value.GetType() != typeof(Expression));
             Assert.NotEqual(
@@ -101,7 +101,7 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
    raw:true
-   key:x:@crypto.rsa.create-key/*/private");
+   private-key:x:@crypto.rsa.create-key/*/private");
             var sign = lambda.Children.Skip(2).First().Value as byte[];
             Assert.NotNull(sign);
             Assert.True(sign.Length > 70 && sign.Length < 200);
@@ -116,10 +116,10 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
    raw:true
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data
    signature:x:@crypto.rsa.sign
-   key:x:@crypto.rsa.create-key/*/public");
+   public-key:x:@crypto.rsa.create-key/*/public");
             var sign = lambda.Children.Skip(2).First().Value as byte[];
             Assert.NotNull(sign);
             Assert.True(sign.Length > 70 && sign.Length < 200);
@@ -134,7 +134,7 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
    algorithm:SHA512
-   key:x:@crypto.rsa.create-key/*/private");
+   private-key:x:@crypto.rsa.create-key/*/private");
             Assert.NotNull(lambda.Children.Skip(2).First().GetEx<string>());
             Assert.True(lambda.Children.Skip(2).First().Value.GetType() != typeof(Expression));
             Assert.NotEqual(
@@ -150,7 +150,7 @@ crypto.rsa.sign:x:@.data
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
-   key:x:@crypto.rsa.create-key/*/public"));
+   public-key:x:@crypto.rsa.create-key/*/public"));
         }
 
         [Fact]
@@ -161,9 +161,9 @@ crypto.rsa.sign:x:@.data
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 ");
         }
@@ -177,10 +177,10 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
    algorithm:SHA512
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data
    algorithm:SHA512
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 ");
         }
@@ -194,10 +194,10 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
    algorithm:SHA1
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data
    algorithm:SHA1
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 ");
         }
@@ -211,10 +211,10 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
    algorithm:SHA384
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data
    algorithm:SHA384
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 ");
         }
@@ -228,10 +228,10 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data
    algorithm:MD5
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data
    algorithm:MD5
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 ");
         }
@@ -245,9 +245,9 @@ crypto.rsa.verify:x:@.data
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data1
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data2
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 "));
         }
@@ -262,10 +262,10 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.sign:x:@.data1
    algorithm:SHA256
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 crypto.rsa.verify:x:@.data2
    algorithm:SHA512
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
    signature:x:@crypto.rsa.sign
 "));
         }
@@ -278,7 +278,7 @@ crypto.rsa.verify:x:@.data2
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.encrypt:x:@.data
-   key:x:@crypto.rsa.create-key/*/public");
+   public-key:x:@crypto.rsa.create-key/*/public");
             Assert.NotNull(lambda.Children.Skip(2).First().GetEx<string>());
             Assert.True(lambda.Children.Skip(2).First().Value.GetType() != typeof(Expression));
             Assert.NotEqual(
@@ -295,7 +295,7 @@ crypto.rsa.create-key
    strength:1024
 crypto.rsa.encrypt:x:@.data
    raw:true
-   key:x:@crypto.rsa.create-key/*/public");
+   public-key:x:@crypto.rsa.create-key/*/public");
             var val = lambda.Children.Skip(2).First().Value as byte[];
             Assert.NotNull(val);
             Assert.True(val.Length > 70 && val.Length < 200);
@@ -309,9 +309,9 @@ crypto.rsa.encrypt:x:@.data
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.encrypt:x:@.data
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
 crypto.rsa.decrypt:x:@crypto.rsa.encrypt
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 ");
             Assert.Equal(
                 "This is some piece of text that should be encrypted",
@@ -326,10 +326,10 @@ crypto.rsa.decrypt:x:@crypto.rsa.encrypt
 crypto.rsa.create-key
    strength:1024
 crypto.rsa.encrypt:x:@.data
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
    raw:true
 crypto.rsa.decrypt:x:@crypto.rsa.encrypt
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
    raw:true
 ");
             Assert.Equal(

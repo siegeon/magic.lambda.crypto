@@ -8,7 +8,7 @@ using Xunit;
 
 namespace magic.lambda.crypto.tests
 {
-    public class Cryptography
+    public class EncryptTests
     {
         [Fact]
         public void SignAndEncrypt()
@@ -27,6 +27,7 @@ crypto.rsa.create-key
 crypto.hash:x:@crypto.rsa.create-key/*/public
    format:raw
 
+// Encrypting content
 crypto.encrypt:This is some super secret!
    encryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
    signing-key:x:@crypto.rsa.create-key/*/private
@@ -35,6 +36,45 @@ crypto.encrypt:This is some super secret!
             var msg = lambda.Children.Skip(3).First().Value as string;
             Assert.NotNull(msg);
             Assert.True(msg.Length > 500 && msg.Length < 700);
+        }
+
+        [Fact]
+        public void VerifyFingerprint()
+        {
+            var lambda = Common.Evaluate(@"
+
+// Recipient's key(s)
+crypto.rsa.create-key
+   raw:true
+   strength:1024
+
+// Sender's key(s).
+crypto.rsa.create-key
+   strength:1024
+
+// Fingerprint of key used to sign content.
+crypto.hash:x:@crypto.rsa.create-key/*/public
+   format:raw
+
+// Encrypting content
+crypto.encrypt:This is some super secret!
+   encryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
+   signing-key:x:@crypto.rsa.create-key/*/private
+   signing-key-fingerprint:x:@crypto.hash
+
+// Getting encrypted content's fingerprint.
+crypto.get-encryption-key:x:@crypto.encrypt
+
+// Getting encryption key's fingerprint.
+crypto.hash:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
+   format:fingerprint
+");
+            var msg = lambda.Children.Skip(3).First().Value as string;
+            Assert.NotNull(msg);
+            Assert.True(msg.Length > 500 && msg.Length < 700);
+            Assert.Equal(
+               lambda.Children.Skip(4).First().Value,
+               lambda.Children.Skip(5).First().Value);
         }
 
         [Fact]
@@ -69,6 +109,37 @@ crypto.encrypt:This is some super secret!
 
         [Fact]
         public void SignEncryptDecryptAndVerify()
+        {
+            var lambda = Common.Evaluate(@"
+
+// Receiver's key(s).
+crypto.rsa.create-key
+   strength:1024
+
+// Sender's key(s).
+crypto.rsa.create-key
+   strength:1024
+
+// Fingerprint of key used to sign content.
+crypto.hash:x:@crypto.rsa.create-key/*/public
+   format:raw
+
+// Signing and encrypting.
+crypto.encrypt:This is some super secret!
+   encryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
+   signing-key:x:@crypto.rsa.create-key/*/private
+   signing-key-fingerprint:x:@crypto.hash
+
+// Decrypting and verifying signature.
+crypto.decrypt:x:-
+   decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
+");
+            var msg = lambda.Children.Skip(4).First().Value as string;
+            Assert.Equal("This is some super secret!", msg);
+        }
+
+        [Fact]
+        public void SignEncryptDecryptAndVerify_Raw()
         {
             var lambda = Common.Evaluate(@"
 

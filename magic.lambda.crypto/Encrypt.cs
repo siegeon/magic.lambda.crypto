@@ -30,7 +30,7 @@ namespace magic.lambda.crypto
             var content = Utilities.GetContent(input);
             var signingKey = Utilities.GetKeyFromArguments(input, "signing-key");
             var encryptionKey = Utilities.GetKeyFromArguments(input, "encryption-key");
-            var signingKeyFingerprint = Utilities.GetFingerprintFromArguments(input, "signing-key-fingerprint");
+            var signingKeyFingerprint = Utilities.GetFingerprint(input, "signing-key-fingerprint");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // House cleaning.

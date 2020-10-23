@@ -101,7 +101,8 @@ namespace magic.lambda.crypto
                 var encWriter = new BinaryWriter(encStream);
 
                 // Writing encryption key's fingerprint.
-                encWriter.Write(CreateSha256(encryptionKey));
+                var fingerprint = CreateSha256(encryptionKey);
+                encWriter.Write(fingerprint);
 
                 // Writing encrypted AES key.
                 var aesKey = CreateAesKey();

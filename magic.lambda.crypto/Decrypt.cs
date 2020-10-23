@@ -23,7 +23,7 @@ namespace magic.lambda.crypto
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
-            var content = Utilities.GetContent(input);
+            var content = Utilities.GetContent(input, true);
             var decryptionKey = Utilities.GetKeyFromArguments(input, "decryption-key");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 

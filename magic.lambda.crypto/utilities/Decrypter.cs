@@ -51,7 +51,7 @@ namespace magic.lambda.crypto
         /*
          * Returns fingerprint of key used to encrypt message.
          */
-        public byte[] GetFingerprint(byte[] content)
+        public static byte[] GetFingerprint(byte[] content)
         {
             // Creating decryption stream.
             using (var encStream = new MemoryStream(content))

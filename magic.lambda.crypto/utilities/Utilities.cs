@@ -71,11 +71,11 @@ namespace magic.lambda.crypto.utilities
         /*
          * Helper method to generate a 256 bits 32 byte[] long key from a passphrase.
          */
-        internal static byte[] Generate256BitKey(string password)
+        internal static byte[] Generate256BitKey(string content)
         {
             using (var hash = SHA256.Create())
             {
-                return hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return hash.ComputeHash(Encoding.UTF8.GetBytes(content));
             }
         }
 
@@ -96,6 +96,9 @@ namespace magic.lambda.crypto.utilities
             input.Clear();
         }
 
+        /*
+         * Encrypts the specified message according to the specified arguments.
+         */
         internal static byte[] EncryptMessage(
             IAsymmetricBlockCipher engine,
             byte[] message,
@@ -164,6 +167,9 @@ namespace magic.lambda.crypto.utilities
                 input.Value = Encoding.UTF8.GetString(result);
         }
 
+        /*
+         * Decrypts the specified message accordint to the specified arguments.
+         */
         internal static byte[] DecryptMessage(
             byte[] message,
             AsymmetricKeyParameter key,
@@ -282,17 +288,15 @@ namespace magic.lambda.crypto.utilities
             return PrivateKeyFactory.CreateKey(GetKeyFromArguments(input, "private-key"));
         }
 
-        #region [ -- Private helper methods -- ]
-
         /*
          * Private helper method to return byte[] representation of key.
          */
         internal static byte[] GetKeyFromArguments(Node input, string keyType)
         {
             // Sanity checking invocation.
-            var keys = input.Children.Where(x => x.Name == keyType || x.Name == "key");
+            var keys = input.Children.Where(x => x.Name == keyType);
             if (keys.Count() != 1)
-                throw new ArgumentException($"You must provide exactly one key, either as [{keyType}] or as [key]");
+                throw new ArgumentException($"You must provide a [{keyType}]");
 
             // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.
             var key = keys.First()?.GetEx<object>();
@@ -305,7 +309,7 @@ namespace magic.lambda.crypto.utilities
         /*
          * Private helper method to return byte[] representation of key.
          */
-        internal static byte[] GetFingerprintFromArguments(Node input, string nodeName)
+        internal static byte[] GetFingerprint(Node input, string nodeName)
         {
             // Sanity checking invocation.
             var nodes = input.Children.Where(x => x.Name == nodeName);
@@ -322,15 +326,20 @@ namespace magic.lambda.crypto.utilities
         /*
          * Returns content of node as byte[] for encryption/decryption.
          */
-        internal static byte[] GetContent(Node input)
+        internal static byte[] GetContent(Node input, bool base64 = false)
         {
             var contentObject = input.GetEx<object>() ??
                 throw new ArgumentException("No content for cryptography operation");
-            return contentObject is string strContent ?
-                Encoding.UTF8.GetBytes(strContent) :
-                contentObject as byte[];
-        }
 
-        #endregion
+            // Checking if content is already byte[].
+            if (contentObject is byte[] bytes)
+                return bytes;
+
+            // Content is string, figuring out how to return it.
+            if (base64)
+                return Convert.FromBase64String((string)contentObject);
+            else
+                return Encoding.UTF8.GetBytes((string)contentObject);
+        }
     }
 }
