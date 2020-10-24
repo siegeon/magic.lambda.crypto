@@ -55,13 +55,14 @@ version. Below is an example of all three of these formats.
 
 ```
 .data:Some data to hash
+
 crypto.hash:x:@.data
    format:fingerprint
+
 crypto.hash:x:@.data
    format:text
 
-// Commented out since Magic can't display byte[] as Hyperlambda
-.crypto.hash:x:@.data
+crypto.hash:x:@.data
    format:raw
 ```
 
