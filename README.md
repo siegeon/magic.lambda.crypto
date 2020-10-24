@@ -386,10 +386,13 @@ Logically it becomes as follows; SHA256(RSA_encryption_key) + length_of_encrypte
 encrypted_AES_key + AES_encrypted_content. Everything as raw `byte[]`.
 
 Hence, the other party can retrieve the encryption key used for encrypting the package, using for instance
-the **[crypto.get-key]** slot on the package, since the RSA encryption key's fingerprint and length of the encrypted
-AES key is the *only* thing that is passed in plain sight. Then the receiver can use his private RSA key to decrypt
+the **[crypto.get-key]** slot on the package. Then the receiver can use his private RSA key to decrypt
 the AES key, and use the decrypted AES key to decrypt the rest of the package - Which will result in getting the
-package's plain text content, plus the signature, in addition to the fingerprint of the key used to sign the package. However, all of these steps are done automatically if you use the **[crypto.decrypt]** slot.
+package's plain text content, plus the signature, in addition to the fingerprint of the RSA key used to sign
+the package. However, all of these steps are done automatically if you use the **[crypto.decrypt]** slot.
+Except signature verification. The reasons why the signature verification is a second step, is because
+we'll need to supply a public key to verify the signature, and we don't know which RSA key was used to
+sign the message, before we have *decrypted* the message.
 
 The AES key is generated using Bouncy Castle's `SecureRandom` implementation, resulting in a 256 bit
 cryptography key. This key again is encrypted using whatever bit strength you selected as you created
