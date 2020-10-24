@@ -303,10 +303,11 @@ crypto.decrypt:x:-
 To understand what occurs in the above Hyperlambda example, let's walk through it step by step, starting from
 the **[crypto.encrypt]** invocation.
 
-1. The message __"Some super secret message"_ is first cryptographically signed using the **[signing-key]**.
-2. The signed message resulting from the above is then encrypted using the **[encryption-key]**.
-3. The signing key's fingerprint is stored inside of the encrypted content, such that when the message is decrypted, the other party can verify that the signature originated from some trusted party
-4. The encryption key's fingerprint is stored as bytes, prepended before the encrypted message, which allows the other party to retrieve the correct decryption key, according to what fingerprint the caller encrypted the message with
+1. The message _"Some super secret message"_ is first cryptographically signed using the **[signing-key]**
+2. The signed message is then encrypted using a CSRNG generated AES key
+3. The AES key from the above is then encrypted using the **[encryption-key]**, that's assumed to be the recipient's public key
+4. The signing key's fingerprint is stored inside of the encrypted content, such that when the message is decrypted, the other party can verify that the signature originated from some trusted party
+5. The encryption key's fingerprint is stored as bytes, prepended before the encrypted message, which allows the other party to retrieve the correct decryption key, according to what encryption key the caller encrypted the message with
 
 Hence, the *only* thing that is in plain sight in the above encrypted message, is the fingerprint of the public
 key that was used to encrypt the message. Only after the message is decrypted, the signature for the message
