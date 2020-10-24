@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
@@ -82,6 +83,22 @@ namespace magic.lambda.crypto.utilities
                 return Convert.FromBase64String(strKey); // base64 encoded.
 
             return key as byte[]; // Assuming raw byte[] key.
+        }
+
+        /*
+         * Returns fingerprint of key used to encrypt message.
+         */
+        public static byte[] GetFingerprint(byte[] content)
+        {
+            // Creating decryption stream.
+            using (var encStream = new MemoryStream(content))
+            {
+                // Simplifying life.
+                var encReader = new BinaryReader(encStream);
+
+                // Discarding encryption key's fingerprint.
+                return encReader.ReadBytes(32);
+            }
         }
 
         /*

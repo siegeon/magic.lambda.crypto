@@ -22,7 +22,7 @@ namespace magic.lambda.crypto.aes
     /// that was previously encrypted using the same algorithm.
     /// </summary>
     [Slot(Name = "crypto.aes.decrypt")]
-    public class Decrypter : ISlot
+    public class Decrypt : ISlot
     {
         const int MAC_SIZE = 128;
         const int NONCE_SIZE = 12;
@@ -44,7 +44,7 @@ namespace magic.lambda.crypto.aes
             input.Clear();
 
             // Performing actual decryption.
-            var result = Decrypt(password, message);
+            var result = Implementation(password, message);
 
             // Returning results to caller according to specifications.
             input.Value = raw ? (object)result : Encoding.UTF8.GetString(result);
@@ -53,7 +53,7 @@ namespace magic.lambda.crypto.aes
         /*
          * AES decrypts the specified data, using the specified password.
          */
-        internal static byte[] Decrypt(byte[] password, byte[] data)
+        internal static byte[] Implementation(byte[] password, byte[] data)
         {
             using (var stream = new MemoryStream(data))
             {

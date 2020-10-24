@@ -8,11 +8,10 @@ using System.IO;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
-using magic.lambda.crypto.utilities;
 using ut_rsa = magic.lambda.crypto.rsa.utilities;
 using ut_aes = magic.lambda.crypto.aes.utilities;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.crypto.utilities
 {
     /*
      * Helper class to sign and encrypt a plain text message.

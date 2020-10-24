@@ -11,7 +11,7 @@ using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.utilities;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.crypto
 {
     /// <summary>
     /// [crypto.get-key] slot that returns the fingerprint of the encryption key
@@ -32,7 +32,7 @@ namespace magic.lambda.crypto
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Retrieving fingerprint.
-            var fingerprint = Decrypter.GetFingerprint(content);
+            var fingerprint = Utilities.GetFingerprint(content);
 
             // Returning results to caller.
             if (raw)

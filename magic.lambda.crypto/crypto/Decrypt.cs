@@ -9,9 +9,10 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.utilities;
+using magic.lambda.crypto.crypto.utilities;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.crypto
 {
     /// <summary>
     /// [crypto.decrypt] slot that decrypts and verifies the
@@ -28,8 +29,8 @@ namespace magic.lambda.crypto
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
-            var content = Utilities.GetContent(input, true);
-            var decryptionKey = Utilities.GetKeyFromArguments(input, "decryption-key");
+            var content = ut.Utilities.GetContent(input, true);
+            var decryptionKey = ut.Utilities.GetKeyFromArguments(input, "decryption-key");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // House cleaning.

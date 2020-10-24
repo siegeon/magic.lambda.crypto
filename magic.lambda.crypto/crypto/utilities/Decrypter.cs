@@ -8,11 +8,10 @@ using System.IO;
 using System.Text;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
-using magic.lambda.crypto.utilities;
 using ut_rsa = magic.lambda.crypto.rsa.utilities;
 using ut_aes = magic.lambda.crypto.aes.utilities;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.crypto.utilities
 {
     /*
      * Helper class to decrypt and verify the signature of a message.
@@ -48,22 +47,6 @@ namespace magic.lambda.crypto
         public Decrypter(byte[] decryptionKey)
         {
             _decryptionKey = decryptionKey;
-        }
-
-        /*
-         * Returns fingerprint of key used to encrypt message.
-         */
-        public static byte[] GetFingerprint(byte[] content)
-        {
-            // Creating decryption stream.
-            using (var encStream = new MemoryStream(content))
-            {
-                // Simplifying life.
-                var encReader = new BinaryReader(encStream);
-
-                // Discarding encryption key's fingerprint.
-                return encReader.ReadBytes(32);
-            }
         }
 
         /*

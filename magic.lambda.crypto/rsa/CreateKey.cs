@@ -15,7 +15,7 @@ namespace magic.lambda.crypto.rsa
     /// .
     /// </summary>
     [Slot(Name = "crypto.rsa.create-key")]
-    public class RsaCreateKey : ISlot
+    public class CreateKey : ISlot
     {
         /// <summary>
         /// Implementation of slot.

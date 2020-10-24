@@ -3,18 +3,19 @@
  * See the enclosed LICENSE file for details.
  */
 
+using Org.BouncyCastle.Crypto.Engines;
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.rsa.utilities;
+using ut = magic.lambda.crypto.rsa.utilities;
 
 namespace magic.lambda.crypto.rsa
 {
     /// <summary>
-    /// [crypto.rsa.verify] slot to verify that some piece of text was cryptographically
-    /// signed with a specific private key.
+    /// [crypto.rsa.decrypt] slot to decrypt some content using a private key that was previously
+    /// encrypted using a public key.
     /// </summary>
-    [Slot(Name = "crypto.rsa.verify")]
-    public class RsaVerify : ISlot
+    [Slot(Name = "crypto.rsa.decrypt")]
+    public class Decrypt : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -23,7 +24,7 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            Verifier.VerifySignature(input, "RSA");
+            ut.Decrypter.DecryptMessage(input, new RsaEngine());
         }
     }
 }

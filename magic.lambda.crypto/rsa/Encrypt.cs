@@ -3,18 +3,19 @@
  * See the enclosed LICENSE file for details.
  */
 
+using Org.BouncyCastle.Crypto.Engines;
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.rsa.utilities;
+using ut = magic.lambda.crypto.rsa.utilities;
 
 namespace magic.lambda.crypto.rsa
 {
     /// <summary>
-    /// [crypto.rsa.sign] slot to cryptographically sign some piece of data with some
-    /// private RSA key.
+    /// [crypto.rsa.encrypt] slot to encrypt some content using a public key that can only be decrypted
+    /// using its public key.
     /// </summary>
-    [Slot(Name = "crypto.rsa.sign")]
-    public class RsaSign : ISlot
+    [Slot(Name = "crypto.rsa.encrypt")]
+    public class Encrypt : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -23,7 +24,7 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            Signer.SignMessage(input, "RSA");
+            ut.Encrypter.EncryptMessage(input, new RsaEngine());
         }
     }
 }

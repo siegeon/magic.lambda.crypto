@@ -8,9 +8,10 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.utilities;
+using magic.lambda.crypto.crypto.utilities;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.crypto
 {
     /// <summary>
     /// [crypto.encrypt] slot that signs and encrypts the specified
@@ -27,10 +28,10 @@ namespace magic.lambda.crypto
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
-            var content = Utilities.GetContent(input);
-            var signingKey = Utilities.GetKeyFromArguments(input, "signing-key");
-            var encryptionKey = Utilities.GetKeyFromArguments(input, "encryption-key");
-            var signingKeyFingerprint = Utilities.GetFingerprint(input, "signing-key-fingerprint");
+            var content = ut.Utilities.GetContent(input);
+            var signingKey = ut.Utilities.GetKeyFromArguments(input, "signing-key");
+            var encryptionKey = ut.Utilities.GetKeyFromArguments(input, "encryption-key");
+            var signingKeyFingerprint = ut.Utilities.GetFingerprint(input, "signing-key-fingerprint");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // House cleaning.
