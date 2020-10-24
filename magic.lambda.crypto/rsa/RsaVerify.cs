@@ -5,7 +5,7 @@
 
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.utilities;
+using magic.lambda.crypto.rsa.utilities;
 
 namespace magic.lambda.crypto.rsa
 {
@@ -23,7 +23,7 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            Utilities.VerifySignature(input, "RSA");
+            Verifier.VerifySignature(input, "RSA");
         }
     }
 }
