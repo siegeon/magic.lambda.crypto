@@ -372,8 +372,10 @@ Hence, the steps for the first process is as follows.
 **Notice** - At this point *nothing has been encrypted* yet.
 
 Logically it becomes as follows; SHA256(signing_key) + signature_length + signature + plain_text_content.
-Then the result from the above steps is encrypted using AES, with a random generated session key 
-32 bytes long. And another package is created which is the final package, that is structured as follows.
+
+Afterwards the result from the above steps is encrypted using AES, with a random generated session key 
+that is 32 bytes long. And another package is created, which is the final package, intended for being sent
+to the recipient. The final encryption package has a structure as follows.
 
 1. Encryption key's fingerprint in SHA256 `byte[]` format, 32 bytes long
 2. The length of the encrypted session key as `int`, 4 bytes long
