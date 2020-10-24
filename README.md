@@ -150,7 +150,7 @@ crypto.rsa.create-key
 
 // Notice, using PRIVATE key
 crypto.rsa.sign:x:@.data
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 
 // Uncommenting these lines, will make the verify process throw an exception
 // set-value:x:@.data
@@ -159,7 +159,7 @@ crypto.rsa.sign:x:@.data
 // Notice, using PUBLIC key
 crypto.rsa.verify:x:@.data
    signature:x:@crypto.rsa.sign
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
 ```
 
 If somebody tampers with the content between the signing process and the verify process, an exception will
@@ -184,10 +184,10 @@ To encrypt a message, you can use something as follows.
 crypto.rsa.create-key
 
 crypto.rsa.encrypt:x:@.data
-   key:x:@crypto.rsa.create-key/*/public
+   public-key:x:@crypto.rsa.create-key/*/public
 
 crypto.rsa.decrypt:x:@crypto.rsa.encrypt
-   key:x:@crypto.rsa.create-key/*/private
+   private-key:x:@crypto.rsa.create-key/*/private
 ```
 
 Notice how the encryption above is using the *public key*, and the decryption is using the *private key*. The encrypt slot
