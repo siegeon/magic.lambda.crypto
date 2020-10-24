@@ -369,6 +369,8 @@ Hence, the steps for the first process is as follows.
 3. The actual signature of the message
 4. The content of the message in `byte[]` format
 
+**Notice** - At this point *nothing has been encrypted* yet.
+
 Logically it becomes as follows; SHA256(signing_key) + signature_length + signature + plain_text_content.
 Then the result from the above steps is encrypted using AES, with a random generated session key 
 32 bytes long. And another package is created which is the final package, that is structured as follows.
