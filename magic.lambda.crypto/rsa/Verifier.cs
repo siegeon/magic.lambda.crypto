@@ -21,7 +21,7 @@ namespace magic.lambda.crypto.rsa
         /*
          * Verifies a cryptographic signature, according to caller's specifications.
          */
-        internal static void VerifySignature(Node input, string encryptionAlgorithm)
+        internal static void Verify(Node input, string encryptionAlgorithm)
         {
             // Retrieving arguments.
             var rawMessage = input.GetEx<object>();

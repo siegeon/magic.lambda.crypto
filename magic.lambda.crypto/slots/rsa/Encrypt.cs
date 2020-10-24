@@ -24,7 +24,7 @@ namespace magic.lambda.crypto.slots.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            Encrypter.EncryptMessage(input, new RsaEngine());
+            Encrypter.Encrypt(input, new RsaEngine());
         }
     }
 }

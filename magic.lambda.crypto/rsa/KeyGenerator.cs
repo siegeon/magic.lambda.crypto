@@ -24,7 +24,7 @@ namespace magic.lambda.crypto.rsa
         /*
          * Creates a new keypair using the specified key pair generator, and returns the key pair to caller.
          */
-        internal static void CreateNewKeyPair(Node input, IAsymmetricCipherKeyPairGenerator generator)
+        internal static void Generate(Node input, IAsymmetricCipherKeyPairGenerator generator)
         {
             // Retrieving arguments, if given, or supplying sane defaults if not.
             var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;

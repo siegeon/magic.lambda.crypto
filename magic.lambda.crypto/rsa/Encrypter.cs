@@ -23,7 +23,7 @@ namespace magic.lambda.crypto.rsa
          * Encrypts a message using the specified engine, and returns result to
          * caller, according to caller's specifications.
          */
-        internal static void EncryptMessage(Node input, IAsymmetricBlockCipher engine)
+        internal static void Encrypt(Node input, IAsymmetricBlockCipher engine)
         {
             // Retrieving message and other arguments.
             var rawMessage = input.GetEx<object>();

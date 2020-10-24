@@ -24,7 +24,7 @@ namespace magic.lambda.crypto.slots.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            KeyGenerator.CreateNewKeyPair(input, new RsaKeyPairGenerator());
+            KeyGenerator.Generate(input, new RsaKeyPairGenerator());
         }
     }
 }

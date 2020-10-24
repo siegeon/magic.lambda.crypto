@@ -22,7 +22,7 @@ namespace magic.lambda.crypto.rsa
         /*
          * Cryptographically signs the specified message, according to caller's specifications.
          */
-        internal static void SignMessage(Node input, string encryptionAlgorithm)
+        internal static void Sign(Node input, string encryptionAlgorithm)
         {
             // Retrieving arguments.
             var rawMessage = input.GetEx<object>();
