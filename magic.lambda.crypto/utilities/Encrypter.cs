@@ -5,9 +5,9 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Crypto.Engines;
 
 namespace magic.lambda.crypto.utilities
 {
@@ -19,6 +19,19 @@ namespace magic.lambda.crypto.utilities
         readonly byte[] _encryptionKey;
         readonly byte[] _signingKey;
         readonly byte[] _signingKeyFingerprint;
+        readonly SecureRandom _csrng;
+
+        public Encrypter(
+            byte[] encryptionKey,
+            byte[] signingKey,
+            byte[] signingKeyFingerprint,
+            string seed)
+            : this (
+                encryptionKey,
+                signingKey,
+                signingKeyFingerprint,
+                string.IsNullOrEmpty(seed) ? null : Encoding.UTF8.GetBytes(seed))
+        { }
 
         /*
          * Creates a new plain text message.
@@ -26,11 +39,17 @@ namespace magic.lambda.crypto.utilities
         public Encrypter(
             byte[] encryptionKey,
             byte[] signingKey,
-            byte[] signingKeyFingerprint)
+            byte[] signingKeyFingerprint,
+            byte[] seed = null)
         {
             // Sanity checking invocation, fingerprint should be SHA256 of signing key's public sibling.
             if (signingKeyFingerprint.Length != 32)
                 throw new ArgumentException("Signing key's fingerprint was not valid");
+
+            // Creating our CS RNG instance.
+            _csrng = new SecureRandom();
+            if (seed != null)
+                _csrng.SetSeed(seed);
 
             _encryptionKey = encryptionKey;
             _signingKey = signingKey;
@@ -57,7 +76,7 @@ namespace magic.lambda.crypto.utilities
         /*
          * Creates and returns signed plain content of message.
          */
-        static byte[] Sign(
+        byte[] Sign(
             byte[] content,
             byte[] signingKeyFingerprint,
             byte[] signingKey)
@@ -89,7 +108,7 @@ namespace magic.lambda.crypto.utilities
         /*
          * Creates encrypted content from the given argument.
          */
-        static byte[] Encrypt(
+        byte[] Encrypt(
             byte[] content,
             byte[] encryptionKey)
         {
@@ -121,11 +140,10 @@ namespace magic.lambda.crypto.utilities
         /*
          * Creates a symmetric AES encryption key, to encrypt payload.
          */
-        static byte[] CreateAesKey()
+        byte[] CreateAesKey()
         {
-            var rnd = new SecureRandom();
             var bytes = new byte[32];
-            rnd.NextBytes(bytes);
+            _csrng.NextBytes(bytes);
             return bytes;
         }
 

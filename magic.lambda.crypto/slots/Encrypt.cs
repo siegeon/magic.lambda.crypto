@@ -8,8 +8,8 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using ut = magic.lambda.crypto.utilities;
 using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots
 {
@@ -33,6 +33,7 @@ namespace magic.lambda.crypto.slots
             var encryptionKey = ut.Utilities.GetKeyFromArguments(input, "encryption-key");
             var signingKeyFingerprint = ut.Utilities.GetFingerprint(input, "signing-key-fingerprint");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
 
             // House cleaning.
             input.Clear();
@@ -42,7 +43,8 @@ namespace magic.lambda.crypto.slots
             var encrypter = new Encrypter(
                 encryptionKey,
                 signingKey,
-                signingKeyFingerprint);
+                signingKeyFingerprint,
+                seed);
 
             // Signing and encrypting content.
             var rawResult = encrypter.SignAndEncrypt(content);

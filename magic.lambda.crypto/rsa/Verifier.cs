@@ -4,13 +4,8 @@
  */
 
 using System;
-using System.Text;
-using System.Linq;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
-using magic.node;
-using magic.node.extensions;
-using magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.rsa
 {
