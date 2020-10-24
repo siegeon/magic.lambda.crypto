@@ -357,7 +357,7 @@ channel - Giving spoofers and malicious hackers literally nothing to work with, 
 of the public key the message was encrypted with.
 
 Hence, malicious adversaries in the middle of the communication, will not know who the message originated from,
-only to whom it was addressed - In addition to of course also not being able to read the content of the message.
+only to what decryption key it was addressed. In addition no adversary will be able to read the encrypted content.
 
 ### The encryption format
 
@@ -366,8 +366,8 @@ Hence, the steps for the first process is as follows.
 
 1. Signing key's fingerprint in SHA256 `byte[]` format, 32 bytes long
 2. The length of the signature as `int`, 4 bytes long
-3. The actual signature of the message, where the signature is generated from the plain text content of the message
-4. The content of the message in `byte[]` format, possibly converted from a string as UTF8 content
+3. The actual signature of the message
+4. The content of the message in `byte[]` format
 
 Logically it becomes as follows; SHA256(signing_key) + signature_length + signature + plain_text_content.
 Then the result from the above steps is encrypted using AES, with a random generated session key 
