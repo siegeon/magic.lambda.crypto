@@ -17,11 +17,15 @@ namespace magic.lambda.crypto
     [Slot(Name = "crypto.fingerprint")]
     public class Fingerprint : ISlot
     {
+        /// <summary>
+        /// Implementation of slot.
+        /// </summary>
+        /// <param name="signaler">Signaler invoking slot.</param>
+        /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
             var content = Utilities.GetContent(input, true);
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Retrieving fingerprint.
             input.Value = Utilities.CreateFingerprint(content);

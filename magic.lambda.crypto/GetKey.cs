@@ -20,6 +20,11 @@ namespace magic.lambda.crypto
     [Slot(Name = "crypto.get-key")]
     public class GetKey : ISlot
     {
+        /// <summary>
+        /// Implementation of slot.
+        /// </summary>
+        /// <param name="signaler">Signaler invoking slot.</param>
+        /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.

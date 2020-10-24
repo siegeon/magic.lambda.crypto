@@ -20,9 +20,6 @@ namespace magic.lambda.crypto.aes
     [Slot(Name = "crypto.aes.decrypt")]
     public class AesDecrypt : ISlot
     {
-        const int MAC_SIZE = 128;
-        const int NONCE_SIZE = 12;
-
         /// <summary>
         /// Implementation of slot.
         /// </summary>
