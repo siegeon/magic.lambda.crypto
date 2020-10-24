@@ -8,7 +8,6 @@ using System.IO;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
-using aes = magic.lambda.crypto.aes;
 
 namespace magic.lambda.crypto.utilities
 {
@@ -106,10 +105,8 @@ namespace magic.lambda.crypto.utilities
 
                 // Writing encrypted AES key.
                 var aesKey = CreateAesKey();
-                var encryptedAesKey = rsa.Encrypter.EncryptMessage(
-                    new RsaEngine(),
-                    aesKey,
-                    PublicKeyFactory.CreateKey(encryptionKey));
+                var rsaEncrypter = new rsa.Encrypter(encryptionKey); 
+                var encryptedAesKey = rsaEncrypter.Encrypt(aesKey);
                 encWriter.Write(encryptedAesKey.Length);
                 encWriter.Write(encryptedAesKey);
 

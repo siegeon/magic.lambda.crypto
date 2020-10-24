@@ -3,56 +3,33 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
-using System.Linq;
-using System.Text;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Encodings;
-using magic.node;
-using magic.node.extensions;
-using magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.rsa
 {
     /*
      * Utility class to provide common functions for other classes and methods.
      */
-    internal static class Decrypter
+    internal class Decrypter
     {
-        /*
-         * Decrypts a message using the specified engine, and returns result to
-         * caller, according to caller's specifications.
-         */
-        internal static void Decrypt(Node input, IAsymmetricBlockCipher engine)
+        readonly AsymmetricKeyParameter _key;
+
+        internal Decrypter(byte[] key)
         {
-            // Retrieving message and other arguments.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ? Convert.FromBase64String(strMsg) : rawMessage as byte[];
-
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var privateKey = Utilities.GetPrivateKey(input);
-            input.Clear();
-
-            // Decrypting message, and returning results to according to caller's specifications.
-            var result = DecryptMessage(message, privateKey, new RsaEngine());
-            if (raw)
-                input.Value = result;
-            else
-                input.Value = Encoding.UTF8.GetString(result);
+            _key = PrivateKeyFactory.CreateKey(key);
         }
 
         /*
          * Decrypts the specified message accordint to the specified arguments.
          */
-        internal static byte[] DecryptMessage(
-            byte[] message,
-            AsymmetricKeyParameter key,
-            IAsymmetricBlockCipher engine)
+        internal byte[] Decrypt(byte[] message)
         {
             // Creating our encryption engine, and decorating according to caller's specifications.
-            var encryptEngine = new Pkcs1Encoding(engine);
-            encryptEngine.Init(false, key);
+            var encryptEngine = new Pkcs1Encoding(new RsaEngine());
+            encryptEngine.Init(false, _key);
 
             // Decrypting message, and returning results to according to caller's specifications.
             var result = encryptEngine.ProcessBlock(message, 0, message.Length);

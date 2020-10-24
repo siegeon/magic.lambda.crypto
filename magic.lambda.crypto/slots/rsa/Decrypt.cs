@@ -3,10 +3,14 @@
  * See the enclosed LICENSE file for details.
  */
 
-using Org.BouncyCastle.Crypto.Engines;
+using System;
+using System.Text;
+using System.Linq;
 using magic.node;
+using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.rsa;
+using ut = magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots.rsa
 {
@@ -24,7 +28,20 @@ namespace magic.lambda.crypto.slots.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            Decrypter.Decrypt(input, new RsaEngine());
+            // Retrieving message and other arguments.
+            var rawMessage = input.GetEx<object>();
+            var message = rawMessage is string strMsg ? Convert.FromBase64String(strMsg) : rawMessage as byte[];
+
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+            var privateKey = ut.Utilities.GetKeyFromArguments(input, "private-key");
+            input.Clear();
+
+            var rsaDecrypter = new Decrypter(privateKey);
+            var result = rsaDecrypter.Decrypt(message);
+            if (raw)
+                input.Value = result;
+            else
+                input.Value = Encoding.UTF8.GetString(result);
         }
     }
 }

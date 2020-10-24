@@ -65,10 +65,8 @@ namespace magic.lambda.crypto.utilities
                 var encryptedAesKey = encReader.ReadBytes(encReader.ReadInt32());
 
                 // Decrypting AES key.
-                var decryptedAesKey = rsa.Decrypter.DecryptMessage(
-                    encryptedAesKey,
-                    PrivateKeyFactory.CreateKey(_decryptionKey),
-                    new RsaEngine());
+                var rsaDecrypter = new rsa.Decrypter(_decryptionKey);
+                var decryptedAesKey = rsaDecrypter.Decrypt(encryptedAesKey);
 
                 // Reading the encrypted content.
                 var encryptedContent = ReadRestOfStream(encStream);
