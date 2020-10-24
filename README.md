@@ -414,7 +414,7 @@ agent's ability to brute force prime numbers in the case of RSA, and similar tec
 This means that even though you create an extremely strong key pair according to today's standard - Due to
 Moore's law, some 5-10 years down the road, the NSA and the CIA will probably be able to reproduce your private
 key, using nothing but your public key as input. And some 10-20 years later, some kid with a pocket calculator,
-will also probably be able to do the same. Since agencies such as the FSB, NSA and the CIA also happens to
+will also probably be able to do the same. Since agencies such as the FSB, NSA and the MI6 also happens to
 vacum clean the internet, for everything transmitted through your ISP, this implies that 5-10 years from now,
 they'll be able to read your communication, and figure out what you were talking about some 5-10 years ago.
 
