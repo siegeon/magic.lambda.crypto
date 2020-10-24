@@ -3,19 +3,18 @@
  * See the enclosed LICENSE file for details.
  */
 
-using Org.BouncyCastle.Crypto.Generators;
 using magic.node;
 using magic.signals.contracts;
 using magic.lambda.crypto.rsa.utilities;
 
-namespace magic.lambda.crypto.rsa
+namespace magic.lambda.crypto.slots.rsa
 {
     /// <summary>
-    /// [crypto.rsa.create-key] slot to create an RSA keypair and return as DER encoded,
-    /// .
+    /// [crypto.rsa.verify] slot to verify that some piece of text was cryptographically
+    /// signed with a specific private key.
     /// </summary>
-    [Slot(Name = "crypto.rsa.create-key")]
-    public class CreateKey : ISlot
+    [Slot(Name = "crypto.rsa.verify")]
+    public class Verify : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -24,7 +23,7 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            KeyGenerator.CreateNewKeyPair(input, new RsaKeyPairGenerator());
+            Verifier.VerifySignature(input, "RSA");
         }
     }
 }

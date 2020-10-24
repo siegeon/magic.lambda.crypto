@@ -15,7 +15,7 @@ using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.utilities;
 
-namespace magic.lambda.crypto.aes
+namespace magic.lambda.crypto.slots.aes
 {
     /// <summary>
     /// [crypto.aes.decrypt] slot to decrypt some content using a symmetric cryptography algorithm (AES),

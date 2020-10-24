@@ -3,17 +3,19 @@
  * See the enclosed LICENSE file for details.
  */
 
+using Org.BouncyCastle.Crypto.Engines;
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.rsa.utilities;
 
-namespace magic.lambda.crypto
+namespace magic.lambda.crypto.slots.rsa
 {
     /// <summary>
-    /// [crypto.fingerprint] slot that returns the fingerprint of whatever it is given.
+    /// [crypto.rsa.encrypt] slot to encrypt some content using a public key that can only be decrypted
+    /// using its public key.
     /// </summary>
-    [Slot(Name = "crypto.fingerprint")]
-    public class Fingerprint : ISlot
+    [Slot(Name = "crypto.rsa.encrypt")]
+    public class Encrypt : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -22,11 +24,7 @@ namespace magic.lambda.crypto
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Retrieving arguments.
-            var content = Utilities.GetContent(input, true);
-
-            // Retrieving fingerprint.
-            input.Value = Utilities.CreateFingerprint(content);
+            ut.Encrypter.EncryptMessage(input, new RsaEngine());
         }
     }
 }

@@ -11,7 +11,7 @@ using magic.signals.contracts;
 using ut = magic.lambda.crypto.utilities;
 using magic.lambda.crypto.crypto.utilities;
 
-namespace magic.lambda.crypto.crypto
+namespace magic.lambda.crypto.slots
 {
     /// <summary>
     /// [crypto.encrypt] slot that signs and encrypts the specified

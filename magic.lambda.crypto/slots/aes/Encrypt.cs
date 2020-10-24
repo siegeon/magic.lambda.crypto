@@ -12,7 +12,7 @@ using magic.signals.contracts;
 using magic.lambda.crypto.utilities;
 using ut = magic.lambda.crypto.aes.utilities;
 
-namespace magic.lambda.crypto.aes
+namespace magic.lambda.crypto.slots.aes
 {
     /// <summary>
     /// [crypto.aes.encrypt] slot to encrypt some content using a symmetric cryptography algorithm (AES).

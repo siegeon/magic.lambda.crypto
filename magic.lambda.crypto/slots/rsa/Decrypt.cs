@@ -8,7 +8,7 @@ using magic.node;
 using magic.signals.contracts;
 using ut = magic.lambda.crypto.rsa.utilities;
 
-namespace magic.lambda.crypto.rsa
+namespace magic.lambda.crypto.slots.rsa
 {
     /// <summary>
     /// [crypto.rsa.decrypt] slot to decrypt some content using a private key that was previously

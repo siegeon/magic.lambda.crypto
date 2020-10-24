@@ -5,16 +5,15 @@
 
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.rsa.utilities;
+using magic.lambda.crypto.utilities;
 
-namespace magic.lambda.crypto.rsa
+namespace magic.lambda.crypto.misc
 {
     /// <summary>
-    /// [crypto.rsa.sign] slot to cryptographically sign some piece of data with some
-    /// private RSA key.
+    /// [crypto.fingerprint] slot that returns the fingerprint of whatever it is given.
     /// </summary>
-    [Slot(Name = "crypto.rsa.sign")]
-    public class Sign : ISlot
+    [Slot(Name = "crypto.fingerprint")]
+    public class Fingerprint : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -23,7 +22,11 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            Signer.SignMessage(input, "RSA");
+            // Retrieving arguments.
+            var content = Utilities.GetContent(input, true);
+
+            // Retrieving fingerprint.
+            input.Value = Utilities.CreateFingerprint(content);
         }
     }
 }
