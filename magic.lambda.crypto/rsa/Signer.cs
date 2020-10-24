@@ -3,52 +3,43 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
-using System.Linq;
-using System.Text;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
-using magic.node;
-using magic.node.extensions;
-using magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.rsa
 {
     /*
      * Utility class to provide common functions for other classes and methods.
      */
-    internal static class Signer
+    internal class Signer
     {
+        readonly AsymmetricKeyParameter _key;
+
+        public Signer(byte[] key)
+        {
+            _key = PrivateKeyFactory.CreateKey(key);
+        }
+
         /*
          * Cryptographically signs the specified message, according to caller's specifications.
          */
-        internal static void Sign(Node input, string encryptionAlgorithm)
+        internal byte[] Sign(string algo, byte[] message)
         {
-            // Retrieving arguments.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
-
-            var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var key = Utilities.GetPrivateKey(input);
-            var signer = SignerUtilities.GetSigner($"{algo}with{encryptionAlgorithm}");
-            var cipher = SignMessage(signer, message, key);
-            input.Value = raw ? cipher : (object)Convert.ToBase64String(cipher);
-            input.Clear();
+            var signer = SignerUtilities.GetSigner($"{algo}withRSA");
+            return Sign(signer, message, _key);
         }
 
         /*
          * Cryptographically signs the specified message.
          */
-        internal static byte[] SignMessage(
+        internal static byte[] Sign(
             ISigner signer,
             byte[] message,
             AsymmetricKeyParameter key)
         {
             signer.Init(true, key);
             signer.BlockUpdate(message, 0, message.Length);
-            byte[] signature = signer.GenerateSignature();
-            return signature;
+            return signer.GenerateSignature();
         }
     }
 }

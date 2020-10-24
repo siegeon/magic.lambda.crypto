@@ -73,7 +73,7 @@ namespace magic.lambda.crypto.utilities
 
                 // Writing signature.
                 var signer = SignerUtilities.GetSigner($"SHA256withRSA");
-                var signature =  rsa.Signer.SignMessage(
+                var signature =  rsa.Signer.Sign(
                     signer,
                     content,
                     PrivateKeyFactory.CreateKey(signingKey));

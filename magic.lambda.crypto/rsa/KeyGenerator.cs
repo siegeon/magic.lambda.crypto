@@ -3,15 +3,12 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
-using System.Linq;
 using System.Text;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
-using magic.node;
-using magic.node.extensions;
+using Org.BouncyCastle.Crypto.Generators;
 using magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.rsa
@@ -19,26 +16,28 @@ namespace magic.lambda.crypto.rsa
     /*
      * Utility class to create an RSA key pair.
      */
-    internal static class KeyGenerator
+    internal class KeyGenerator
     {
+        readonly SecureRandom _csrng;
+
+        public KeyGenerator(string seed)
+            : this(string.IsNullOrEmpty(seed) ? null : Encoding.UTF8.GetBytes(seed))
+        { }
+
+        public KeyGenerator(byte[] seed)
+        {
+            _csrng = new SecureRandom();
+            if (seed != null)
+                _csrng.SetSeed(seed);
+        }
+
         /*
          * Creates a new keypair using the specified key pair generator, and returns the key pair to caller.
          */
-        internal static void Generate(Node input, IAsymmetricCipherKeyPairGenerator generator)
+        internal (byte[] Private, byte[] Public, string Fingerprint) Generate(int strength)
         {
-            // Retrieving arguments, if given, or supplying sane defaults if not.
-            var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
-            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-
-            // Clearing existing node, to avoid returning garbage back to caller.
-            input.Clear();
-
-            // Initializing our generator according to caller's specifications.
-            var rnd = new SecureRandom();
-            if (seed != null)
-                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
-            generator.Init(new KeyGenerationParameters(rnd, strength));
+            var generator = new RsaKeyPairGenerator();
+            generator.Init(new KeyGenerationParameters(_csrng, strength));
 
             // Creating keypair.
             var keyPair = generator.GenerateKeyPair();
@@ -48,20 +47,9 @@ namespace magic.lambda.crypto.rsa
             // Returning key pair according to caller's specifications.
             var publicKey = publicInfo.GetDerEncoded();
             var fingerprint = Utilities.CreateFingerprint(publicKey);
-            if (raw)
-            {
-                // Returning as DER encoded raw byte[].
-                input.Add(new Node("private", privateInfo.GetDerEncoded()));
-                input.Add(new Node("public", publicKey));
-                input.Add(new Node("fingerprint", fingerprint));
-            }
-            else
-            {
-                // Returning as base64 encoded DER format.
-                input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
-                input.Add(new Node("public", Convert.ToBase64String(publicKey)));
-                input.Add(new Node("fingerprint", fingerprint));
-            }
+
+            // Returning as DER encoded raw byte[].
+            return (privateInfo.GetDerEncoded(), publicKey, fingerprint);
         }
     }
 }
