@@ -449,6 +449,9 @@ you are using. Hence ...
 
 > The only true privacy that exists, is never telling anybody anything!
 
+With the above disclaimer set aside, I guarantee you that I have done *everything* I can to make
+sure the cryptography slots in Magic and this library is as strong and secure as I am able to.
+
 ## Quality gates
 
 - [![Build status](https://travis-ci.com/polterguy/magic.lambda.crypto.svg?master)](https://travis-ci.com/polterguy/magic.lambda.crypto)
