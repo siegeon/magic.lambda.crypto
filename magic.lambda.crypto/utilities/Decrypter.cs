@@ -74,7 +74,8 @@ namespace magic.lambda.crypto.utilities
                 var encryptedContent = ReadRestOfStream(encStream);
 
                 // Decrypting content.
-                var decryptedContent = aes.Decrypter.Decrypt(decryptedAesKey, encryptedContent);
+                var aesDecrypter = new aes.Decrypter(decryptedAesKey);
+                var decryptedContent = aesDecrypter.Decrypt(encryptedContent);
 
                 // Reading decrypted content and returning results to caller.
                 using (var decryptedContentStream = new MemoryStream(decryptedContent))

@@ -14,24 +14,28 @@ namespace magic.lambda.crypto.aes
     /*
      * Utility class to provide common functions for other classes and methods.
      */
-    internal static class Encrypter
+    internal class Encrypter
     {
-        const int MAC_SIZE = 128;
-        const int NONCE_SIZE = 12;
+        readonly byte[] _key;
+
+        public Encrypter(byte[] key)
+        {
+            _key = key;
+        }
 
         /*
          * AES encrypts the specified data, using the specified password, and bit strength.
          */
-        internal static byte[] Encrypt(byte[] password, byte[] data)
+        internal byte[] Encrypt(byte[] data)
         {
             // Creating our nonce, or Initial Vector (IV).
             var rnd = new SecureRandom();
-            var nonce = new byte[NONCE_SIZE];
+            var nonce = new byte[Constants.NONCE_SIZE];
             rnd.NextBytes(nonce, 0, nonce.Length);
 
             // Initializing AES engine.
             var cipher = new GcmBlockCipher(new AesEngine());
-            var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
+            var parameters = new AeadParameters(new KeyParameter(_key), Constants.MAC_SIZE, nonce, null);
             cipher.Init(true, parameters);
 
             // Creating buffer to hold encrypted content, and encrypting into buffer.

@@ -37,7 +37,8 @@ namespace magic.lambda.crypto.slots.aes
             input.Clear();
 
             // Performing actual encryption.
-            var result = Encrypter.Encrypt(password, message);
+            var aesEncrypter = new Encrypter(password);
+            var result = aesEncrypter.Encrypt(message);
 
             // Returning results to caller according to specifications.
             input.Value = raw ? (object)result : Convert.ToBase64String(result);

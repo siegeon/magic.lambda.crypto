@@ -13,26 +13,33 @@ namespace magic.lambda.crypto.aes
     /*
      * Utility class to provide common functions for other classes and methods.
      */
-    internal static class Decrypter
+    internal class Decrypter
     {
-        const int MAC_SIZE = 128;
-        const int NONCE_SIZE = 12;
+        readonly byte[] _key;
+
+        /*
+         * Creates an instance of the AES decrypter, with the specified password.
+         */
+        public Decrypter(byte[] key)
+        {
+            _key = key;
+        }
 
         /*
          * AES decrypts the specified data, using the specified password.
          */
-        internal static byte[] Decrypt(byte[] password, byte[] data)
+        internal byte[] Decrypt(byte[] data)
         {
             using (var stream = new MemoryStream(data))
             {
                 using (var reader = new BinaryReader(stream))
                 {
                     // Reading and discarding nonce.
-                    var nonce = reader.ReadBytes(NONCE_SIZE);
+                    var nonce = reader.ReadBytes(Constants.NONCE_SIZE);
 
                     // Creating and initializing AES engine.
                     var cipher = new GcmBlockCipher(new AesEngine());
-                    var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
+                    var parameters = new AeadParameters(new KeyParameter(_key), Constants.MAC_SIZE, nonce, null);
                     cipher.Init(false, parameters);
 
                     // Reading encrypted parts, and decrypting into result.

@@ -8,6 +8,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
+using aes = magic.lambda.crypto.aes;
 
 namespace magic.lambda.crypto.utilities
 {
@@ -113,7 +114,8 @@ namespace magic.lambda.crypto.utilities
                 encWriter.Write(encryptedAesKey);
 
                 // Writing encrypted content.
-                var encrypted = aes.Encrypter.Encrypt(aesKey, content);
+                var aesEcnrypter = new aes.Encrypter(aesKey);
+                var encrypted = aesEcnrypter.Encrypt(content);
                 encWriter.Write(encrypted);
                 return encStream.ToArray();
             }
