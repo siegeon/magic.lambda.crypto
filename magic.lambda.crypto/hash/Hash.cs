@@ -53,6 +53,9 @@ namespace magic.lambda.crypto.hash
                 default:
                     throw new ArgumentException($"'{algorithm}' is an unknown hashing algorithm.");
             }
+
+            // House cleaning.
+            input.Clear();
         }
 
         #region [ -- Private helper methods -- ]
