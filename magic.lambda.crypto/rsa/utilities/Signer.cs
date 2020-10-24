@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
@@ -31,9 +32,23 @@ namespace magic.lambda.crypto.rsa.utilities
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var key = Utilities.GetPrivateKey(input);
             var signer = SignerUtilities.GetSigner($"{algo}with{encryptionAlgorithm}");
-            var cipher = Utilities.SignMessage(signer, message, key);
+            var cipher = SignMessage(signer, message, key);
             input.Value = raw ? cipher : (object)Convert.ToBase64String(cipher);
             input.Clear();
+        }
+
+        /*
+         * Cryptographically signs the specified message.
+         */
+        internal static byte[] SignMessage(
+            ISigner signer,
+            byte[] message,
+            AsymmetricKeyParameter key)
+        {
+            signer.Init(true, key);
+            signer.BlockUpdate(message, 0, message.Length);
+            byte[] signature = signer.GenerateSignature();
+            return signature;
         }
     }
 }

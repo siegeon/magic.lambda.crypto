@@ -9,6 +9,8 @@ using System.Text;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
 using magic.lambda.crypto.utilities;
+using ut_rsa = magic.lambda.crypto.rsa.utilities;
+using ut_aes = magic.lambda.crypto.aes.utilities;
 
 namespace magic.lambda.crypto
 {
@@ -82,7 +84,7 @@ namespace magic.lambda.crypto
                 var encryptedAesKey = encReader.ReadBytes(encReader.ReadInt32());
 
                 // Decrypting AES key.
-                var decryptedAesKey = Utilities.DecryptMessage(
+                var decryptedAesKey = ut_rsa.Decrypter.DecryptMessage(
                     encryptedAesKey,
                     PrivateKeyFactory.CreateKey(_decryptionKey),
                     new RsaEngine());
@@ -91,7 +93,7 @@ namespace magic.lambda.crypto
                 var encryptedContent = ReadRestOfStream(encStream);
 
                 // Decrypting content.
-                var decryptedContent = Utilities.Decrypt(decryptedAesKey, encryptedContent);
+                var decryptedContent = ut_aes.Decrypter.Decrypt(decryptedAesKey, encryptedContent);
 
                 // Reading decrypted content and returning results to caller.
                 using (var decryptedContentStream = new MemoryStream(decryptedContent))

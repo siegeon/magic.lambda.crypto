@@ -4,16 +4,11 @@
  */
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Crypto.Modes;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Encodings;
-using Org.BouncyCastle.Crypto.Parameters;
 using magic.node;
 using magic.node.extensions;
 
@@ -24,9 +19,6 @@ namespace magic.lambda.crypto.utilities
      */
     internal static class Utilities
     {
-        const int MAC_SIZE = 128;
-        const int NONCE_SIZE = 12;
-
         /*
          * Creates a fingerprint from the specified content.
          */
@@ -56,115 +48,6 @@ namespace magic.lambda.crypto.utilities
             {
                 return hash.ComputeHash(Encoding.UTF8.GetBytes(passphrase));
             }
-        }
-
-        /*
-         * Encrypts the specified message according to the specified arguments.
-         */
-        internal static byte[] EncryptMessage(
-            IAsymmetricBlockCipher engine,
-            byte[] message,
-            AsymmetricKeyParameter key)
-        {
-            // Creating our encryption engine, and decorating according to caller's specifications.
-            var encryptionEngine = new Pkcs1Encoding(engine);
-            encryptionEngine.Init(true, key);
-
-            // Encrypting message, and returning results to according to caller's specifications.
-            var result = encryptionEngine.ProcessBlock(message, 0, message.Length);
-            return result;
-        }
-
-        /*
-         * AES encrypts the specified data, using the specified password, and bit strength.
-         */
-        internal static byte[] AesEncrypt(byte[] password, byte[] data)
-        {
-            // Creating our nonce, or Initial Vector (IV).
-            var rnd = new SecureRandom();
-            var nonce = new byte[NONCE_SIZE];
-            rnd.NextBytes(nonce, 0, nonce.Length);
-
-            // Initializing AES engine.
-            var cipher = new GcmBlockCipher(new AesEngine());
-            var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
-            cipher.Init(true, parameters);
-
-            // Creating buffer to hold encrypted content, and encrypting into buffer.
-            var encrypted = new byte[cipher.GetOutputSize(data.Length)];
-            var len = cipher.ProcessBytes(data, 0, data.Length, encrypted, 0);
-            cipher.DoFinal(encrypted, len);
-
-            // Writing nonce and encrypted data, and returning as byte[] to caller.
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = new BinaryWriter(stream))
-                {
-                    writer.Write(nonce);
-                    writer.Write(encrypted);
-                }
-                return stream.ToArray();
-            }
-        }
-
-        /*
-         * Decrypts the specified message accordint to the specified arguments.
-         */
-        internal static byte[] DecryptMessage(
-            byte[] message,
-            AsymmetricKeyParameter key,
-            IAsymmetricBlockCipher engine)
-        {
-            // Creating our encryption engine, and decorating according to caller's specifications.
-            var encryptEngine = new Pkcs1Encoding(engine);
-            encryptEngine.Init(false, key);
-
-            // Decrypting message, and returning results to according to caller's specifications.
-            var result = encryptEngine.ProcessBlock(message, 0, message.Length);
-            return result;
-        }
-
-        /*
-         * AES decrypts the specified data, using the specified password.
-         */
-        internal static byte[] Decrypt(byte[] password, byte[] data)
-        {
-            using (var stream = new MemoryStream(data))
-            {
-                using (var reader = new BinaryReader(stream))
-                {
-                    // Reading and discarding nonce.
-                    var nonce = reader.ReadBytes(NONCE_SIZE);
-
-                    // Creating and initializing AES engine.
-                    var cipher = new GcmBlockCipher(new AesEngine());
-                    var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
-                    cipher.Init(false, parameters);
-
-                    // Reading encrypted parts, and decrypting into result.
-                    var encrypted = reader.ReadBytes(data.Length - nonce.Length);
-                    var result = new byte[cipher.GetOutputSize(encrypted.Length)];
-                    var len = cipher.ProcessBytes(encrypted, 0, encrypted.Length, result, 0);
-                    cipher.DoFinal(result, len);
-
-                    // Returning result as byte[].
-                    return result;
-                }
-            }
-        }
-
-        /*
-         * Cryptographically signs the specified message.
-         */
-        internal static byte[] SignMessage(
-            ISigner signer,
-            byte[] message,
-            AsymmetricKeyParameter key)
-        {
-            signer.Init(true, key);
-            signer.BlockUpdate(message, 0, message.Length);
-            byte[] signature = signer.GenerateSignature();
-            return signature;
         }
 
         /*

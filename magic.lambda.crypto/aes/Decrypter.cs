@@ -4,8 +4,12 @@
  */
 
 using System;
+using System.IO;
 using System.Text;
 using System.Linq;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -18,8 +22,11 @@ namespace magic.lambda.crypto.aes
     /// that was previously encrypted using the same algorithm.
     /// </summary>
     [Slot(Name = "crypto.aes.decrypt")]
-    public class AesDecrypt : ISlot
+    public class Decrypter : ISlot
     {
+        const int MAC_SIZE = 128;
+        const int NONCE_SIZE = 12;
+
         /// <summary>
         /// Implementation of slot.
         /// </summary>
@@ -37,10 +44,39 @@ namespace magic.lambda.crypto.aes
             input.Clear();
 
             // Performing actual decryption.
-            var result = Utilities.Decrypt(password, message);
+            var result = Decrypt(password, message);
 
             // Returning results to caller according to specifications.
             input.Value = raw ? (object)result : Encoding.UTF8.GetString(result);
+        }
+
+        /*
+         * AES decrypts the specified data, using the specified password.
+         */
+        internal static byte[] Decrypt(byte[] password, byte[] data)
+        {
+            using (var stream = new MemoryStream(data))
+            {
+                using (var reader = new BinaryReader(stream))
+                {
+                    // Reading and discarding nonce.
+                    var nonce = reader.ReadBytes(NONCE_SIZE);
+
+                    // Creating and initializing AES engine.
+                    var cipher = new GcmBlockCipher(new AesEngine());
+                    var parameters = new AeadParameters(new KeyParameter(password), MAC_SIZE, nonce, null);
+                    cipher.Init(false, parameters);
+
+                    // Reading encrypted parts, and decrypting into result.
+                    var encrypted = reader.ReadBytes(data.Length - nonce.Length);
+                    var result = new byte[cipher.GetOutputSize(encrypted.Length)];
+                    var len = cipher.ProcessBytes(encrypted, 0, encrypted.Length, result, 0);
+                    cipher.DoFinal(result, len);
+
+                    // Returning result as byte[].
+                    return result;
+                }
+            }
         }
     }
 }

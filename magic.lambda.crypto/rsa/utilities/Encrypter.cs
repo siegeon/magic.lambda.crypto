@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Text;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Encodings;
 using magic.node;
 using magic.node.extensions;
 using magic.lambda.crypto.utilities;
@@ -30,9 +31,26 @@ namespace magic.lambda.crypto.rsa.utilities
 
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var key = Utilities.GetPublicKey(input);
-            var cipher = Utilities.EncryptMessage(engine, message, key);
+            var cipher = EncryptMessage(engine, message, key);
             input.Value = raw ? cipher : (object)Convert.ToBase64String(cipher);
             input.Clear();
+        }
+
+        /*
+         * Encrypts the specified message according to the specified arguments.
+         */
+        internal static byte[] EncryptMessage(
+            IAsymmetricBlockCipher engine,
+            byte[] message,
+            AsymmetricKeyParameter key)
+        {
+            // Creating our encryption engine, and decorating according to caller's specifications.
+            var encryptionEngine = new Pkcs1Encoding(engine);
+            encryptionEngine.Init(true, key);
+
+            // Encrypting message, and returning results to according to caller's specifications.
+            var result = encryptionEngine.ProcessBlock(message, 0, message.Length);
+            return result;
         }
     }
 }

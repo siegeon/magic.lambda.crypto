@@ -10,6 +10,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.aes.utilities;
 
 namespace magic.lambda.crypto.aes
 {
@@ -17,7 +18,7 @@ namespace magic.lambda.crypto.aes
     /// [crypto.aes.encrypt] slot to encrypt some content using a symmetric cryptography algorithm (AES).
     /// </summary>
     [Slot(Name = "crypto.aes.encrypt")]
-    public class AesEncrypt : ISlot
+    public class Encrypter : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -36,7 +37,7 @@ namespace magic.lambda.crypto.aes
             input.Clear();
 
             // Performing actual encryption.
-            var result = Utilities.AesEncrypt(password, message);
+            var result = ut.Encrypter.Encrypt(password, message);
 
             // Returning results to caller according to specifications.
             input.Value = raw ? (object)result : Convert.ToBase64String(result);
