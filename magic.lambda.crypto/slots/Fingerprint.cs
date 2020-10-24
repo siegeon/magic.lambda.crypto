@@ -7,7 +7,7 @@ using magic.node;
 using magic.signals.contracts;
 using magic.lambda.crypto.utilities;
 
-namespace magic.lambda.crypto.misc
+namespace magic.lambda.crypto.slots
 {
     /// <summary>
     /// [crypto.fingerprint] slot that returns the fingerprint of whatever it is given.

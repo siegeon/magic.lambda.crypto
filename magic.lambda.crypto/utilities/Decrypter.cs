@@ -8,10 +8,8 @@ using System.IO;
 using System.Text;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
-using ut_rsa = magic.lambda.crypto.rsa.utilities;
-using ut_aes = magic.lambda.crypto.aes.utilities;
 
-namespace magic.lambda.crypto.crypto.utilities
+namespace magic.lambda.crypto.utilities
 {
     /*
      * Helper class to decrypt and verify the signature of a message.
@@ -67,7 +65,7 @@ namespace magic.lambda.crypto.crypto.utilities
                 var encryptedAesKey = encReader.ReadBytes(encReader.ReadInt32());
 
                 // Decrypting AES key.
-                var decryptedAesKey = ut_rsa.Decrypter.DecryptMessage(
+                var decryptedAesKey = rsa.Decrypter.DecryptMessage(
                     encryptedAesKey,
                     PrivateKeyFactory.CreateKey(_decryptionKey),
                     new RsaEngine());
@@ -76,7 +74,7 @@ namespace magic.lambda.crypto.crypto.utilities
                 var encryptedContent = ReadRestOfStream(encStream);
 
                 // Decrypting content.
-                var decryptedContent = ut_aes.Decrypter.Decrypt(decryptedAesKey, encryptedContent);
+                var decryptedContent = aes.Decrypter.Decrypt(decryptedAesKey, encryptedContent);
 
                 // Reading decrypted content and returning results to caller.
                 using (var decryptedContentStream = new MemoryStream(decryptedContent))

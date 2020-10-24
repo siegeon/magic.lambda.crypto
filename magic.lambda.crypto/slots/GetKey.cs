@@ -11,7 +11,7 @@ using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.utilities;
 
-namespace magic.lambda.crypto.crypto
+namespace magic.lambda.crypto.slots
 {
     /// <summary>
     /// [crypto.get-key] slot that returns the fingerprint of the encryption key

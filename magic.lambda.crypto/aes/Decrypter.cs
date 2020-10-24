@@ -8,7 +8,7 @@ using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 
-namespace magic.lambda.crypto.aes.utilities
+namespace magic.lambda.crypto.aes
 {
     /*
      * Utility class to provide common functions for other classes and methods.

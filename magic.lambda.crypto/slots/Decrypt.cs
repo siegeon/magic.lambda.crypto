@@ -10,7 +10,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 using ut = magic.lambda.crypto.utilities;
-using magic.lambda.crypto.crypto.utilities;
+using magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots
 {

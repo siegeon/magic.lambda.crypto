@@ -8,10 +8,8 @@ using System.IO;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Engines;
-using ut_rsa = magic.lambda.crypto.rsa.utilities;
-using ut_aes = magic.lambda.crypto.aes.utilities;
 
-namespace magic.lambda.crypto.crypto.utilities
+namespace magic.lambda.crypto.utilities
 {
     /*
      * Helper class to sign and encrypt a plain text message.
@@ -75,7 +73,7 @@ namespace magic.lambda.crypto.crypto.utilities
 
                 // Writing signature.
                 var signer = SignerUtilities.GetSigner($"SHA256withRSA");
-                var signature =  ut_rsa.Signer.SignMessage(
+                var signature =  rsa.Signer.SignMessage(
                     signer,
                     content,
                     PrivateKeyFactory.CreateKey(signingKey));
@@ -107,7 +105,7 @@ namespace magic.lambda.crypto.crypto.utilities
 
                 // Writing encrypted AES key.
                 var aesKey = CreateAesKey();
-                var encryptedAesKey = ut_rsa.Encrypter.EncryptMessage(
+                var encryptedAesKey = rsa.Encrypter.EncryptMessage(
                     new RsaEngine(),
                     aesKey,
                     PublicKeyFactory.CreateKey(encryptionKey));
@@ -115,7 +113,7 @@ namespace magic.lambda.crypto.crypto.utilities
                 encWriter.Write(encryptedAesKey);
 
                 // Writing encrypted content.
-                var encrypted = ut_aes.Encrypter.Encrypt(aesKey, content);
+                var encrypted = aes.Encrypter.Encrypt(aesKey, content);
                 encWriter.Write(encrypted);
                 return encStream.ToArray();
             }

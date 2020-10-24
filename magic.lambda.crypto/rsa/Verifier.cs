@@ -11,7 +11,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.lambda.crypto.utilities;
 
-namespace magic.lambda.crypto.rsa.utilities
+namespace magic.lambda.crypto.rsa
 {
     /*
      * Utility class to provide common functions for other classes and methods.

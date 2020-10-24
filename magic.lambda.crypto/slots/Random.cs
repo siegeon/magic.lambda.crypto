@@ -10,7 +10,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 
-namespace magic.lambda.crypto.misc
+namespace magic.lambda.crypto.slots
 {
     /// <summary>
     /// [crypto.random] slot to create a bunch of cryptographically secured random characters.

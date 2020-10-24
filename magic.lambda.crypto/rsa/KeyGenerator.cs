@@ -14,7 +14,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.lambda.crypto.utilities;
 
-namespace magic.lambda.crypto.rsa.utilities
+namespace magic.lambda.crypto.rsa
 {
     /*
      * Utility class to create an RSA key pair.

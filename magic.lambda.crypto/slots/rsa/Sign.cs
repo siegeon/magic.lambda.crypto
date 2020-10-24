@@ -5,7 +5,7 @@
 
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.rsa.utilities;
+using magic.lambda.crypto.rsa;
 
 namespace magic.lambda.crypto.slots.rsa
 {

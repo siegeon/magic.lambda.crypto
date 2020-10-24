@@ -3,21 +3,13 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Parameters;
-using magic.node;
-using magic.node.extensions;
 
-namespace magic.lambda.crypto.aes.utilities
+namespace magic.lambda.crypto.aes
 {
     /*
      * Utility class to provide common functions for other classes and methods.
