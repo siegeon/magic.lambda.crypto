@@ -30,49 +30,6 @@ namespace magic.lambda.crypto.utilities
         const int NONCE_SIZE = 12;
 
         /*
-         * Creates a new keypair using the specified key pair generator, and returns the key pair to caller.
-         */
-        internal static void CreateNewKeyPair(Node input, IAsymmetricCipherKeyPairGenerator generator)
-        {
-            // Retrieving arguments, if given, or supplying sane defaults if not.
-            var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
-            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-
-            // Clearing existing node, to avoid returning garbage back to caller.
-            input.Clear();
-
-            // Initializing our generator according to caller's specifications.
-            var rnd = new SecureRandom();
-            if (seed != null)
-                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
-            generator.Init(new KeyGenerationParameters(rnd, strength));
-
-            // Creating keypair.
-            var keyPair = generator.GenerateKeyPair();
-            var privateInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private);
-            var publicInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public);
-
-            // Returning key pair according to caller's specifications.
-            var publicKey = publicInfo.GetDerEncoded();
-            var fingerprint = CreateFingerprint(publicKey);
-            if (raw)
-            {
-                // Returning as DER encoded raw byte[].
-                input.Add(new Node("private", privateInfo.GetDerEncoded()));
-                input.Add(new Node("public", publicKey));
-                input.Add(new Node("fingerprint", fingerprint));
-            }
-            else
-            {
-                // Returning as base64 encoded DER format.
-                input.Add(new Node("private", Convert.ToBase64String(privateInfo.GetDerEncoded())));
-                input.Add(new Node("public", Convert.ToBase64String(publicKey)));
-                input.Add(new Node("fingerprint", fingerprint));
-            }
-        }
-
-        /*
          * Creates a fingerprint from the specified content.
          */
         internal static string CreateFingerprint(byte[] content)
@@ -101,23 +58,6 @@ namespace magic.lambda.crypto.utilities
             {
                 return hash.ComputeHash(Encoding.UTF8.GetBytes(passphrase));
             }
-        }
-
-        /*
-         * Encrypts a message using the specified engine, and returns result to
-         * caller, according to caller's specifications.
-         */
-        internal static void EncryptMessage(Node input, IAsymmetricBlockCipher engine)
-        {
-            // Retrieving message and other arguments.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
-
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var key = GetPublicKey(input);
-            var cipher = EncryptMessage(engine, message, key);
-            input.Value = raw ? cipher : (object)Convert.ToBase64String(cipher);
-            input.Clear();
         }
 
         /*
@@ -167,28 +107,6 @@ namespace magic.lambda.crypto.utilities
                 }
                 return stream.ToArray();
             }
-        }
-
-        /*
-         * Decrypts a message using the specified engine, and returns result to
-         * caller, according to caller's specifications.
-         */
-        internal static void DecryptMessage(Node input, IAsymmetricBlockCipher engine)
-        {
-            // Retrieving message and other arguments.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ? Convert.FromBase64String(strMsg) : rawMessage as byte[];
-
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var privateKey = GetPrivateKey(input);
-            input.Clear();
-
-            // Decrypting message, and returning results to according to caller's specifications.
-            var result = DecryptMessage(message, privateKey, new RsaEngine());
-            if (raw)
-                input.Value = result;
-            else
-                input.Value = Encoding.UTF8.GetString(result);
         }
 
         /*

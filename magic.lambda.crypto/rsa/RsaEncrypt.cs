@@ -6,7 +6,7 @@
 using Org.BouncyCastle.Crypto.Engines;
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.rsa.utilities;
 
 namespace magic.lambda.crypto.rsa
 {
@@ -24,7 +24,7 @@ namespace magic.lambda.crypto.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            Utilities.EncryptMessage(input, new RsaEngine());
+            ut.Encrypter.EncryptMessage(input, new RsaEngine());
         }
     }
 }
