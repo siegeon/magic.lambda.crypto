@@ -5,7 +5,7 @@
 
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots.misc
 {
@@ -26,7 +26,7 @@ namespace magic.lambda.crypto.slots.misc
             var content = Utilities.GetContent(input, true);
 
             // Retrieving fingerprint.
-            input.Value = Utilities.CreateSha256Fingerprint(content);
+            input.Value = ut.Utilities.CreateSha256Fingerprint(content);
         }
     }
 }

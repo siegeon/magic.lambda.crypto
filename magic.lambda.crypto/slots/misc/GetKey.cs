@@ -3,13 +3,11 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
-using System.Text;
 using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots.misc
 {
@@ -32,13 +30,13 @@ namespace magic.lambda.crypto.slots.misc
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Retrieving fingerprint.
-            var fingerprint = Utilities.GetPackageFingerprint(content);
+            var fingerprint = ut.Utilities.GetPackageFingerprint(content);
 
             // Returning results to caller.
             if (raw)
                 input.Value = fingerprint;
             else
-                input.Value = Utilities.CreateFingerprint(fingerprint);
+                input.Value = ut.Utilities.CreateFingerprint(fingerprint);
         }
     }
 }
