@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace magic.lambda.crypto.utilities
+namespace magic.lambda.crypto.combinations
 {
     /*
      * Helper class to decrypt and verify the signature of a message.

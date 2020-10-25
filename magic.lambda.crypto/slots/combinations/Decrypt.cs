@@ -10,9 +10,9 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.utilities;
-using ut = magic.lambda.crypto.utilities;
+using magic.lambda.crypto.combinations;
 
-namespace magic.lambda.crypto.slots
+namespace magic.lambda.crypto.slots.combinations
 {
     /// <summary>
     /// [crypto.decrypt] slot that decrypts and verifies the
@@ -53,8 +53,8 @@ namespace magic.lambda.crypto.slots
 
         (byte[] Content, byte[] DecryptionKey, bool Raw) GetArguments(Node input)
         {
-            var content = ut.Utilities.GetContent(input, true);
-            var decryptionKey = ut.Utilities.GetKeyFromArguments(input, "decryption-key");
+            var content = Utilities.GetContent(input, true);
+            var decryptionKey = Utilities.GetKeyFromArguments(input, "decryption-key");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
             return (content, decryptionKey, raw);

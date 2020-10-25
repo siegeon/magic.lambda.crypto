@@ -10,9 +10,9 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.utilities;
-using ut = magic.lambda.crypto.utilities;
+using magic.lambda.crypto.combinations;
 
-namespace magic.lambda.crypto.slots
+namespace magic.lambda.crypto.slots.combinations
 {
     /// <summary>
     /// [crypto.encrypt] slot that signs and encrypts the specified
@@ -52,10 +52,10 @@ namespace magic.lambda.crypto.slots
 
         (byte[] Content, byte[] SigningKey, byte[] EncryptionKey, byte[] SigningKeyFingerprint, byte[] Seed, bool Raw) GetArguments(Node input)
         {
-            var content = ut.Utilities.GetContent(input);
-            var signingKey = ut.Utilities.GetKeyFromArguments(input, "signing-key");
-            var encryptionKey = ut.Utilities.GetKeyFromArguments(input, "encryption-key");
-            var signingKeyFingerprint = ut.Utilities.GetFingerprint(input, "signing-key-fingerprint");
+            var content = Utilities.GetContent(input);
+            var signingKey = Utilities.GetKeyFromArguments(input, "signing-key");
+            var encryptionKey = Utilities.GetKeyFromArguments(input, "encryption-key");
+            var signingKeyFingerprint = Utilities.GetFingerprint(input, "signing-key-fingerprint");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var seedRaw = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<object>();
             var seed = seedRaw is string strSeed ? Encoding.UTF8.GetBytes(strSeed) : seedRaw as byte[];
