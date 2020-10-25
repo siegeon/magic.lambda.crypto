@@ -32,25 +32,13 @@ namespace magic.lambda.crypto.slots.misc
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Retrieving fingerprint.
-            var fingerprint = Utilities.GetFingerprint(content);
+            var fingerprint = Utilities.GetPackageFingerprint(content);
 
             // Returning results to caller.
             if (raw)
-            {
-                input.Value = raw;
-            }
+                input.Value = fingerprint;
             else
-            {
-                var result = new StringBuilder();
-                var idxNo = 0;
-                foreach (var idx in fingerprint)
-                {
-                    result.Append(BitConverter.ToString(new byte[] { idx }));
-                    if (++idxNo % 2 == 0)
-                        result.Append("-");
-                }
-                input.Value = result.ToString().TrimEnd('-').ToLowerInvariant();
-            }
+                input.Value = Utilities.CreateFingerprint(fingerprint);
         }
     }
 }

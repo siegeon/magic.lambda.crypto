@@ -8,8 +8,6 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Security.Cryptography;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
 
@@ -21,22 +19,53 @@ namespace magic.lambda.crypto.utilities
     internal static class Utilities
     {
         /*
-         * Creates a fingerprint from the specified content.
+         * Creates a string fingerprint from the specified content by creating
+         * a SHA256 of the specified content, and then returning the hash in
+         * fingerprint format to the caller.
          */
-        internal static string CreateFingerprint(byte[] content)
+        internal static string CreateSha256Fingerprint(byte[] content)
         {
             using (var hash = SHA256.Create())
             {
                 var hashed = hash.ComputeHash(content);
-                var result = new StringBuilder();
-                var idxNo = 0;
-                foreach (var idx in hashed)
-                {
-                    result.Append(BitConverter.ToString(new byte[] { idx }));
-                    if (++idxNo % 2 == 0)
-                        result.Append("-");
-                }
-                return result.ToString().TrimEnd('-').ToLowerInvariant();
+                return CreateFingerprint(hashed);
+            }
+        }
+
+        /*
+         * Creates a fingerprint representation of the specified byte[] content.
+         */
+        internal static string CreateFingerprint(byte[] content)
+        {
+            // Sanity checking invocation.
+            if (content.Length != 32)
+                throw new ArgumentException($"Cannot create a fingerprint from your content, since it was {content.Length} long. It must be 32 bytes.");
+
+            // Creating a fingerprint in the format of "09fe-de45-..." of the 32 bytes long argument.
+            var result = new StringBuilder();
+            var idxNo = 0;
+            foreach (var idx in content)
+            {
+                result.Append(BitConverter.ToString(new byte[] { idx }));
+                if (++idxNo % 2 == 0)
+                    result.Append("-");
+            }
+            return result.ToString().TrimEnd('-').ToLowerInvariant();
+        }
+
+        /*
+         * Returns fingerprint of key used to encrypt message.
+         */
+        public static byte[] GetPackageFingerprint(byte[] content)
+        {
+            // Creating decryption stream.
+            using (var encStream = new MemoryStream(content))
+            {
+                // Simplifying life.
+                var encReader = new BinaryReader(encStream);
+
+                // Discarding encryption key's fingerprint.
+                return encReader.ReadBytes(32);
             }
         }
 
@@ -49,22 +78,6 @@ namespace magic.lambda.crypto.utilities
             {
                 return hash.ComputeHash(Encoding.UTF8.GetBytes(passphrase));
             }
-        }
-
-        /*
-         * Returns a public key according to the given arguments.
-         */
-        internal static AsymmetricKeyParameter GetPublicKey(Node input)
-        {
-            return PublicKeyFactory.CreateKey(GetKeyFromArguments(input, "public-key"));
-        }
-
-        /*
-         * Returns a private key according to the given arguments.
-         */
-        internal static AsymmetricKeyParameter GetPrivateKey(Node input)
-        {
-            return PrivateKeyFactory.CreateKey(GetKeyFromArguments(input, "private-key"));
         }
 
         /*
@@ -83,53 +96,6 @@ namespace magic.lambda.crypto.utilities
                 return Convert.FromBase64String(strKey); // base64 encoded.
 
             return key as byte[]; // Assuming raw byte[] key.
-        }
-
-        /*
-         * Returns fingerprint of key used to encrypt message.
-         */
-        public static byte[] GetFingerprint(byte[] content)
-        {
-            // Creating decryption stream.
-            using (var encStream = new MemoryStream(content))
-            {
-                // Simplifying life.
-                var encReader = new BinaryReader(encStream);
-
-                // Discarding encryption key's fingerprint.
-                return encReader.ReadBytes(32);
-            }
-        }
-
-        /*
-         * Private helper method to return byte[] from fingerprint.
-         */
-        internal static byte[] GetFingerprint(Node input, string nodeName)
-        {
-            // Sanity checking invocation.
-            var nodes = input.Children.Where(x => x.Name == nodeName);
-            if (nodes.Count() != 1)
-                throw new ArgumentException($"You must provide [{nodeName}]");
-
-            // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.
-            var result = nodes.First()?.GetEx<object>();
-            if (result is byte[] resultRaw)
-            {
-                if (resultRaw.Length != 32)
-                    throw new ArgumentException("Fingerprint is not 32 bytes long");
-                return resultRaw;
-            }
-            else
-            {
-                var resultFingerprint = (result as string).Replace("-", "");
-                int noChars = resultFingerprint.Length;
-                byte[] bytes = new byte[noChars / 2];
-                for (int i = 0; i < noChars; i += 2)
-                {
-                    bytes[i / 2] = Convert.ToByte(resultFingerprint.Substring(i, 2), 16);
-                }
-                return bytes;
-            }
         }
 
         /*

@@ -41,7 +41,7 @@ namespace magic.lambda.crypto.rsa
 
             // Returning key pair according to caller's specifications.
             var publicKey = publicInfo.GetDerEncoded();
-            var fingerprint = Utilities.CreateFingerprint(publicKey);
+            var fingerprint = Utilities.CreateSha256Fingerprint(publicKey);
 
             // Returning as DER encoded raw byte[].
             return (privateInfo.GetDerEncoded(), publicKey, fingerprint);

@@ -26,7 +26,7 @@ namespace magic.lambda.crypto.slots.misc
             var content = Utilities.GetContent(input, true);
 
             // Retrieving fingerprint.
-            input.Value = Utilities.CreateFingerprint(content);
+            input.Value = Utilities.CreateSha256Fingerprint(content);
         }
     }
 }
