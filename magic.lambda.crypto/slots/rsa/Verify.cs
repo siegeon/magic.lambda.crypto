@@ -10,7 +10,7 @@ using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.rsa;
-using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots.rsa
 {
@@ -28,20 +28,21 @@ namespace magic.lambda.crypto.slots.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Retrieving arguments.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
-
-            var rawSignature = input.Children.FirstOrDefault(x => x.Name == "signature")?.GetEx<object>();
-            var signature = rawSignature is string strSign ? Convert.FromBase64String(strSign) : rawSignature as byte[];
-
+            // Figuring our hashing algorithm to use.
             var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
-            var key = Utilities.GetKeyFromArguments(input, "public-key");
-            input.Clear();
-            input.Value = null;
 
-            var verifier = new Verifier(key);
-            verifier.Verify(algo, message, signature);
+            // Retrieving signature, and converting if necessary
+            var rawSignature = input.Children.FirstOrDefault(x => x.Name == "signature")?.GetEx<object>();
+            var signature = rawSignature is string strSign ?
+                Convert.FromBase64String(strSign) :
+                rawSignature as byte[];
+
+            // Retrieving common arguments.
+            var arguments = Utilities.GetArguments(input, false, "public-key");
+
+            // Verifying signature of message.
+            var verifier = new Verifier(arguments.Key);
+            verifier.Verify(algo, arguments.Message, signature);
         }
     }
 }

@@ -29,17 +29,14 @@ namespace magic.lambda.crypto.slots.rsa
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving message and other arguments.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
+            var arguments = Utilities.GetArguments(input, false, "public-key");
 
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var key = ut.Utilities.GetPublicKey(input);
-            var publicKey = ut.Utilities.GetKeyFromArguments(input, "public-key");
+            // Encrypting message.
+            var encrypter = new Encrypter(arguments.Key);
+            var result = encrypter.Encrypt(arguments.Message);
 
-            var rsaEncrypter = new Encrypter(publicKey);
-            var result = rsaEncrypter.Encrypt(message);
-            input.Value = raw ? result : (object)Convert.ToBase64String(result);
-            input.Clear();
+            // Returning results to caller according to specifications.
+            input.Value = arguments.Raw ? (object)result : Convert.ToBase64String(result);
         }
     }
 }

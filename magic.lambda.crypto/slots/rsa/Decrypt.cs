@@ -3,14 +3,10 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
 using System.Text;
-using System.Linq;
 using magic.node;
-using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.rsa;
-using ut = magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots.rsa
 {
@@ -29,19 +25,14 @@ namespace magic.lambda.crypto.slots.rsa
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving message and other arguments.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ? Convert.FromBase64String(strMsg) : rawMessage as byte[];
+            var arguments = Utilities.GetArguments(input, true, "private-key");
 
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var privateKey = ut.Utilities.GetKeyFromArguments(input, "private-key");
-            input.Clear();
+            // Decrypting message.
+            var decrypter = new Decrypter(arguments.Key);
+            var result = decrypter.Decrypt(arguments.Message);
 
-            var rsaDecrypter = new Decrypter(privateKey);
-            var result = rsaDecrypter.Decrypt(message);
-            if (raw)
-                input.Value = result;
-            else
-                input.Value = Encoding.UTF8.GetString(result);
+            // Returning results to caller according to specifications.
+            input.Value = arguments.Raw ? (object)result : Encoding.UTF8.GetString(result);
         }
     }
 }

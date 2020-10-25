@@ -18,7 +18,7 @@ namespace magic.lambda.crypto.aes
         readonly byte[] _key;
 
         /*
-         * Creates an instance of the AES decrypter, with the specified password.
+         * Creates an instance of the AES decrypter, with the specified key.
          */
         public Decrypter(byte[] key)
         {

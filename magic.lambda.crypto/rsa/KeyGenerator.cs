@@ -20,10 +20,6 @@ namespace magic.lambda.crypto.rsa
     {
         readonly SecureRandom _csrng;
 
-        public KeyGenerator(string seed)
-            : this(string.IsNullOrEmpty(seed) ? null : Encoding.UTF8.GetBytes(seed))
-        { }
-
         public KeyGenerator(byte[] seed)
         {
             _csrng = new SecureRandom();

@@ -4,13 +4,9 @@
  */
 
 using System;
-using System.Text;
-using System.Linq;
 using magic.node;
-using magic.node.extensions;
 using magic.signals.contracts;
 using magic.lambda.crypto.aes;
-using ut = magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots.aes
 {
@@ -28,20 +24,14 @@ namespace magic.lambda.crypto.slots.aes
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ? Encoding.UTF8.GetBytes(strMsg) : rawMessage as byte[];
-            var rawPassword = input.Children.FirstOrDefault(x => x.Name == "password")?.GetEx<object>() ??
-                throw new ArgumentException("No [password] provided to [crypto.aes.encrypt]");
-            var password = rawPassword is string strPwd ? ut.Utilities.Generate256BitKey(strPwd) : rawPassword as byte[];
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            input.Clear();
+            var arguments = Utilities.GetArguments(input, false);
 
             // Performing actual encryption.
-            var aesEncrypter = new Encrypter(password);
-            var result = aesEncrypter.Encrypt(message);
+            var encrypter = new Encrypter(arguments.Password);
+            var result = encrypter.Encrypt(arguments.Message);
 
             // Returning results to caller according to specifications.
-            input.Value = raw ? (object)result : Convert.ToBase64String(result);
+            input.Value = arguments.Raw ? (object)result : Convert.ToBase64String(result);
         }
     }
 }
