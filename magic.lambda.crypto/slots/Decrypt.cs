@@ -9,14 +9,16 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using ut = magic.lambda.crypto.utilities;
 using magic.lambda.crypto.utilities;
+using ut = magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.slots
 {
     /// <summary>
     /// [crypto.decrypt] slot that decrypts and verifies the
     /// specified content using the specified arguments.
+    /// 
+    /// This slots assumes the message was encrypted using its [crypto.encrypt] equivalent.
     /// </summary>
     [Slot(Name = "crypto.decrypt")]
     public class Decrypt : ISlot
@@ -29,18 +31,12 @@ namespace magic.lambda.crypto.slots
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
-            var content = ut.Utilities.GetContent(input, true);
-            var decryptionKey = ut.Utilities.GetKeyFromArguments(input, "decryption-key");
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-
-            // House cleaning.
-            input.Clear();
-            input.Value = null;
+            var arguments = GetArguments(input);
 
             // Decrypting content and returning to caller.
-            var decrypter = new Decrypter(decryptionKey);
-            var result = decrypter.Decrypt(content);
-            if (raw)
+            var decrypter = new Decrypter(arguments.DecryptionKey);
+            var result = decrypter.Decrypt(arguments.Content);
+            if (arguments.Raw)
             {
                 input.Value = result.Content;
                 input.Add(new Node("signature", result.Signature));
@@ -52,5 +48,18 @@ namespace magic.lambda.crypto.slots
             }
             input.Add(new Node("fingerprint", result.Fingerprint));
         }
+
+        #region [ -- Private helper methods -- ]
+
+        (byte[] Content, byte[] DecryptionKey, bool Raw) GetArguments(Node input)
+        {
+            var content = ut.Utilities.GetContent(input, true);
+            var decryptionKey = ut.Utilities.GetKeyFromArguments(input, "decryption-key");
+            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
+            input.Clear();
+            return (content, decryptionKey, raw);
+        }
+
+        #endregion
     }
 }

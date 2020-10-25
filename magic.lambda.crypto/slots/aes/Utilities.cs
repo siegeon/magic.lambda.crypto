@@ -20,15 +20,12 @@ namespace magic.lambda.crypto.slots.aes
         /*
          * Retrieves arguments specified to slot.
          */
-        internal static (byte[] Message, byte[] Password, bool Raw) GetArguments(Node input, bool messageIsBase64)
+        internal static (byte[] Message, byte[] Password, bool Raw) GetArguments(
+            Node input,
+            bool messageIsBase64)
         {
             // Retrieving message as byte[], converting if necessary.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ?
-                messageIsBase64 ?
-                    Convert.FromBase64String(strMsg) :
-                    Encoding.UTF8.GetBytes(strMsg) :
-                rawMessage as byte[];
+            var message = ut.Utilities.GetContent(input, messageIsBase64);
 
             // Retrieving password as byte[], creating SHA256 out of it, if it's a string.
             var rawPassword = input.Children.FirstOrDefault(x => x.Name == "password")?.GetEx<object>() ??

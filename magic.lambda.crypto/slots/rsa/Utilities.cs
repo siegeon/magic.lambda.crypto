@@ -26,12 +26,7 @@ namespace magic.lambda.crypto.slots.rsa
             string keyName)
         {
             // Retrieving message as byte[], converting if necessary.
-            var rawMessage = input.GetEx<object>();
-            var message = rawMessage is string strMsg ?
-                messageIsBase64 ?
-                    Convert.FromBase64String(strMsg) :
-                    Encoding.UTF8.GetBytes(strMsg) :
-                rawMessage as byte[];
+            var message = ut.Utilities.GetContent(input, messageIsBase64);
 
             // Retrieving key to use for cryptography operation.
             var key = ut.Utilities.GetKeyFromArguments(input, keyName);
