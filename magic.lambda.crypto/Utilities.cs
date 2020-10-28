@@ -6,7 +6,6 @@
 using System;
 using System.Text;
 using System.Linq;
-using System.Security.Cryptography;
 using magic.node;
 using magic.node.extensions;
 
@@ -51,7 +50,7 @@ namespace magic.lambda.crypto.slots
             {
                 if (throwOnMissing)
                     throw new ArgumentException($"You must provide a [{keyType}]");
-                return null;
+                return Array.Empty<byte>();
             }
 
             // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.

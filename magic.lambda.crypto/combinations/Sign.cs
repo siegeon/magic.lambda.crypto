@@ -47,7 +47,6 @@ namespace magic.lambda.crypto.slots.combinations
             var signingKey = Utilities.GetKeyFromArguments(input, "signing-key");
             var signingKeyFingerprint = GetFingerprint(input);
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var seedRaw = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<object>();
             input.Clear();
             return (content, signingKey, signingKeyFingerprint, raw);
         }
