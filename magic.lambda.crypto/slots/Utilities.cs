@@ -4,8 +4,9 @@
  */
 
 using System;
-using System.Linq;
 using System.Text;
+using System.Linq;
+using System.Security.Cryptography;
 using magic.node;
 using magic.node.extensions;
 

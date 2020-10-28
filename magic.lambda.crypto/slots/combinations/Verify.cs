@@ -14,13 +14,11 @@ using magic.lambda.crypto.combinations;
 namespace magic.lambda.crypto.slots.combinations
 {
     /// <summary>
-    /// [crypto.decrypt] slot that decrypts and verifies the
-    /// specified content using the specified arguments.
-    /// 
-    /// This slots assumes the message was encrypted using its [crypto.encrypt] equivalent.
+    /// [crypto.verify] slot that verifies the package was cryptographically
+    /// using the specified [public-key].
     /// </summary>
-    [Slot(Name = "crypto.decrypt")]
-    public class Decrypt : ISlot
+    [Slot(Name = "crypto.verify")]
+    public class Verify : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -32,13 +30,9 @@ namespace magic.lambda.crypto.slots.combinations
             // Retrieving arguments.
             var arguments = GetArguments(input);
 
-            // Decrypting content.
-            var decrypter = new Decrypter(arguments.DecryptionKey);
-            var decrypted = decrypter.Decrypt(arguments.Content);
-
             // Verifying content, which implies splitting the content, signature, and signing key.
-            var verifier = new Verifier(null);
-            var result = verifier.Verify(decrypted);
+            var verifier = new Verifier(arguments.PublicKey);
+            var result = verifier.Verify(arguments.Content);
 
             // Returning result to caller.
             if (arguments.Raw)
@@ -59,13 +53,13 @@ namespace magic.lambda.crypto.slots.combinations
         /*
          * Retrieves arguments for invocation.
          */
-        (byte[] Content, byte[] DecryptionKey, bool Raw) GetArguments(Node input)
+        (byte[] Content, byte[] PublicKey, bool Raw) GetArguments(Node input)
         {
             var content = Utilities.GetContent(input, true);
-            var decryptionKey = Utilities.GetKeyFromArguments(input, "decryption-key");
+            var publicKey = Utilities.GetKeyFromArguments(input, "public-key");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
-            return (content, decryptionKey, raw);
+            return (content, publicKey, raw);
         }
 
         #endregion

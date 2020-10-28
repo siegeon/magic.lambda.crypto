@@ -76,5 +76,28 @@ namespace magic.lambda.crypto.utilities
                 return hash.ComputeHash(Encoding.UTF8.GetBytes(passphrase));
             }
         }
+
+        /*
+         * Returns a SHA256 of the specified data.
+         */
+        internal static byte[] CreateSha256(byte[] data)
+        {
+            using (var algo = SHA256Managed.Create())
+            {
+                return algo.ComputeHash(data);
+            }
+        }
+
+        /*
+         * Read the rest of the specified stream, and returns result to caller.
+         */
+        internal static byte[] ReadRestOfStream(Stream stream)
+        {
+            using (var tmp = new MemoryStream())
+            {
+                stream.CopyTo(tmp);
+                return tmp.ToArray();
+            }
+        }
     }
 }

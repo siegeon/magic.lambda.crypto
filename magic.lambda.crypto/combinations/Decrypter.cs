@@ -3,9 +3,8 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
 using System.IO;
-using System.Text;
+using magic.lambda.crypto.utilities;
 
 namespace magic.lambda.crypto.combinations
 {
@@ -14,26 +13,6 @@ namespace magic.lambda.crypto.combinations
      */
     internal class Decrypter
     {
-        /*
-         * Class encapsulating an encrypted message.
-         */
-        public class Message
-        {
-            public readonly byte[] Content;
-            public readonly byte[] Signature;
-            public readonly string Fingerprint;
-
-            public Message(
-                byte[] content,
-                byte[] signature,
-                string fingerprint)
-            {
-                Content = content;
-                Signature = signature;
-                Fingerprint = fingerprint;
-            }
-        }
-
         readonly byte[] _decryptionKey;
 
         /*
@@ -48,7 +27,7 @@ namespace magic.lambda.crypto.combinations
         /*
          * Decrypts the specified message.
          */
-        public Message Decrypt(byte[] content)
+        public byte[] Decrypt(byte[] content)
         {
             // Creating decryption stream.
             using (var encStream = new MemoryStream(content))
@@ -67,65 +46,13 @@ namespace magic.lambda.crypto.combinations
                 var decryptedAesKey = rsaDecrypter.Decrypt(encryptedAesKey);
 
                 // Reading the encrypted content.
-                var encryptedContent = ReadRestOfStream(encStream);
+                var encryptedContent = Utilities.ReadRestOfStream(encStream);
 
                 // Decrypting content.
                 var aesDecrypter = new aes.Decrypter(decryptedAesKey);
                 var decryptedContent = aesDecrypter.Decrypt(encryptedContent);
-
-                // Reading decrypted content and returning results to caller.
-                using (var decryptedContentStream = new MemoryStream(decryptedContent))
-                {
-                    // Simplifying life.
-                    var decryptedReader = new BinaryReader(decryptedContentStream);
-
-                    // Reading signing key.
-                    var signingKey = decryptedReader.ReadBytes(32);
-                    var fingerprint = CreateFingerprint(signingKey);
-
-                    // Reading signature.
-                    var lengthOfSignature = decryptedReader.ReadInt32();
-                    var signature = decryptedReader.ReadBytes(lengthOfSignature);
-
-                    // Reading decrypted content.
-                    var result = ReadRestOfStream(decryptedContentStream);
-
-                    // Returning a new message to caller, encapsulating decrypted message.
-                    return new Message(result, signature, fingerprint);
-                }
+                return decryptedContent;
             }
         }
-
-        #region [ -- Private helper methods -- ]
-
-        /*
-         * Read the rest of the specified stream, and returns result to caller.
-         */
-        byte[] ReadRestOfStream(Stream stream)
-        {
-            using (var tmp = new MemoryStream())
-            {
-                stream.CopyTo(tmp);
-                return tmp.ToArray();
-            }
-        }
-
-        /*
-         * Creates a fingerprint from a raw byte[] array.
-         */
-        string CreateFingerprint(byte[] raw)
-        {
-            var result = new StringBuilder();
-            var idxNo = 0;
-            foreach (var idx in raw)
-            {
-                result.Append(BitConverter.ToString(new byte[] { idx }));
-                if (++idxNo % 2 == 0)
-                    result.Append("-");
-            }
-            return result.ToString().TrimEnd('-').ToLowerInvariant();
-        }
-
-        #endregion
     }
 }
