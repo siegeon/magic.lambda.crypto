@@ -9,7 +9,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.crypto.combinations;
+using magic.crypto.combinations;
 
 namespace magic.lambda.crypto.slots.combinations
 {
@@ -36,16 +36,9 @@ namespace magic.lambda.crypto.slots.combinations
 
             // Returning result to caller.
             if (arguments.Raw)
-            {
-                input.Value = result.Content;
-                input.Add(new Node("signature", result.Signature));
-            }
+                input.Value = result;
             else
-            {
-                input.Value = Encoding.UTF8.GetString(result.Content);
-                input.Add(new Node("signature", Convert.ToBase64String(result.Signature)));
-            }
-            input.Add(new Node("fingerprint", result.Fingerprint));
+                input.Value = Encoding.UTF8.GetString(result);
         }
 
         #region [ -- Private helper methods -- ]

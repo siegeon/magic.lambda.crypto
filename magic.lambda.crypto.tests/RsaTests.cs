@@ -253,24 +253,6 @@ crypto.rsa.verify:x:@.data2
         }
 
         [Fact]
-        public void SignAndVerifyText_Throws_02()
-        {
-            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
-.data1:This is some piece of text that should be signed
-.data2:This is some piece of text that should be signed
-crypto.rsa.create-key
-   strength:1024
-crypto.rsa.sign:x:@.data1
-   algorithm:SHA256
-   private-key:x:@crypto.rsa.create-key/*/private
-crypto.rsa.verify:x:@.data2
-   algorithm:SHA512
-   public-key:x:@crypto.rsa.create-key/*/public
-   signature:x:@crypto.rsa.sign
-"));
-        }
-
-        [Fact]
         public void EncryptText()
         {
             var lambda = Common.Evaluate(@"

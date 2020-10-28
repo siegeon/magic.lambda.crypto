@@ -133,6 +133,7 @@ crypto.encrypt:This is some super secret!
 // Decrypting and verifying signature.
 crypto.decrypt:x:-
    decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
+   verify-key:x:@crypto.rsa.create-key/*/public
 ");
             var msg = lambda.Children.Skip(4).First().Value as string;
             Assert.Equal("This is some super secret!", msg);
@@ -165,6 +166,7 @@ crypto.encrypt:This is some super secret!
 // Decrypting and verifying signature.
 crypto.decrypt:x:-
    decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
+   verify-key:x:@crypto.rsa.create-key/*/public
 ");
             var msg = lambda.Children.Skip(4).First().Value as string;
             Assert.Equal("This is some super secret!", msg);

@@ -3,13 +3,12 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
 using System.Text;
 using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.crypto.combinations;
+using magic.crypto.combinations;
 
 namespace magic.lambda.crypto.slots.combinations
 {
@@ -34,24 +33,20 @@ namespace magic.lambda.crypto.slots.combinations
 
             // Decrypting content.
             var decrypter = new Decrypter(arguments.DecryptionKey);
-            var decrypted = decrypter.Decrypt(arguments.Content);
+            var result = decrypter.Decrypt(arguments.Content);
 
-            // Verifying content, which implies splitting the content, signature, and signing key.
-            var verifier = new Verifier(null);
-            var result = verifier.Verify(decrypted);
+            // Verifying content, but only if caller supplied a [verify-key].
+            if (arguments.VerifyKey != null)
+            {
+                var verifier = new Verifier(arguments.VerifyKey);
+                result = verifier.Verify(result);
+            }
 
             // Returning result to caller.
             if (arguments.Raw)
-            {
-                input.Value = result.Content;
-                input.Add(new Node("signature", result.Signature));
-            }
+                input.Value = result;
             else
-            {
-                input.Value = Encoding.UTF8.GetString(result.Content);
-                input.Add(new Node("signature", Convert.ToBase64String(result.Signature)));
-            }
-            input.Add(new Node("fingerprint", result.Fingerprint));
+                input.Value = Encoding.UTF8.GetString(result);
         }
 
         #region [ -- Private helper methods -- ]
@@ -59,13 +54,14 @@ namespace magic.lambda.crypto.slots.combinations
         /*
          * Retrieves arguments for invocation.
          */
-        (byte[] Content, byte[] DecryptionKey, bool Raw) GetArguments(Node input)
+        (byte[] Content, byte[] DecryptionKey, byte[] VerifyKey, bool Raw) GetArguments(Node input)
         {
             var content = Utilities.GetContent(input, true);
             var decryptionKey = Utilities.GetKeyFromArguments(input, "decryption-key");
+            var verifyKey = Utilities.GetKeyFromArguments(input, "verify-key");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
-            return (content, decryptionKey, raw);
+            return (content, decryptionKey, verifyKey, raw);
         }
 
         #endregion

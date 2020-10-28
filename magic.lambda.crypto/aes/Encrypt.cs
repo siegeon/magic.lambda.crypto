@@ -6,15 +6,14 @@
 using System;
 using magic.node;
 using magic.signals.contracts;
-using magic.lambda.crypto.rsa;
+using magic.crypto.aes;
 
-namespace magic.lambda.crypto.slots.rsa
+namespace magic.lambda.crypto.slots.aes
 {
     /// <summary>
-    /// [crypto.rsa.encrypt] slot to encrypt some content using a public key that can only be decrypted
-    /// using its public key.
+    /// [crypto.aes.encrypt] slot to encrypt some content using a symmetric cryptography algorithm (AES).
     /// </summary>
-    [Slot(Name = "crypto.rsa.encrypt")]
+    [Slot(Name = "crypto.aes.encrypt")]
     public class Encrypt : ISlot
     {
         /// <summary>
@@ -24,11 +23,11 @@ namespace magic.lambda.crypto.slots.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Retrieving message and other arguments.
-            var arguments = Utilities.GetArguments(input, false, "public-key");
+            // Retrieving arguments.
+            var arguments = Utilities.GetArguments(input, false);
 
-            // Encrypting message.
-            var encrypter = new Encrypter(arguments.Key);
+            // Performing actual encryption.
+            var encrypter = new Encrypter(arguments.Password);
             var result = encrypter.Encrypt(arguments.Message);
 
             // Returning results to caller according to specifications.

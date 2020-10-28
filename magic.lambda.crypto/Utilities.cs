@@ -40,12 +40,19 @@ namespace magic.lambda.crypto.slots
         /*
          * Private helper method to return byte[] representation of key.
          */
-        internal static byte[] GetKeyFromArguments(Node input, string keyType)
+        internal static byte[] GetKeyFromArguments(
+            Node input,
+            string keyType,
+            bool throwOnMissing = true)
         {
             // Sanity checking invocation.
             var keys = input.Children.Where(x => x.Name == keyType);
             if (keys.Count() != 1)
-                throw new ArgumentException($"You must provide a [{keyType}]");
+            {
+                if (throwOnMissing)
+                    throw new ArgumentException($"You must provide a [{keyType}]");
+                return null;
+            }
 
             // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.
             var key = keys.First()?.GetEx<object>();

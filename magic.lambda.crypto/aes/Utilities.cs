@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using magic.node;
 using magic.node.extensions;
-using ut = magic.lambda.crypto.utilities;
+using ut = magic.crypto.utilities;
 
 namespace magic.lambda.crypto.slots.aes
 {

@@ -6,9 +6,9 @@
 using System;
 using System.Linq;
 using magic.node;
+using magic.crypto.rsa;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.crypto.rsa;
 
 namespace magic.lambda.crypto.slots.rsa
 {
@@ -26,15 +26,12 @@ namespace magic.lambda.crypto.slots.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Figuring our hashing algorithm to use for signature.
-            var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
-
             // Retrieving common arguments.
             var arguments = Utilities.GetArguments(input, false, "private-key");
 
             // Signing message.
             var signer = new Signer(arguments.Key);
-            var signature = signer.Sign(algo, arguments.Message);
+            var signature = signer.Sign(arguments.Message);
             input.Value = arguments.Raw ? (object)signature : Convert.ToBase64String(signature);
         }
     }

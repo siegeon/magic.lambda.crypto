@@ -9,7 +9,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.crypto.rsa;
+using magic.crypto.rsa;
 
 namespace magic.lambda.crypto.slots.rsa
 {
@@ -36,14 +36,14 @@ namespace magic.lambda.crypto.slots.rsa
             if (arguments.Raw)
             {
                 // Returning as DER encoded raw byte[].
-                input.Add(new Node("private", result.Private));
-                input.Add(new Node("public", result.Public));
+                input.Add(new Node("private", result.PrivateKey));
+                input.Add(new Node("public", result.PublicKey));
             }
             else
             {
                 // Returning as base64 encoded DER format.
-                input.Add(new Node("private", Convert.ToBase64String(result.Private)));
-                input.Add(new Node("public", Convert.ToBase64String(result.Public)));
+                input.Add(new Node("private", Convert.ToBase64String(result.PrivateKey)));
+                input.Add(new Node("public", Convert.ToBase64String(result.PublicKey)));
             }
             input.Add(new Node("fingerprint", result.Fingerprint));
     }

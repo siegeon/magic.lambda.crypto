@@ -8,7 +8,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.lambda.crypto.rsa;
+using magic.crypto.rsa;
 
 namespace magic.lambda.crypto.slots.rsa
 {
@@ -40,7 +40,7 @@ namespace magic.lambda.crypto.slots.rsa
 
             // Verifying signature of message.
             var verifier = new Verifier(arguments.Key);
-            verifier.Verify(algo, arguments.Message, signature);
+            verifier.Verify(arguments.Message, signature);
         }
     }
 }
