@@ -352,18 +352,18 @@ the message.
 **Notice** - We're using only 512 bit strength in the above example. Make sure you (at least) use
 2048, preferably 4096 in real world usage.
 
-If the above invocation to **[crypto.rsa.verify]** does not throw an exception, we know for a fact that
+If the above invocation to **[crypto.verify]** does not throw an exception, we know for a fact that
 the message was cryptographically signed with the private key that matches its **[public-key]** argument.
 Normally the fingerprint of the sender's key is asssociated with some sort of _"authorisation object"_
 to elevate the rights of the user, only *after* having verified the message originated from a trusted
 party.
 
 Hence, from the caller's perspective it's *one* invocation to encrypt and sign a message. From the receiver's
-perspective it's *two* steps to both decrypt and verify the integrity of a message. The reasons for this,
-is because we do *not know* who signed the message, before the message has been decrypted using the receiver's
-private key. This prevents any part of the message, except its bare minimum to be provided over your insecure
-channel - Giving spoofers and malicious hackers literally nothing to work with, except the fingerprint
-of the public key the message was encrypted with.
+perspective it's *two* steps to both decrypt and verify the integrity of a message, unless you know who
+the message originated from. The reasons for this, is because we do *not normally know* who signed the message,
+before the message has been decrypted using the receiver's private key. This prevents any part of the message,
+except its bare minimum to be provided over your insecure channel - Giving spoofers and malicious hackers
+literally nothing to work with, except the fingerprint of the public key the message was encrypted with.
 
 Hence, malicious adversaries in the middle of the communication, will not know who the message originated from,
 only to what decryption key it was addressed. In addition no adversary will be able to read the encrypted content.
