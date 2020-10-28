@@ -46,6 +46,7 @@ namespace magic.lambda.crypto.slots.rsa
                 input.Add(new Node("public", Convert.ToBase64String(result.PublicKey)));
             }
             input.Add(new Node("fingerprint", result.Fingerprint));
+            input.Add(new Node("fingerprint-raw", result.FingerprintRaw));
     }
 
         #region [ -- Private helper methods -- ]

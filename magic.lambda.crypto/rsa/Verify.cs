@@ -26,9 +26,6 @@ namespace magic.lambda.crypto.slots.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Figuring our hashing algorithm to use.
-            var algo = input.Children.FirstOrDefault(x => x.Name == "algorithm")?.GetEx<string>() ?? "SHA256";
-
             // Retrieving signature, and converting if necessary
             var rawSignature = input.Children.FirstOrDefault(x => x.Name == "signature")?.GetEx<object>();
             var signature = rawSignature is string strSign ?
@@ -37,6 +34,7 @@ namespace magic.lambda.crypto.slots.rsa
 
             // Retrieving common arguments.
             var arguments = Utilities.GetArguments(input, false, "public-key");
+            input.Value = null;
 
             // Verifying signature of message.
             var verifier = new Verifier(arguments.Key);

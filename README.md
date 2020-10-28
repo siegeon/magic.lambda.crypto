@@ -337,10 +337,17 @@ crypto.decrypt:x:-
    decryption-key:x:././*/crypto.rsa.create-key/[0,1]/*/private
 
 // Verifying signature of encrypted message.
-crypto.rsa.verify:x:-
-   signature:x:@crypto.decrypt/*/signature
+crypto.verify:x:-
    public-key:x:././*/crypto.rsa.create-key/[1,2]/*/public
 ```
+
+Only after the message is verified, the actual content of the message is possible to read, as the
+value of the **[crypto.verify]** slot - Unless you pass in a **[verify-key]** during the invocation
+to **[crypto.decrypt]**, at which point that key will be used to verify the signature of the message,
+after package has been encrypted. Of course, normally you wouldn't know the the idenity of the signer,
+or what public key to use to verify the signature, before *after* you have decrypted the message.
+At which point you can use **[crypto.get-key]** to retrieve the signing key, after having decrypted
+the message.
 
 **Notice** - We're using only 512 bit strength in the above example. Make sure you (at least) use
 2048, preferably 4096 in real world usage.

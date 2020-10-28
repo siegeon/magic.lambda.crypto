@@ -3,6 +3,7 @@
  * See the enclosed LICENSE file for details.
  */
 
+using System;
 using System.Text;
 using System.Linq;
 using magic.node;
@@ -38,15 +39,25 @@ namespace magic.lambda.crypto.slots.combinations
             // Verifying content, but only if caller supplied a [verify-key].
             if (arguments.VerifyKey != null)
             {
+                // Caller passed in a public key to verify the signature of message.
                 var verifier = new Verifier(arguments.VerifyKey);
                 result = verifier.Verify(result);
-            }
 
-            // Returning result to caller.
-            if (arguments.Raw)
-                input.Value = result;
+                // Returning result to caller.
+                if (arguments.Raw)
+                    input.Value = result;
+                else
+                    input.Value = Encoding.UTF8.GetString(result);
+            }
             else
-                input.Value = Encoding.UTF8.GetString(result);
+            {
+                // Returning result to caller.
+                // Notice, package is still "raw" since signature hasn't been verified yet.
+                if (arguments.Raw)
+                    input.Value = result;
+                else
+                    input.Value = Convert.ToBase64String(result);
+            }
         }
 
         #region [ -- Private helper methods -- ]
@@ -58,7 +69,7 @@ namespace magic.lambda.crypto.slots.combinations
         {
             var content = Utilities.GetContent(input, true);
             var decryptionKey = Utilities.GetKeyFromArguments(input, "decryption-key");
-            var verifyKey = Utilities.GetKeyFromArguments(input, "verify-key");
+            var verifyKey = Utilities.GetKeyFromArguments(input, "verify-key", false);
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
             return (content, decryptionKey, verifyKey, raw);
