@@ -398,51 +398,6 @@ not know who, if any signed the package - Or any other parts of the message - As
 to somehow crack the AES encryption, and/or somehow retrieve the private RSA key the AES package's
 encryption key was encrypted with.
 
-## Cryptography concerns
-
-Even assuming you can 100% perfectly communicate in privacy today, your privacy is only as good as a malicious
-agent's ability to brute force prime numbers in the case of RSA, and similar techniques with Elliptic Curve.
-This means that even though you create an extremely strong key pair according to today's standard - Due to
-Moore's law, some 5-10 years down the road, the NSA and the CIA will probably be able to reproduce your private
-key, using nothing but your public key as input. And some 10-20 years later, some kid with a pocket calculator,
-will also probably be able to do the same. Since agencies such as the FSB, NSA and the MI6 also happens to
-vacum clean the internet, for everything transmitted through your ISP, this implies that 5-10 years from now,
-they'll be able to read your communication, and figure out what you were talking about some 5-10 years ago.
-
-Also, as quantum computing becomes practical to implement, today's cryptography based upon _"hard problems"_,
-will effectively prove useless towards a serious quantum computer's ability to perform multiple math
-operations simultaneously, allowing a malicious agent to reproduce your private key in milliseconds, almost
-regardless of its strength. So far, we don't know about such quantum computers, but it is assumed they will
-become available in the not too distant future for organisations with very deep pockets.
-
-This implies that privacy is like fruit and vegetables; It rots over time. If you can live with this,
-you can eliminate most of its concerns, by making sure you periodically create stronger and stronger keypairs,
-with higher and higher bit strength. However, in the case quantum computing should somehow be practical,
-even such strategies are futile for traditional cryptography, such as EC and RSA. If these are no concerns
-for you, you can still use cryptography to have a _"practical form of privacy"_ in your communication,
-but have this in mind as you start using cryptography, since there are no certainties when it comes
-to this subject. And of course, even if you had access to 100% perfect privacy in your communication with
-others, you still need to trust the ones you're communicating with to not tell others about what you
-are communicating to them ...
-
-### Torture based decryption
-
-In addition to the above concerns, any shmuck with a baseball bat could probably _"decrypt"_ your
-private communication, by simply coercing and torturing the other party to spill the beans. Inevitably,
-at some point, everybody breaks. Although there exist ways to counter this too, by for instance start
-lying immediately once the torture begins, and/or pretend to be insane - At which point as the torture
-victim breaks, he's lied so much, and acted so crazy, that it becomes impossible for the torturer to
-believe anything that his victim says - This is probably the simplest way of _"decryption"_ that exists,
-and is easily within the means of any gorilla having enough IQ to open a door.
-
-Hence, there is no true privacy, only shades of privacy. This is true regardless of how strong encryption
-you are using. Hence ...
-
-> The only true privacy that exists, is never telling anybody anything!
-
-With the above disclaimer set aside, I guarantee you that I have done *everything* I can to make
-sure the cryptography slots in Magic and this library is as strong and secure as I am able to.
-
 ## Reference documentation
 
 This project provides the following slots.
