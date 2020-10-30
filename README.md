@@ -135,20 +135,21 @@ by the owner of the private key. To sign some arbitrary content using your priva
 was correctly signed with a specific key, you can use something as follows.
 
 ```
-.data:some piece of text you wish to sign
+// The message can also by byte arrays.
+.message:Some message you wish to sign
 
 crypto.rsa.create-key
 
 // Notice, using PRIVATE key
-crypto.rsa.sign:x:@.data
+crypto.rsa.sign:x:@.message
    private-key:x:@crypto.rsa.create-key/*/private
 
 // Uncommenting these lines, will make the verify process throw an exception
-// set-value:x:@.data
+// set-value:x:@.message
 //    .:Some piece of text you wish to sign - XXXX
 
 // Notice, using PUBLIC key
-crypto.rsa.verify:x:@.data
+crypto.rsa.verify:x:@.message
    signature:x:@crypto.rsa.sign
    public-key:x:@crypto.rsa.create-key/*/public
 ```
