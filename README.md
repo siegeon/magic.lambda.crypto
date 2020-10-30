@@ -3,6 +3,8 @@
 
 This project provides cryptography helper slots for Magic, allowing you to use both symmetric and asymmetric cryptography
 operations. The symmetric parts of the project is using AES internally, and the asymmetric parts is using RSA.
+In addition to a bunch of _"low level slots"_, the project also contains combination slots, combining RSA and AES,
+allowing you to both encrypt and sign a message, using a single signal invocation.
 
 ## [crypto.random]
 
