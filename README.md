@@ -358,8 +358,7 @@ the message originated from.
 
 ### The encryption format
 
-The encrypted package has the following format. Notice, the encryption and signing is a two step process.
-Hence, the steps for the first process is as follows.
+The encrypted package has the following format.
 
 1. Signing key's fingerprint in SHA256 `byte[]` format, 32 bytes long
 2. The length of the signature as `int`, 4 bytes long
