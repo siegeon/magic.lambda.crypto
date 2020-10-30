@@ -287,11 +287,12 @@ crypto.decrypt:x:-
 ```
 
 **Notice** - We're using only 512 bit strength in the above example. Make sure you (at least) use
-2048, preferably 4096 in real world usage.
+2048, preferably 4096 in real world usage. The **[crypto.encrypt]** slot can also optionally handle
+a **[seed]** argument, which will seed the CS RNG that's used to generate a symmetric AES encryption
+key.
 
-The **[crypto.encrypt]** slot can also optionally handle a **[seed]** argument, which will seed the CS RNG that's
-used to generate a symmetric AES encryption key. To understand what occurs in the above Hyperlambda example, let's
-walk through it step by step, starting from the **[crypto.encrypt]** invocation.
+To understand what occurs in the above Hyperlambda example, let's walk through it step by step,
+starting from the **[crypto.encrypt]** invocation.
 
 1. The message _"Some super secret message"_ is first cryptographically signed using the **[signing-key]**
 2. The signed message is then encrypted using a CSRNG generated AES key
