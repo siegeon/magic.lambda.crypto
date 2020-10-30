@@ -61,8 +61,8 @@ Public key cryptography, or what's often referred to as _"asymmetric cryptograph
 a *key pair*. One of your keys are intended for being publicly shared, and is often referred to
 as _"your public key"_. This key can do two important things.
 
-1. It can encrypt data such that *only* its private counterpart key can decrypt the data
-2. It can verify that a message originated from a party that has access to its private counterpart
+1. Your public key can encrypt data such that *only* its private counterpart key can decrypt the data
+2. Your public key can verify that a message originated from a party that has access to its private counterpart
 
 Hence, keeping your *private* key as just that, implying **private**, is of outmost importance, otherwise 3rd
 parties might read messages others send to you, and also impersonate you in front of others. In addition, securely
