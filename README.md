@@ -374,8 +374,8 @@ to the recipient. The final encryption package has a structure as follows.
 3. The encrypted session key, encrypted using the recipient's public RSA key
 4. The AES encrypted content from the above signing step
 
-Logically it becomes as follows; SHA256(RSA_encryption_key) + length_of_encrypted_AES_key +
-encrypted_AES_key + AES_encrypted_content. Everything as raw `byte[]`.
+Hence, only when *both* of the above lists are done, you have a final encryption package to send
+to some recipient.
 
 Hence, the other party can retrieve the encryption key used for encrypting the package, using for instance
 the **[crypto.get-key]** slot on the package. Then the receiver can use his private RSA key to decrypt
