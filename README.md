@@ -188,14 +188,7 @@ since encryption will result in a byte array, which is often inconvenient to han
 You can override this by passing in a **[raw]** argument, and set its value to true, at which point a `byte[]` will be
 returned.
 
-Also notice how the encrypted message is larger than its original string. This is because of something called _"padding"_
-in encryption, only being relevant for messages that are smaller in size than your original text. Padding
-implies that no encrypted text resulting of en encryption operation can be significantly smaller in size than the
-size of the (public) key used to encrypt the message. This is only relevant for small pieces of data, and have
-few implications for larger pieces of text being encrypted. However, if you want to transmit *very large* messages,
-you might want to *combine* asymmetric cryptography with symmetric cryptography, which we will illustrate later.
-
-Notice, if you want the message back as raw bytes, you can supply a **[raw]** argument, and set its value to boolean
+If you want the message back as raw bytes, you can supply a **[raw]** argument, and set its value to boolean
 true as you invoke **[crypto.rsa.encrypt]**, at which point the returned encrypted message will be returned as a
 raw `byte[]`. This might be useful, if you for instance need to persist the message to disc, as a binary file, etc.
 You can also supply **[raw]** as you invoke **[crypto.rsa.decrypt]** if you know the content in the message is
