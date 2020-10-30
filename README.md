@@ -94,6 +94,8 @@ into their code. Bouncy Castle is also Open Source, allowing others to scrutinis
 backdoors. However, with cryptography, there *are no guarantees*, only a _"general feeling and concent"_
 amongst developers that it's secure.
 
+The asymmetric parts of this project is built upon RSA for its public and private key pairs.
+
 ### Creating an RSA keypair
 
 To create an RSA keypair that you can use for other cryptographic services later, you can use something as follows.
