@@ -24,7 +24,7 @@ crypto.random
 Notice, the **[crypto.random]** slot will _only_ return characters from a-z, A-Z and 0-9. Which makes
 it easily traversed using any string library. However, you can provide a **[raw]** argument, and set its
 value to boolean true, at which point the slot will return the raw bytes as a `byte[]`. This has a much
-larger amount of entropy than simply using alphanumeric characters, for the same size - Which is
+larger amount of entropy than simply using alphanumeric characters for the same size - Which is
 important as you start creating keys for AES encryption, etc.
 
 ## [crypto.hash]
@@ -45,6 +45,14 @@ crypto.hash:x:@.data
 crypto.hash:x:@.data
    format:raw
 ```
+
+You can choose between the following hashing algorithms as you consume the above slot.
+
+* SHA256
+* SHA384
+* SHA512
+
+Neither SHA1 nor MD5 are supported, since they're both considered _"insecure"_ hashing algorithms.
 
 ## Cryptography
 
