@@ -377,7 +377,7 @@ to the recipient. The final encryption package has a structure as follows.
 Hence, only when *both* of the above lists are done, you have a final encryption package to send
 to some recipient.
 
-Hence, the other party can retrieve the encryption key used for encrypting the package, using for instance
+The other party can retrieve the encryption key used for encrypting the package, using for instance
 the **[crypto.get-key]** slot on the package. Then the receiver can use his private RSA key to decrypt
 the AES key, and use the decrypted AES key to decrypt the rest of the package - Which will result in getting the
 package's plain text content, plus the signature, in addition to the fingerprint of the RSA key used to sign
