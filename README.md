@@ -107,7 +107,7 @@ crypto.rsa.create-key
 ```
 
 Both the **[strength]** and **[seed]** is optional above. Strength will default to 2048, which might be too little
-for serious cryptography, but increasing your strength too much, might result in the function spending several
+for serious cryptography, but increasing your strength too much, might result in that the above function spends several
 seconds, possibly minutes to return if you set it too high - In addition to that your key pair becomes very large.
 The **[seed]** is optional, and even if you don't provide a seed argument, the default seed should still be strong
 enough to avoid predictions.
@@ -124,7 +124,8 @@ their results as `byte[]` values, if you provide a **[raw]** argument to them, a
 If you don't provide a raw argument, the returned value will be the base64 encoded DER format of your key pair.
 
 This slot will also return the fingerprint of your public key, which is useful to keep around somewhere,
-since it's used in other cryptographic operations to identify keys used in operation, etc.
+since it's used in other cryptographic operations to identify keys used in operation, etc. The public key's
+fingerprint is usually used to identify a specific key somehow.
 
 ### Cryptographically signing and verifying the signature of a message
 
