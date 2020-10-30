@@ -365,10 +365,6 @@ The encrypted package has the following format.
 3. The actual signature of the message
 4. The content of the message in `byte[]` format
 
-**Notice** - At this point *nothing has been encrypted* yet.
-
-Logically it becomes as follows; SHA256(signing_key) + signature_length + signature + plain_text_content.
-
 Afterwards the result from the above steps is encrypted using AES, with a random generated session key 
 that is 32 bytes long. And another package is created, which is the final package, intended for being sent
 to the recipient. The final encryption package has a structure as follows.
