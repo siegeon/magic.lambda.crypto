@@ -146,7 +146,7 @@ crypto.rsa.sign:x:@.message
 
 // Uncommenting these lines, will make the verify process throw an exception
 // set-value:x:@.message
-//    .:Some piece of text you wish to sign - XXXX
+//    .:Some message you wish to sign - XXXX
 
 // Notice, using PUBLIC key
 crypto.rsa.verify:x:@.message
