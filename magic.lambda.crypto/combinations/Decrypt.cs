@@ -37,7 +37,7 @@ namespace magic.lambda.crypto.slots.combinations
             var result = decrypter.Decrypt(arguments.Content);
 
             // Verifying content, but only if caller supplied a [verify-key].
-            if (arguments.VerifyKey != null)
+            if (arguments.VerifyKey != null && arguments.VerifyKey.Length > 0)
             {
                 // Caller passed in a public key to verify the signature of message.
                 var verifier = new Verifier(arguments.VerifyKey);

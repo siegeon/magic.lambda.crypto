@@ -296,6 +296,7 @@ crypto.encrypt:Some super secret message
 // Decrypting the above encrypted message.
 crypto.decrypt:x:-
    decryption-key:x:././*/crypto.rsa.create-key/[0,1]/*/private
+   verify-key:x:././*/crypto.rsa.create-key/[1,2]/*/public
 ```
 
 **Notice** - We're using only 512 bit strength in the above example. Make sure you (at least) use
