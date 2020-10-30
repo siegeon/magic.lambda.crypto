@@ -1,31 +1,7 @@
 
 # Magic Lambda Crypto
 
-Provides cryptographic services to Magic. More specifically, this project provides the following slots.
-
-* __[crypto.hash]__ - Creates a hash of the specified string value/expression's value, using the specified **[algorithm]**, that defaults to SHA256
-* __[crypto.password.hash]__ - Creates a cryptographically secure hash from the specified password, expected to be found in its value node. Uses blowfish, or more specifically BCrypt internally, to create the hash with individual salts.
-* __[crypto.password.verify]__ - Verifies that a **[hash]** argument matches towards the password specified in its value. The **[hash]** is expected to be in the format created by BCrypt, implying the hash was created with e.g. **[crypto.password.hash]**.
-* __[crypto.random]__ - Creates a cryptographically secured random string for you, with the characters [a-zA-Z0-9].
-* __[crypto.rsa.create-key]__ - Creates an RSA keypair for you, allowing you to pass in **[strength]**, and/or **[seed]** to override the default strength being 2048, and apply a custom seed to the random number generator. The private/public keypair will be returned to caller as **[public]** and **[private]** after invocation, which is the DER encoded keys, encoded by default as base64.
-* __[crypto.rsa.sign]__ - Cryptographically signs a message (provided as value) with the given private **[private-key]**, and returns the signature for your content as value. The signature content will be returned as the base64 encoded raw bytes being your signature.
-* __[crypto.rsa.verify]__ - Verifies a previously created RSA signature towards its message (provided as value), with the specified public **[public-key]**, optionally allowing the caller to provide a hashing **[algorithm]**, defaulting to SHA256. The slot will throw an exception if the signature is not matching the message passed in for security reasons.
-* __[crypto.rsa.encrypt]__ - Encrypts the specified message (provided as value) using the specified public **[public-key]**, and returns the encrypted message as a base64 encoded encrypted message by default.
-* __[crypto.rsa.decrypt]__ - Decrypts the specified message (provided as value) using the specified private **[private-key]**, and returns the decrypted message as its original value.
-* __[crypto.aes.encrypt]__ - Encrypts a piece of data using the AES encryption algorithm
-* __[crypto.aes.decrypt]__ - Decrypts a piece of data previously encrypted using AES encryption
-* __[crypto.encrypt]__ - Convenience slot combining AES and RSA encryption to encrypt some message
-* __[crypto.decrypt]__ - The opposite of the above
-* __[crypto.get-key]__ - Returns the public key that was used to encrypt a message using the above slot. Result is returned in _"fingerprint format"_.
-
-## Supported hashing algorithms
-
-All slots above requiring an **[algorithm]** argument, can use these hashing algorithms by default. Notice, some unsafe hashing
-algorithms have been explicitly removed, due to the high risks of creating collisions with them. These includes SHA1 and MD5.
-
-* SHA256
-* SHA384
-* SHA512
+This project provides cryptography helper slots for Magic.
 
 ## [crypto.random]
 
@@ -461,6 +437,36 @@ you are using. Hence ...
 
 With the above disclaimer set aside, I guarantee you that I have done *everything* I can to make
 sure the cryptography slots in Magic and this library is as strong and secure as I am able to.
+
+## Reference documentation
+
+This project provides the following slots.
+
+* __[crypto.hash]__ - Creates a hash of the specified string value/expression's value, using the specified **[algorithm]**, that defaults to SHA256
+* __[crypto.password.hash]__ - Creates a cryptographically secure hash from the specified password, expected to be found in its value node. Uses blowfish, or more specifically BCrypt internally, to create the hash with individual salts.
+* __[crypto.password.verify]__ - Verifies that a **[hash]** argument matches towards the password specified in its value. The **[hash]** is expected to be in the format created by BCrypt, implying the hash was created with e.g. **[crypto.password.hash]**.
+* __[crypto.random]__ - Creates a cryptographically secured random string for you, with the characters [a-zA-Z0-9].
+* __[crypto.rsa.create-key]__ - Creates an RSA keypair for you, allowing you to pass in **[strength]**, and/or **[seed]** to override the default strength being 2048, and apply a custom seed to the random number generator. The private/public keypair will be returned to caller as **[public]** and **[private]** after invocation, which is the DER encoded keys, encoded by default as base64.
+* __[crypto.rsa.sign]__ - Cryptographically signs a message (provided as value) with the given private **[private-key]**, and returns the signature for your content as value. The signature content will be returned as the base64 encoded raw bytes being your signature.
+* __[crypto.rsa.verify]__ - Verifies a previously created RSA signature towards its message (provided as value), with the specified public **[public-key]**, optionally allowing the caller to provide a hashing **[algorithm]**, defaulting to SHA256. The slot will throw an exception if the signature is not matching the message passed in for security reasons.
+* __[crypto.rsa.encrypt]__ - Encrypts the specified message (provided as value) using the specified public **[public-key]**, and returns the encrypted message as a base64 encoded encrypted message by default.
+* __[crypto.rsa.decrypt]__ - Decrypts the specified message (provided as value) using the specified private **[private-key]**, and returns the decrypted message as its original value.
+* __[crypto.aes.encrypt]__ - Encrypts a piece of data using the AES encryption algorithm
+* __[crypto.aes.decrypt]__ - Decrypts a piece of data previously encrypted using AES encryption
+* __[crypto.encrypt]__ - Convenience slot combining AES and RSA encryption to encrypt some message
+* __[crypto.decrypt]__ - The opposite of the above
+* __[crypto.sign]__ - Signs a package, and returns the combination of the signature and package to caller
+* __[crypto.verify]__ - Verifies a signature created using the **[crypto.sign]** slot
+* __[crypto.get-key]__ - Returns the public key that was used to encrypt a message using the above slot. Result is returned in _"fingerprint format"_.
+
+## Supported hashing algorithms
+
+All slots above requiring an **[algorithm]** argument, can use these hashing algorithms by default. Notice, some unsafe hashing
+algorithms have been explicitly removed, due to the high risks of creating collisions with them. These includes SHA1 and MD5.
+
+* SHA256
+* SHA384
+* SHA512
 
 ## Quality gates
 
