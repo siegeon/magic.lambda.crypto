@@ -351,11 +351,7 @@ party.
 
 Hence, from the caller's perspective it's *one* invocation to encrypt and sign a message. From the receiver's
 perspective it's normally *two* steps to both decrypt and verify the integrity of a message, unless you know who
-the message originated from. The reasons for this, is because we do *not normally know* who signed the message,
-before the message has been decrypted using the receiver's private key.
-
-Hence, malicious adversaries in the middle of the communication, will not know who the message originated from,
-only to what decryption key it was addressed. In addition no adversary will be able to read the encrypted content.
+the message originated from.
 
 **Notice** - We're using only 512 bit strength in the above example. Make sure you (at least) use
 2048, preferably 4096 in real world usage.
