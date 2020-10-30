@@ -305,7 +305,9 @@ key that was used to encrypt the message. Only after the message is decrypted, t
 can be retrieved, together with the fingerprint of the key that was used to sign the message. Hence, what would
 normally be a more complete process, is that after the receiver decrypts the message, he should also verify that
 the signature originates from some trusted party. This can be done by simply *omitting* the **[verify-key]** argument
-as you invoke **[crypto.decrypt]**, and then invoke **[crypto.get-key]** on the result of the decryption process.
+as you invoke **[crypto.decrypt]**, and then invoke **[crypto.get-key]** on the result of the decryption process,
+for then to use the result of **[crypto.get-key]** to lookup the public key used to *verify* the signature of the
+package.
 
 ```
 // Recipient's key.
