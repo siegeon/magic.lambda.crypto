@@ -1,7 +1,8 @@
 
 # Magic Lambda Crypto
 
-This project provides cryptography helper slots for Magic.
+This project provides cryptography helper slots for Magic, allowing you to use both symmetric and asymmetric cryptography
+operations. The symmetric parts of the project is using AES internally, and the asymmetric parts is using RSA.
 
 ## [crypto.random]
 
