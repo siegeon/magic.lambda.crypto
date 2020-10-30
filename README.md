@@ -256,7 +256,7 @@ crypto.random
 AES and RSA are only really useful when combined. Hence, this project contains the following convenience slots.
 
 * __[crypto.encrypt]__ - Encrypts some message using AES + RSA, optionally signing the message in the process
-* __[crypto.decrypt]__ - Decrypts some message using AES + RSA, optionally verifying the message in the process
+* __[crypto.decrypt]__ - Decrypts some message using AES + RSA, optionally verifying a signature in the process
 * __[crypto.sign]__ - Cryptographically signs a message using RSA and creates a package containing both signature, signing key's fingerprint, and the content that was signed
 * __[crypto.verify]__ - The opposite of the above, that verifies the integrity of a package created with **[crypto.sign]**
 * __[crypto.get-key]__ - Returns the fingerprint of the RSA key that was used to encrypt some message using **[crypto.encrypt]** or sign some message using **[crypto.sign]**
