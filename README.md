@@ -419,15 +419,6 @@ This project provides the following slots.
 * __[crypto.verify]__ - Verifies a signature created using the **[crypto.sign]** slot
 * __[crypto.get-key]__ - Returns the public key that was used to encrypt a message using the above slot. Result is returned in _"fingerprint format"_.
 
-## Supported hashing algorithms
-
-All slots above requiring an **[algorithm]** argument, can use these hashing algorithms by default. Notice, some unsafe hashing
-algorithms have been explicitly removed, due to the high risks of creating collisions with them. These includes SHA1 and MD5.
-
-* SHA256
-* SHA384
-* SHA512
-
 ## Quality gates
 
 - [![Build status](https://travis-ci.com/polterguy/magic.lambda.crypto.svg?master)](https://travis-ci.com/polterguy/magic.lambda.crypto)
