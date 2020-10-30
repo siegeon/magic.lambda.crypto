@@ -171,11 +171,11 @@ If you don't provide a raw argument, the returned value will be a base64 encoded
 To encrypt a message, you can use something as follows.
 
 ```
-.data:some piece of text you wish to encrypt
+.message:Some message you want to encrypt
 
 crypto.rsa.create-key
 
-crypto.rsa.encrypt:x:@.data
+crypto.rsa.encrypt:x:@.message
    public-key:x:@crypto.rsa.create-key/*/public
 
 crypto.rsa.decrypt:x:@crypto.rsa.encrypt
