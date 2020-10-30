@@ -298,13 +298,14 @@ starting from the **[crypto.encrypt]** invocation.
 2. The signed message is then encrypted using a CSRNG generated AES key
 3. The AES key from the above is then encrypted using the **[encryption-key]**, that's assumed to be the recipient's public key
 4. The signing key's fingerprint is stored inside of the encrypted content, such that when the message is decrypted, the other party can verify that the signature originated from some trusted party
-5. The encryption key's fingerprint is stored as bytes, prepended before the encrypted message, which allows the other party to retrieve the correct decryption key, according to what encryption key the caller encrypted the message with. To retrieve a cryptography operation's key fingerprint, you can use **[crypto.get-key]**
+5. The encryption key's fingerprint is stored as bytes, prepended before the encrypted message, which allows the other party to retrieve the correct decryption key, according to what encryption key the caller encrypted the message with. To retrieve a cryptography operation key fingerprint, you can use **[crypto.get-key]**
 
 Hence, the *only* thing that is in plain sight in the above encrypted message, is the fingerprint of the public
 key that was used to encrypt the message. Only after the message is decrypted, the signature for the message
 can be retrieved, together with the fingerprint of the key that was used to sign the message. Hence, what would
 normally be a more complete process, is that after the receiver decrypts the message, he should also verify that
-the signature originates from some trusted party - Such as illustrated below.
+the signature originates from some trusted party. This can be done by simply *omitting* the **[verify-key]** argument
+as you invoke **[crypto.decrypt]**, and then invoke **[crypto.get-key]** on the result of the decryption process.
 
 ```
 // Recipient's key.
@@ -324,9 +325,14 @@ crypto.encrypt:Some super secret message
 // Decrypting the above encrypted message.
 crypto.decrypt:x:-
    decryption-key:x:././*/crypto.rsa.create-key/[0,1]/*/private
+   
+// Uncomment this line to retrieve signing key's fingerprint
+// That you can use to lookup the public key needed to verify
+// the signature
+// crypto.get-key:x:-
 
 // Verifying signature of encrypted message.
-crypto.verify:x:-
+crypto.verify:x:@crypto.decrypt
    public-key:x:././*/crypto.rsa.create-key/[1,2]/*/public
 ```
 
