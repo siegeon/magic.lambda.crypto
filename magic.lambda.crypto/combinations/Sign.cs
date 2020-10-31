@@ -45,43 +45,10 @@ namespace magic.lambda.crypto.slots.combinations
         {
             var content = Utilities.GetContent(input);
             var signingKey = Utilities.GetKeyFromArguments(input, "signing-key");
-            var signingKeyFingerprint = GetFingerprint(input);
+            var signingKeyFingerprint = Utilities.GetFingerprint(input);
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
             return (content, signingKey, signingKeyFingerprint, raw);
-        }
-
-        /*
-         * Returns byte[] representation of fingerprint used in invocation.
-         */
-        byte[] GetFingerprint(Node input)
-        {
-            // Sanity checking invocation.
-            var nodes = input.Children.Where(x => x.Name == "signing-key-fingerprint");
-            if (nodes.Count() != 1)
-                throw new ArgumentException($"You must provide [signing-key-fingerprint]");
-
-            // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.
-            var result = nodes.First()?.GetEx<object>();
-            if (result is byte[] resultRaw)
-            {
-                if (resultRaw.Length != 32)
-                    throw new ArgumentException("Fingerprint is not 32 bytes long");
-                return resultRaw;
-            }
-            else
-            {
-                var resultFingerprint = (result as string).Replace("-", "");
-                int noChars = resultFingerprint.Length;
-                byte[] bytes = new byte[noChars / 2];
-                for (int i = 0; i < noChars; i += 2)
-                {
-                    bytes[i / 2] = Convert.ToByte(resultFingerprint.Substring(i, 2), 16);
-                }
-                if (bytes.Length != 32)
-                    throw new ArgumentException("Fingerprint is not 32 bytes long");
-                return bytes;
-            }
         }
 
         #endregion
