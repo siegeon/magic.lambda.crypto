@@ -26,7 +26,9 @@ namespace magic.lambda.crypto.slots.hash
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            input.Value = bc.BCrypt.HashPassword(input.GetEx<string>());
+            var password = input.GetEx<string>();
+            if (!string.IsNullOrEmpty(password))
+                input.Value = bc.BCrypt.HashPassword(password);
         }
     }
 }
