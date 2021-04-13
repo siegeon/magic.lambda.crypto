@@ -39,6 +39,32 @@ crypto.encrypt:This is some super secret!
         }
 
         [Fact]
+        public void SignOnly()
+        {
+            Common.Evaluate(@"
+
+// Recipient's key(s)
+crypto.rsa.create-key
+   strength:1024
+
+// Sender's key(s).
+crypto.rsa.create-key
+   strength:1024
+
+// Fingerprint of key used to sign content.
+crypto.hash:x:@crypto.rsa.create-key/*/public
+   format:raw
+
+// Encrypting content
+crypto.sign:This is some super secret!
+   signing-key:x:@crypto.rsa.create-key/*/private
+   signing-key-fingerprint:x:@crypto.hash
+crypto.verify:x:-
+   public-key:x:@crypto.rsa.create-key/*/public
+");
+        }
+
+        [Fact]
         public void VerifyFingerprint()
         {
             var lambda = Common.Evaluate(@"

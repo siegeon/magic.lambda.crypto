@@ -47,6 +47,15 @@ crypto.password.verify:WRONG"));
         }
 
         [Fact]
+        public void CreateFingerprint()
+        {
+            var lambda = Common.Evaluate(@"crypto.fingerprint:c29tZS1pbnB1dC1zdHJpbmc=");
+            Assert.Equal(
+                "d70b-eb83-530d-c0c9-65fe-075c-57eb-7065-72a0-5d5d-3d3e-117c-45fe-8236-900e-80dd",
+                lambda.Children.First().Get<string>());
+        }
+
+        [Fact]
         public void HashSha256()
         {
             var lambda = Common.Evaluate(@"
