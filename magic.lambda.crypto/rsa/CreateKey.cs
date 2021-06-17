@@ -6,6 +6,7 @@
 using System;
 using System.Text;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -14,12 +15,22 @@ using magic.crypto.rsa;
 namespace magic.lambda.crypto.slots.rsa
 {
     /// <summary>
-    /// [crypto.rsa.create-key] slot to create an RSA keypair and return as DER encoded,
-    /// .
+    /// [crypto.rsa.create-key] slot to create an RSA keypair and return as DER encoded.
     /// </summary>
     [Slot(Name = "crypto.rsa.create-key")]
     public class CreateKey : ISlot
     {
+        readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Creates an instance of your slot.
+        /// </summary>
+        /// <param name="configuration">Needed to retrieve common seed for operation</param>
+        public CreateKey(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         /// <summary>
         /// Implementation of slot.
         /// </summary>
@@ -56,9 +67,11 @@ namespace magic.lambda.crypto.slots.rsa
             var strength = input.Children.FirstOrDefault(x => x.Name == "strength")?.GetEx<int>() ?? 2048;
 
             var rawSeed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<object>();
+
+            // Notice, even if caller never supplied a manual seed, we still apply the auth secret as the default seed to create maximum amount of entropy.
             var seed = rawSeed is string strSeed ?
-                Encoding.UTF8.GetBytes(strSeed) :
-                rawSeed as byte[];
+                Encoding.UTF8.GetBytes(strSeed + _configuration["magic:auth:secret"]) :
+                (rawSeed as byte[]).Concat(Encoding.UTF8.GetBytes(_configuration["magic:auth:secret"])).ToArray();
 
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 

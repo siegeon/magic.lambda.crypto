@@ -5,6 +5,7 @@
 
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
@@ -19,6 +20,16 @@ namespace magic.lambda.crypto.slots.misc
     public class Random : ISlot
     {
         const string _alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Creates an instance of your slot.
+        /// </summary>
+        /// <param name="configuration">Needed to retrieve common seed for operation</param>
+        public Random(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         /// <summary>
         /// Implementation of slot.
@@ -37,6 +48,11 @@ namespace magic.lambda.crypto.slots.misc
             var rnd = new SecureRandom();
             if (!string.IsNullOrEmpty(seed))
                 rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
+
+            // Regardless of whether or not caller supplied a manual seed, we still apply the Auth token's value as a global seed.
+            var seedStr = _configuration["magic:auth:secret"];
+            rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
+
 
             // Retrieving a random number of bytes, between min/max values provided by caller.
             var bytes = new byte[rnd.Next(min, max)];

@@ -6,6 +6,7 @@
 using System;
 using System.Text;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
@@ -23,6 +24,17 @@ namespace magic.lambda.crypto.slots.combinations
     [Slot(Name = "crypto.encrypt")]
     public class Encrypt : ISlot
     {
+        readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Creates an instance of your slot.
+        /// </summary>
+        /// <param name="configuration">Needed to retrieve common seed for operation</param>
+        public Encrypt(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         /// <summary>
         /// Implementation of slot.
         /// </summary>
@@ -58,7 +70,12 @@ namespace magic.lambda.crypto.slots.combinations
             var signingKeyFingerprint = Utilities.GetFingerprint(input);
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             var seedRaw = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<object>();
-            var seed = seedRaw is string strSeed ? Encoding.UTF8.GetBytes(strSeed) : seedRaw as byte[];
+
+            // Notice, even if caller never supplied a manual seed, we still apply the auth secret as the default seed to create maximum amount of entropy.
+            var seed = seedRaw is string strSeed ?
+                Encoding.UTF8.GetBytes(strSeed + _configuration["magic:auth:secret"]) :
+                (seedRaw as byte[]).Concat(Encoding.UTF8.GetBytes(_configuration["magic:auth:secret"])).ToArray();
+
             input.Clear();
             return (content, signingKey, encryptionKey, signingKeyFingerprint, seed, raw);
         }
