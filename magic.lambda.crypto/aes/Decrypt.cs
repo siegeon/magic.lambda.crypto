@@ -5,8 +5,8 @@
 
 using System.Text;
 using magic.node;
-using magic.signals.contracts;
 using magic.crypto.aes;
+using magic.signals.contracts;
 
 namespace magic.lambda.crypto.slots.aes
 {

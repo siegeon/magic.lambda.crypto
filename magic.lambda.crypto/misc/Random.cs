@@ -3,10 +3,8 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
 using System.Linq;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using Org.BouncyCastle.Security;
 using magic.node;
 using magic.node.extensions;
@@ -21,16 +19,6 @@ namespace magic.lambda.crypto.slots.misc
     public class Random : ISlot
     {
         const string _alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        readonly IConfiguration _configuration;
-
-        /// <summary>
-        /// Creates an instance of your slot.
-        /// </summary>
-        /// <param name="configuration">Needed to retrieve common seed for operation</param>
-        public Random(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
 
         /// <summary>
         /// Implementation of slot.
@@ -43,18 +31,12 @@ namespace magic.lambda.crypto.slots.misc
             var min = input.Children.FirstOrDefault(x => x.Name == "min")?.GetEx<int>() ?? 10;
             var max = input.Children.FirstOrDefault(x => x.Name == "max")?.GetEx<int>() ?? 20;
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>() ?? "";
+            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
 
             // Creating a new CSRNG, seeding it if caller provided a [seed].
             var rnd = new SecureRandom();
-
-            // Ensuring CSRNG is securely seeded.
-            var seedBytes = Utilities
-                .GetAuthSecretAsSeedOnce(_configuration)
-                .Concat(Encoding.UTF8.GetBytes(seed))
-                .ToArray();
-            if (seedBytes != null && seedBytes.Length > 0)
-                rnd.SetSeed(seedBytes);
+            if (!string.IsNullOrEmpty(seed))
+                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
 
             // Retrieving a random number of bytes, between min/max values provided by caller.
             var bytes = new byte[rnd.Next(min, max)];

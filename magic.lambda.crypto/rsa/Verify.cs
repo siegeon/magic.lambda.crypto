@@ -6,9 +6,9 @@
 using System;
 using System.Linq;
 using magic.node;
+using magic.crypto.rsa;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.crypto.rsa;
 
 namespace magic.lambda.crypto.slots.rsa
 {
