@@ -73,8 +73,9 @@ namespace magic.lambda.crypto.slots.combinations
 
             // Notice, even if caller never supplied a manual seed, we still apply the auth secret as the default seed to create maximum amount of entropy.
             var seed = seedRaw is string strSeed ?
-                Encoding.UTF8.GetBytes(strSeed + _configuration["magic:auth:secret"]) :
-                (seedRaw as byte[]).Concat(Encoding.UTF8.GetBytes(_configuration["magic:auth:secret"])).ToArray();
+                Encoding.UTF8.GetBytes(strSeed) :
+                (seedRaw as byte[] ?? Array.Empty<byte>()).Concat(Utilities.GetAuthSecretAsSeedOnce(_configuration)).ToArray();
+            seed = seed.Concat(Utilities.GetAuthSecretAsSeedOnce(_configuration)).ToArray();
 
             input.Clear();
             return (content, signingKey, encryptionKey, signingKeyFingerprint, seed, raw);

@@ -8,9 +8,9 @@ using System.Text;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using magic.node;
+using magic.crypto.rsa;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.crypto.rsa;
 
 namespace magic.lambda.crypto.slots.rsa
 {
@@ -70,8 +70,8 @@ namespace magic.lambda.crypto.slots.rsa
 
             // Notice, even if caller never supplied a manual seed, we still apply the auth secret as the default seed to create maximum amount of entropy.
             var seed = rawSeed is string strSeed ?
-                Encoding.UTF8.GetBytes(strSeed + _configuration["magic:auth:secret"]) :
-                (rawSeed as byte[]).Concat(Encoding.UTF8.GetBytes(_configuration["magic:auth:secret"])).ToArray();
+                Encoding.UTF8.GetBytes(strSeed) :
+                (rawSeed as byte[] ?? Array.Empty<byte>()).Concat(Utilities.GetAuthSecretAsSeedOnce(_configuration)).ToArray();
 
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 

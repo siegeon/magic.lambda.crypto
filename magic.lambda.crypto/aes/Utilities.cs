@@ -24,7 +24,7 @@ namespace magic.lambda.crypto.slots.aes
             bool messageIsBase64)
         {
             // Retrieving message as byte[], converting if necessary.
-            var message = slots.Utilities.GetContent(input, messageIsBase64);
+            var message = crypto.Utilities.GetContent(input, messageIsBase64);
 
             // Retrieving password as byte[], creating SHA256 out of it, if it's a string.
             var rawPassword = input.Children.FirstOrDefault(x => x.Name == "password")?.GetEx<object>() ??

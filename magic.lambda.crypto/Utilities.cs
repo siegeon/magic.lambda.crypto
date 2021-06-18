@@ -6,16 +6,23 @@
 using System;
 using System.Text;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using magic.node;
 using magic.node.extensions;
 
-namespace magic.lambda.crypto.slots
+namespace magic.lambda.crypto
 {
     /*
      * Helper class to retrieve common arguments.
      */
     internal static class Utilities
     {
+        // If true, we have applied the auth.secret as a seed to CSRNG.
+        static bool _seeded = false;
+
+        // Used to synchronise access to above seeded booolean.
+        readonly static object _locker = new object();
+
         /*
          * Retrieves arguments specified to slot.
          */
@@ -110,6 +117,32 @@ namespace magic.lambda.crypto.slots
                 if (bytes.Length != 32)
                     throw new ArgumentException("Fingerprint is not 32 bytes long");
                 return bytes;
+            }
+        }
+
+        /*
+         * Helper method to ensure CryptoRandom is seeded ONCE with auth.secret before used.
+         * Consumed by all methods instantiating a SecureRandom in the project.
+         */
+        internal static byte[] GetAuthSecretAsSeedOnce(IConfiguration configuration)
+        {
+            if (_seeded)
+            {
+                // SecureRandom has been previously seeded with auth.secret.
+                return Array.Empty<byte>();
+            }
+            else
+            {
+                lock (_locker)
+                {
+                    if (_seeded)
+                        return Array.Empty<byte>(); // Somebody beat us to the punch.
+
+                    // SecureRandom has not been seeded before with auth.secret, hence doing it to ensure entropy.
+                    var seedStr = configuration["magic:auth:secret"];
+                    _seeded = true;
+                    return Encoding.UTF8.GetBytes(seedStr);
+                }
             }
         }
     }

@@ -3,6 +3,7 @@
  * See the enclosed LICENSE file for details.
  */
 
+using System;
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -42,17 +43,18 @@ namespace magic.lambda.crypto.slots.misc
             var min = input.Children.FirstOrDefault(x => x.Name == "min")?.GetEx<int>() ?? 10;
             var max = input.Children.FirstOrDefault(x => x.Name == "max")?.GetEx<int>() ?? 20;
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
-            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>();
+            var seed = input.Children.FirstOrDefault(x => x.Name == "seed")?.GetEx<string>() ?? "";
 
             // Creating a new CSRNG, seeding it if caller provided a [seed].
             var rnd = new SecureRandom();
-            if (!string.IsNullOrEmpty(seed))
-                rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
 
-            // Regardless of whether or not caller supplied a manual seed, we still apply the Auth token's value as a global seed.
-            var seedStr = _configuration["magic:auth:secret"];
-            rnd.SetSeed(Encoding.UTF8.GetBytes(seed));
-
+            // Ensuring CSRNG is securely seeded.
+            var seedBytes = Utilities
+                .GetAuthSecretAsSeedOnce(_configuration)
+                .Concat(Encoding.UTF8.GetBytes(seed))
+                .ToArray();
+            if (seedBytes != null && seedBytes.Length > 0)
+                rnd.SetSeed(seedBytes);
 
             // Retrieving a random number of bytes, between min/max values provided by caller.
             var bytes = new byte[rnd.Next(min, max)];
