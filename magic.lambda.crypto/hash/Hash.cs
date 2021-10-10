@@ -32,6 +32,22 @@ namespace magic.lambda.crypto.slots.hash
             var format = input.Children.FirstOrDefault(x => x.Name == "format")?.GetEx<string>() ?? "text";
             switch (algorithm)
             {
+                /*
+                 * MD5 and SHA1 are unfortunately necessary in order to support old legacy data,
+                 * such as existing passwords in existing legacy databases
+                 */
+                case "MD5":
+                    using (var algo = MD5.Create())
+                    {
+                        input.Value = GenerateHash(algo, data, format);
+                    }
+                    break;
+                case "SHA1":
+                    using (var algo = SHA1Managed.Create())
+                    {
+                        input.Value = GenerateHash(algo, data, format);
+                    }
+                    break;
                 case "SHA256":
                     using (var algo = SHA256Managed.Create())
                     {
