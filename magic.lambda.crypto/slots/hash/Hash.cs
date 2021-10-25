@@ -122,6 +122,9 @@ namespace magic.lambda.crypto.slots.hash
 
         #region [ -- Private helper methods -- ]
 
+        /*
+         * Actual implementation, responsible for creating hash, and returning it to caller.
+         */
         object GenerateHash(
             ISignaler signaler,
             HashAlgorithm algo,
