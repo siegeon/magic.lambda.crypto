@@ -5,16 +5,16 @@
 
 using System.Text;
 using magic.node;
-using magic.crypto.rsa;
 using magic.signals.contracts;
+using magic.lambda.crypto.lib.aes;
 
-namespace magic.lambda.crypto.slots.rsa
+namespace magic.lambda.crypto.slots.aes
 {
     /// <summary>
-    /// [crypto.rsa.decrypt] slot to decrypt some content using a private key that was previously
-    /// encrypted using a public key.
+    /// [crypto.aes.decrypt] slot to decrypt some content using a symmetric cryptography algorithm (AES),
+    /// that was previously encrypted using the same algorithm.
     /// </summary>
-    [Slot(Name = "crypto.rsa.decrypt")]
+    [Slot(Name = "crypto.aes.decrypt")]
     public class Decrypt : ISlot
     {
         /// <summary>
@@ -24,11 +24,11 @@ namespace magic.lambda.crypto.slots.rsa
         /// <param name="input">Arguments to slot.</param>
         public void Signal(ISignaler signaler, Node input)
         {
-            // Retrieving message and other arguments.
-            var arguments = Utilities.GetArguments(input, true, "private-key");
+            // Retrieving arguments.
+            var arguments = Utilities.GetArguments(input, true);
 
-            // Decrypting message.
-            var decrypter = new Decrypter(arguments.Key);
+            // Performing actual decryption.
+            var decrypter = new Decrypter(arguments.Password);
             var result = decrypter.Decrypt(arguments.Message);
 
             // Returning results to caller according to specifications.

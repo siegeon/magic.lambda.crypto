@@ -5,8 +5,8 @@
 
 using System;
 using magic.node;
-using magic.crypto.aes;
 using magic.signals.contracts;
+using magic.lambda.crypto.lib.aes;
 
 namespace magic.lambda.crypto.slots.aes
 {

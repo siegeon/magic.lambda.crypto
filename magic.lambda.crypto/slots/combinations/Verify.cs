@@ -3,20 +3,21 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System;
+using System.Text;
 using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.crypto.combinations;
+using magic.lambda.crypto.lib.combinations;
 
 namespace magic.lambda.crypto.slots.combinations
 {
     /// <summary>
-    /// [crypto.sign] slot that signs the specified content using the spcified arguments.
+    /// [crypto.verify] slot that verifies the package was cryptographically
+    /// using the specified [public-key].
     /// </summary>
-    [Slot(Name = "crypto.sign")]
-    public class Sign : ISlot
+    [Slot(Name = "crypto.verify")]
+    public class Verify : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -28,12 +29,15 @@ namespace magic.lambda.crypto.slots.combinations
             // Retrieving arguments.
             var arguments = GetArguments(input);
 
-            // Signing content.
-            var signer = new Signer(arguments.SigningKey, arguments.SigningKeyFingerprint);
-            var signed = signer.Sign(arguments.Content);
+            // Verifying content, which implies splitting the content, signature, and signing key.
+            var verifier = new Verifier(arguments.PublicKey);
+            var result = verifier.Verify(arguments.Content);
 
-            // Returning results to caller.
-            input.Value = arguments.Raw ? (object)signed : Convert.ToBase64String(signed);
+            // Returning result to caller.
+            if (arguments.Raw)
+                input.Value = result;
+            else
+                input.Value = Encoding.UTF8.GetString(result);
         }
 
         #region [ -- Private helper methods -- ]
@@ -41,14 +45,13 @@ namespace magic.lambda.crypto.slots.combinations
         /*
          * Retrieves arguments for invocation.
          */
-        (byte[] Content, byte[] SigningKey, byte[] SigningKeyFingerprint, bool Raw) GetArguments(Node input)
+        (byte[] Content, byte[] PublicKey, bool Raw) GetArguments(Node input)
         {
-            var content = Utilities.GetContent(input);
-            var signingKey = Utilities.GetKeyFromArguments(input, "signing-key");
-            var signingKeyFingerprint = Utilities.GetFingerprint(input);
+            var content = Utilities.GetContent(input, true);
+            var publicKey = Utilities.GetKeyFromArguments(input, "public-key");
             var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
             input.Clear();
-            return (content, signingKey, signingKeyFingerprint, raw);
+            return (content, publicKey, raw);
         }
 
         #endregion

@@ -3,20 +3,17 @@
  * See the enclosed LICENSE file for details.
  */
 
-using System.Linq;
 using magic.node;
-using magic.node.extensions;
 using magic.signals.contracts;
-using ut = magic.crypto.utilities;
+using ut = magic.lambda.crypto.lib.utilities;
 
 namespace magic.lambda.crypto.slots.misc
 {
     /// <summary>
-    /// [crypto.get-key] slot that returns the fingerprint of the encryption key
-    /// that was used to encrypt a message.
+    /// [crypto.fingerprint] slot that returns the fingerprint of whatever it is given.
     /// </summary>
-    [Slot(Name = "crypto.get-key")]
-    public class GetKey : ISlot
+    [Slot(Name = "crypto.fingerprint")]
+    public class Fingerprint : ISlot
     {
         /// <summary>
         /// Implementation of slot.
@@ -27,16 +24,9 @@ namespace magic.lambda.crypto.slots.misc
         {
             // Retrieving arguments.
             var content = Utilities.GetContent(input, true);
-            var raw = input.Children.FirstOrDefault(x => x.Name == "raw")?.GetEx<bool>() ?? false;
 
             // Retrieving fingerprint.
-            var fingerprint = ut.Utilities.GetPackageFingerprint(content);
-
-            // Returning results to caller.
-            if (raw)
-                input.Value = fingerprint;
-            else
-                input.Value = ut.Utilities.CreateFingerprint(fingerprint);
+            input.Value = ut.Utilities.CreateSha256Fingerprint(content);
         }
     }
 }

@@ -267,7 +267,7 @@ specified from a string to a SHA256 hash value. This allows you to use *any* pas
 while avoiding reducing entropy, making it harder to crack the encrypted message.
 
 Even though AES has low bit strength, it's still considered one of the strongest forms of cryptography
-that exists, assuming you use it *correct*. For the record, this library does *not* use the built in
+that exists, assuming you use it *correctly*. For the record, this library does *not* use the built in
 AES library from .Net, which has several security issues, due to the way it handles padding, among other
 things - Neither does this library simply convert strings to `byte[]` arrays using `Encoding.UTF.GetBytes`,
 which *significantly* reduces entropy, and makes your message easily cracked by a malicious agent with

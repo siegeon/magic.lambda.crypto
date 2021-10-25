@@ -9,7 +9,7 @@ using System.Linq;
 using magic.node;
 using magic.node.extensions;
 using magic.signals.contracts;
-using magic.crypto.combinations;
+using magic.lambda.crypto.lib.combinations;
 
 namespace magic.lambda.crypto.slots.combinations
 {
