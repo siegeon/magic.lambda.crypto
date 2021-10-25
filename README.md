@@ -17,7 +17,12 @@ More specifically this project contains the following slots.
 * __[crypto.fingerprint]__ - Creates a fingerprint of something
 * __[crypto.get-key]__ - Returns the fingerprint of the public key associated with message
 * __[crypto.random]__ - CSRNG creating random seeds for you
-* __[crypto.hash]__ - Hashes some message or payload
+* __[crypto.hash]__ - Hashes some message or payload using the specified **[algo]** or **[algorithm]**
+* __[crypto.hash.md5]__ - MD5 hashes some message or payload
+* __[crypto.hash.sha1]__ - SHA1 hashes some message or payload
+* __[crypto.hash.sha256]__ - SHA256 hashes some message or payload
+* __[crypto.hash.sha384]__ - SHA384 hashes some message or payload
+* __[crypto.hash.sha512]__ - SHA512 hashes some message or payload
 * __[crypto.password.hash]__ - Creates a Blowfish per salted hash
 * __[crypto.password.verify]__ - Verifies a Blowfish salted hash
 * __[crypto.encrypt]__ - High level slot combining RSA and AES to encrypt some message
@@ -47,7 +52,7 @@ value to boolean true, at which point the slot will return the raw bytes as a `b
 larger amount of entropy than simply using alphanumeric characters for the same size - Which is
 important as you start creating keys for AES encryption, etc.
 
-## [crypto.hash]
+## [crypto.hash] and [crypto.hash.xxx]
 
 The **[crypto.hash]** slot can be used to generate hash values. When you invoke it, you can choose
 between having the hash returned as raw a `byte[]`, as a _"fingerprint"_ or as its bit encoded hex
@@ -77,7 +82,22 @@ algorithms as you consume the above slot.
 * SHA512
 
 **Notice** - SHA1 and MD5 is supported _only_ for legacy reasons, and _should not be used_ unless you have
-a legacy system depending upon it. Sha1 and MD5 are considered weak today.
+a legacy system depending upon it. Sha1 and MD5 are considered weak today. This slot also contains convenience
+overloads with the hashing algorithm being a part of the name of the invocation, such as illustrated below.
+
+* __[crypto.hash.sha1]__
+* __[crypto.hash.md5]__
+* __[crypto.hash.sha256]__
+* __[crypto.hash.sha384]__
+* __[crypto.hash.sha512]__
+
+In addition you canhash a file directly, without having to load it first, by providing a **[filename]** argument
+to it, such as illustrated below.
+
+```
+crypto.hash.sha256
+   filename:/README.md
+```
 
 ## [crypto.seed]
 

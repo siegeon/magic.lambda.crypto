@@ -133,6 +133,7 @@ namespace magic.lambda.crypto.slots.hash
             byte[] bytes = null;
             if (isFile)
             {
+                // Input is a file, hence directly hashing file without loading it into memory.
                 var pathNode = new Node();
                 signaler.Signal(".io.folder.root", pathNode);
                 var path = pathNode.Get<string>().TrimEnd('/') + '/' + (data as string).TrimStart('/');
@@ -143,6 +144,7 @@ namespace magic.lambda.crypto.slots.hash
             }
             else
             {
+                // Input is a byte[] array.
                 bytes = algo.ComputeHash(data as byte[]);
             }
 
