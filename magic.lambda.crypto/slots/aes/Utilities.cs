@@ -27,7 +27,7 @@ namespace magic.lambda.crypto.slots.aes
 
             // Retrieving password as byte[], creating SHA256 out of it, if it's a string.
             var rawPassword = input.Children.FirstOrDefault(x => x.Name == "password")?.GetEx<object>() ??
-                throw new ArgumentException("No [password] provided to [crypto.aes.xxx]");
+                throw new HyperlambdaException("No [password] provided to [crypto.aes.xxx]");
             var password = rawPassword is string strPwd ?
                 ut.Utilities.Generate256BitKey(strPwd) :
                 rawPassword as byte[];

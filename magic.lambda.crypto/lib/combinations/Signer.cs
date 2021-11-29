@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using System.Text;
+using magic.node.extensions;
 
 namespace magic.lambda.crypto.lib.combinations
 {
@@ -25,7 +26,7 @@ namespace magic.lambda.crypto.lib.combinations
         {
             // Sanity checking invocation, fingerprint should be SHA256 of signing key's public sibling.
             if (publicKeyFingerprint.Length != 32)
-                throw new ArgumentException("Signing key's fingerprint was not valid");
+                throw new HyperlambdaException("Signing key's fingerprint was not valid");
 
             _privateKey = privateRsaKey;
             _publicKeyFingerprint = publicKeyFingerprint;

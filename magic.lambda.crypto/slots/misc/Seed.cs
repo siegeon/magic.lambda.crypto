@@ -25,7 +25,7 @@ namespace magic.lambda.crypto.slots.misc
         public void Signal(ISignaler signaler, Node input)
         {
             // Retrieving arguments.
-            var seedStr = input.GetEx<string>() ?? throw new ArgumentException("No value provided to [crypto.seed]");
+            var seedStr = input.GetEx<string>() ?? throw new HyperlambdaException("No value provided to [crypto.seed]");
             var seed = Encoding.UTF8.GetBytes(seedStr);
             var rnd = new SecureRandom();
             rnd.SetSeed(seed);

@@ -144,7 +144,7 @@ crypto.rsa.sign:x:@.data
         [Fact]
         public void SignText_Throws()
         {
-            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 .data:This is some piece of text that should be signed
 crypto.rsa.create-key
    strength:1024
@@ -238,7 +238,7 @@ crypto.rsa.verify:x:@.data
         [Fact]
         public void SignAndVerifyText_Throws_01()
         {
-            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 .data1:This is some piece of text that should be signed
 .data2:ThiS is some piece of text that should be signed
 crypto.rsa.create-key

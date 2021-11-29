@@ -2,7 +2,6 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-using System;
 using System.Linq;
 using Xunit;
 using magic.node.extensions;
@@ -32,7 +31,7 @@ crypto.password.verify:WRONG
         [Fact]
         public void VerifyHashPasswordThrows()
         {
-            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"crypto.password.hash:foo
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"crypto.password.hash:foo
 crypto.password.verify:WRONG"));
         }
 
@@ -95,7 +94,7 @@ crypto.hash:some-input-string
         [Fact]
         public void HashShaThrows()
         {
-            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 crypto.hash:some-input-string
    algorithm:Non-Existing"));
         }

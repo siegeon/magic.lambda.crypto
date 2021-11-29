@@ -31,7 +31,7 @@ namespace magic.lambda.crypto.slots.hash
         {
             var hash = input.Children.FirstOrDefault(x => x.Name == "hash")?.GetEx<string>();
             if (hash == null)
-                throw new ArgumentException($"No [hash] value provided to [crypto.password.verify]");
+                throw new HyperlambdaException($"No [hash] value provided to [crypto.password.verify]");
 
             var value = input.GetEx<string>();
 

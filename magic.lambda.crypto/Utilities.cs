@@ -48,7 +48,7 @@ namespace magic.lambda.crypto
             if (keys.Count() != 1)
             {
                 if (throwOnMissing)
-                    throw new ArgumentException($"You must provide a [{keyType}]");
+                    throw new HyperlambdaException($"You must provide a [{keyType}]");
                 return Array.Empty<byte>();
             }
 
@@ -66,7 +66,7 @@ namespace magic.lambda.crypto
         internal static byte[] GetContent(Node input, bool base64 = false)
         {
             var contentObject = input.GetEx<object>() ??
-                throw new ArgumentException("No content for cryptography operation");
+                throw new HyperlambdaException("No content for cryptography operation");
 
             // Checking if content is already byte[].
             if (contentObject is byte[] bytes)
@@ -87,14 +87,14 @@ namespace magic.lambda.crypto
             // Sanity checking invocation.
             var nodes = input.Children.Where(x => x.Name == "signing-key-fingerprint");
             if (nodes.Count() != 1)
-                throw new ArgumentException($"You must provide [signing-key-fingerprint]");
+                throw new HyperlambdaException($"You must provide [signing-key-fingerprint]");
 
             // Retrieving key, making sure we support both base64 encoded, and raw byte[] keys.
             var result = nodes.First()?.GetEx<object>();
             if (result is byte[] resultRaw)
             {
                 if (resultRaw.Length != 32)
-                    throw new ArgumentException("Fingerprint is not 32 bytes long");
+                    throw new HyperlambdaException("Fingerprint is not 32 bytes long");
                 return resultRaw;
             }
             else
@@ -107,7 +107,7 @@ namespace magic.lambda.crypto
                     bytes[i / 2] = Convert.ToByte(resultFingerprint.Substring(i, 2), 16);
                 }
                 if (bytes.Length != 32)
-                    throw new ArgumentException("Fingerprint is not 32 bytes long");
+                    throw new HyperlambdaException("Fingerprint is not 32 bytes long");
                 return bytes;
             }
         }

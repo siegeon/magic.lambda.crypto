@@ -2,13 +2,13 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-using System;
 using System.Text;
 using Xunit;
 using Org.BouncyCastle.Crypto;
 using magic.lambda.crypto.lib.rsa;
 using aes = magic.lambda.crypto.lib.aes;
 using combinations = magic.lambda.crypto.lib.combinations;
+using magic.node.extensions;
 
 namespace magic.lambda.crypto.tests
 {
@@ -72,7 +72,7 @@ namespace magic.lambda.crypto.tests
             var signature = signer.Sign(Encoding.UTF8.GetBytes("Hello World"));
 
             var verifier = new Verifier(key.PublicKey);
-            Assert.Throws<ArgumentException>(() => verifier.Verify(Encoding.UTF8.GetBytes("Hello XWorld"), signature));
+            Assert.Throws<HyperlambdaException>(() => verifier.Verify(Encoding.UTF8.GetBytes("Hello XWorld"), signature));
         }
 
         [Fact]

@@ -2,7 +2,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-using System;
+using magic.node.extensions;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 
@@ -41,7 +41,7 @@ namespace magic.lambda.crypto.lib.rsa
             // Signing the specified data, and returning to caller as base64.
             signer.BlockUpdate(message, 0, message.Length);
             if (!signer.VerifySignature(signature))
-                throw new ArgumentException("Signature mismatch");
+                throw new HyperlambdaException("Signature mismatch");
         }
     }
 }

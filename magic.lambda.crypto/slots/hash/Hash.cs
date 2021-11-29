@@ -42,7 +42,7 @@ namespace magic.lambda.crypto.slots.hash
             if (data == null)
             {
                 data = input.Children.FirstOrDefault(x => x.Name == "filename")?.GetEx<string>() ??
-                    throw new ArgumentException($"No data or [filename] supplied to [{input.Name}]");
+                    throw new HyperlambdaException($"No data or [filename] supplied to [{input.Name}]");
                 isFile = true;
             }
 
@@ -112,7 +112,7 @@ namespace magic.lambda.crypto.slots.hash
                     break;
 
                 default:
-                    throw new ArgumentException($"'{algorithm}' is an unknown hashing algorithm.");
+                    throw new HyperlambdaException($"'{algorithm}' is an unknown hashing algorithm.");
             }
 
             // House cleaning.
@@ -174,7 +174,7 @@ namespace magic.lambda.crypto.slots.hash
                     return result.ToString().TrimEnd('-').ToLowerInvariant();
 
                 default:
-                    throw new ArgumentException($"I don't understand {format} as format for my hash");
+                    throw new HyperlambdaException($"I don't understand {format} as format for my hash");
             }
         }
 

@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
+using magic.node.extensions;
 
 namespace magic.lambda.crypto.lib.utilities
 {
@@ -39,7 +40,7 @@ namespace magic.lambda.crypto.lib.utilities
         {
             // Sanity checking invocation.
             if (content.Length != 32)
-                throw new ArgumentException($"Cannot create a fingerprint from your content, since it was {content.Length} long. It must be 32 bytes.");
+                throw new HyperlambdaException($"Cannot create a fingerprint from your content, since it was {content.Length} long. It must be 32 bytes.");
 
             // Creating a fingerprint in the format of "09fe-de45-..." of the 32 bytes long argument.
             var result = new StringBuilder();

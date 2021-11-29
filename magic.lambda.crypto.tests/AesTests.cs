@@ -2,10 +2,10 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
-using System;
 using System.Linq;
 using System.Text;
 using Xunit;
+using magic.node.extensions;
 
 namespace magic.lambda.crypto.tests
 {
@@ -57,7 +57,7 @@ crypto.aes.decrypt:x:-
         [Fact]
         public void EncryptDecrypt_Throws_01()
         {
-            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
    password:Jo dude!
 crypto.aes.decrypt:x:-
@@ -67,7 +67,7 @@ crypto.aes.decrypt:x:-
         [Fact]
         public void EncryptDecrypt_Throws_02()
         {
-            Assert.Throws<ArgumentException>(() => Common.Evaluate(@"
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
 crypto.aes.encrypt:Howdy, this is cool
 "));
         }
