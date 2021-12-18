@@ -35,25 +35,26 @@ namespace magic.lambda.crypto.lib.combinations
             using (var encStream = new MemoryStream(message))
             {
                 // Simplifying life.
-                var encReader = new BinaryReader(encStream);
+                using (var encReader = new BinaryReader(encStream))
+                {
+                    // Discarding encryption key's fingerprint.
+                    encReader.ReadBytes(32);
 
-                // Discarding encryption key's fingerprint.
-                encReader.ReadBytes(32);
+                    // Reading encrypted AES key.
+                    var encryptedAesKey = encReader.ReadBytes(encReader.ReadInt32());
 
-                // Reading encrypted AES key.
-                var encryptedAesKey = encReader.ReadBytes(encReader.ReadInt32());
+                    // Decrypting AES key.
+                    var rsaDecrypter = new lib_rsa.Decrypter(_rsaPrivateKey);
+                    var decryptedAesKey = rsaDecrypter.Decrypt(encryptedAesKey);
 
-                // Decrypting AES key.
-                var rsaDecrypter = new lib_rsa.Decrypter(_rsaPrivateKey);
-                var decryptedAesKey = rsaDecrypter.Decrypt(encryptedAesKey);
+                    // Reading the encrypted content.
+                    var encryptedContent = ut.Utilities.ReadRestOfStream(encStream);
 
-                // Reading the encrypted content.
-                var encryptedContent = ut.Utilities.ReadRestOfStream(encStream);
-
-                // Decrypting content.
-                var aesDecrypter = new aes.Decrypter(decryptedAesKey);
-                var decryptedContent = aesDecrypter.Decrypt(encryptedContent);
-                return decryptedContent;
+                    // Decrypting content.
+                    var aesDecrypter = new aes.Decrypter(decryptedAesKey);
+                    var decryptedContent = aesDecrypter.Decrypt(encryptedContent);
+                    return decryptedContent;
+                }
             }
         }
 

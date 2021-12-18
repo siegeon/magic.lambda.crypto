@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using magic.node;
+using magic.node.contracts;
 using magic.node.extensions;
 using magic.signals.contracts;
 
@@ -24,6 +25,17 @@ namespace magic.lambda.crypto.slots.hash
     [Slot(Name = "crypto.hash.sha512")]
     public class Hash : ISlot
     {
+        readonly IStreamService _streamService;
+
+        /// <summary>
+        /// Creates an instance of your type.
+        /// </summary>
+        /// <param name="streamService">Needed in case caller wants to create a hash from some sort of file or stream.</param>
+        public Hash(IStreamService streamService)
+        {
+            _streamService = streamService;
+        }
+
         /// <summary>
         /// Implementation of slot.
         /// </summary>
@@ -139,7 +151,7 @@ namespace magic.lambda.crypto.slots.hash
                 var pathNode = new Node();
                 signaler.Signal(".io.folder.root", pathNode);
                 var path = pathNode.Get<string>().TrimEnd('/') + '/' + (data as string).TrimStart('/');
-                using (var stream = File.OpenRead(path))
+                using (var stream = _streamService.OpenFile(path))
                 {
                     bytes = algo.ComputeHash(stream);
                 }

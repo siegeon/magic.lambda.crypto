@@ -86,24 +86,25 @@ namespace magic.lambda.crypto.lib.combinations
             using (var stream = new MemoryStream(message))
             {
                 // Simplifying life.
-                var reader = new BinaryReader(stream);
+                using (var reader = new BinaryReader(stream))
+                {
+                    // Reading signing key.
+                    reader.ReadBytes(32);
 
-                // Reading signing key.
-                reader.ReadBytes(32);
+                    // Reading signature.
+                    var lengthOfSignature = reader.ReadInt32();
+                    var signature = reader.ReadBytes(lengthOfSignature);
 
-                // Reading signature.
-                var lengthOfSignature = reader.ReadInt32();
-                var signature = reader.ReadBytes(lengthOfSignature);
+                    // Reading decrypted content.
+                    var result = ut.Utilities.ReadRestOfStream(stream);
 
-                // Reading decrypted content.
-                var result = ut.Utilities.ReadRestOfStream(stream);
+                    // Verifying signature.
+                    var rsaVerifier = new rsa.Verifier(_publicKey);
+                    rsaVerifier.Verify(result, signature);
 
-                // Verifying signature.
-                var rsaVerifier = new rsa.Verifier(_publicKey);
-                rsaVerifier.Verify(result, signature);
-
-                // Returning only the content of the message to the caller.
-                return result;
+                    // Returning only the content of the message to the caller.
+                    return result;
+                }
             }
         }
 

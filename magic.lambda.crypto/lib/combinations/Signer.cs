@@ -84,20 +84,21 @@ namespace magic.lambda.crypto.lib.combinations
             using (var stream = new MemoryStream())
             {
                 // Simplifying life.
-                var writer = new BinaryWriter(stream);
+                using (var writer = new BinaryWriter(stream))
+                {
+                    // Writing SHA256 of fingerprint key.
+                    writer.Write(_publicKeyFingerprint);
 
-                // Writing SHA256 of fingerprint key.
-                writer.Write(_publicKeyFingerprint);
+                    // Writing signature.
+                    var signer = new rsa.Signer(_privateKey);
+                    var signature =  signer.Sign(message);
+                    writer.Write(signature.Length);
+                    writer.Write(signature);
 
-                // Writing signature.
-                var signer = new rsa.Signer(_privateKey);
-                var signature =  signer.Sign(message);
-                writer.Write(signature.Length);
-                writer.Write(signature);
-
-                // Writing content.
-                writer.Write(message);
-                return stream.ToArray();
+                    // Writing content.
+                    writer.Write(message);
+                    return stream.ToArray();
+                }
             }
         }
 
