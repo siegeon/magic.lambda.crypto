@@ -203,6 +203,7 @@ jqlytqgW6l6KI/Q=
             services.AddTransient((svc) => mockConfiguration.Object);
             services.AddTransient<ISignaler, Signaler>();
             services.AddTransient<IStreamService, StreamService>();
+            services.AddTransient<IFileService, FileService>();
             var types = new SignalsProvider(InstantiateAllTypes<ISlot>(services));
             services.AddTransient<ISignalsProvider>((svc) => types);
             var provider = services.BuildServiceProvider();
