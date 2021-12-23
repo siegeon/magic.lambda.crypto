@@ -195,6 +195,22 @@ jqlytqgW6l6KI/Q=
 
         #region [ -- Private helper methods -- ]
 
+        private class RootResolver : IRootResolver
+        {
+            public string DynamicFiles => AppDomain.CurrentDomain.BaseDirectory;
+            public string RootFolder => AppDomain.CurrentDomain.BaseDirectory;
+
+            public string AbsolutePath(string path)
+            {
+                return DynamicFiles + path.TrimStart(new char[] { '/', '\\' });
+            }
+
+            public string RelativePath(string path)
+            {
+                return path.Substring(DynamicFiles.Length - 1);
+            }
+        }
+
         static IServiceProvider Initialize()
         {
             var services = new ServiceCollection();
@@ -204,6 +220,7 @@ jqlytqgW6l6KI/Q=
             services.AddTransient<ISignaler, Signaler>();
             services.AddTransient<IStreamService, StreamService>();
             services.AddTransient<IFileService, FileService>();
+            services.AddTransient<IRootResolver, RootResolver>();
             var types = new SignalsProvider(InstantiateAllTypes<ISlot>(services));
             services.AddTransient<ISignalsProvider>((svc) => types);
             var provider = services.BuildServiceProvider();
