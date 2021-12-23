@@ -26,14 +26,17 @@ namespace magic.lambda.crypto.slots.hash
     public class Hash : ISlot
     {
         readonly IStreamService _streamService;
+        readonly IRootResolver _rootResolver;
 
         /// <summary>
         /// Creates an instance of your type.
         /// </summary>
         /// <param name="streamService">Needed in case caller wants to create a hash from some sort of file or stream.</param>
-        public Hash(IStreamService streamService)
+        /// <param name="rootResolver">Needed in resolve the root path for dynamic files.</param>
+        public Hash(IStreamService streamService, IRootResolver rootResolver)
         {
             _streamService = streamService;
+            _rootResolver = rootResolver;
         }
 
         /// <summary>
@@ -148,9 +151,7 @@ namespace magic.lambda.crypto.slots.hash
             if (isFile)
             {
                 // Input is a file, hence directly hashing file without loading it into memory.
-                var pathNode = new Node();
-                signaler.Signal(".io.folder.root", pathNode);
-                var path = pathNode.Get<string>().TrimEnd('/') + '/' + (data as string).TrimStart('/');
+                var path = _rootResolver.DynamicFiles + (data as string).TrimStart('/');
                 using (var stream = _streamService.OpenFile(path))
                 {
                     bytes = algo.ComputeHash(stream);
