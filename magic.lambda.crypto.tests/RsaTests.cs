@@ -105,6 +105,7 @@ crypto.rsa.sign:x:@.data
             Assert.True(sign.Length > 70 && sign.Length < 200);
         }
 
+        #pragma warning disable S2699
         [Fact]
         public void SignAndVerifyText_Raw()
         {
@@ -122,6 +123,7 @@ crypto.rsa.verify:x:@.data
             Assert.NotNull(sign);
             Assert.True(sign.Length > 70 && sign.Length < 200);
         }
+        #pragma warning restore S2699
 
         [Fact]
         public void SignTextSha512()
@@ -166,6 +168,7 @@ crypto.rsa.verify:x:@.data
 ");
         }
 
+        #pragma warning disable S2699
         [Fact]
         public void SignAndVerifyTextSha512()
         {
@@ -182,7 +185,9 @@ crypto.rsa.verify:x:@.data
    signature:x:@crypto.rsa.sign
 ");
         }
+        #pragma warning restore S2699
 
+        #pragma warning disable S2699
         [Fact]
         public void SignAndVerifyTextSHA1()
         {
@@ -199,7 +204,9 @@ crypto.rsa.verify:x:@.data
    signature:x:@crypto.rsa.sign
 ");
         }
+        #pragma warning restore S2699
 
+        #pragma warning disable S2699
         [Fact]
         public void SignAndVerifyTextSHA384()
         {
@@ -216,7 +223,9 @@ crypto.rsa.verify:x:@.data
    signature:x:@crypto.rsa.sign
 ");
         }
+        #pragma warning restore S2699
 
+        #pragma warning disable S2699
         [Fact]
         public void SignAndVerifyTextMD5()
         {
@@ -233,6 +242,7 @@ crypto.rsa.verify:x:@.data
    signature:x:@crypto.rsa.sign
 ");
         }
+        #pragma warning restore S2699
 
         [Fact]
         public void SignAndVerifyText_Throws_01()

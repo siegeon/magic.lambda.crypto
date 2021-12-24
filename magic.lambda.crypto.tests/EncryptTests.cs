@@ -37,6 +37,7 @@ crypto.encrypt:This is some super secret!
             Assert.True(msg.Length > 500 && msg.Length < 700);
         }
 
+        #pragma warning disable S2699
         [Fact]
         public void SignOnly()
         {
@@ -62,6 +63,7 @@ crypto.verify:x:-
    public-key:x:@crypto.rsa.create-key/*/public
 ");
         }
+        #pragma warning restore S2699
 
         [Fact]
         public void VerifyFingerprint()
