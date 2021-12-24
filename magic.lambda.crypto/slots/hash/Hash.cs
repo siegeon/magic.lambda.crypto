@@ -3,7 +3,6 @@
  */
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
@@ -94,35 +93,35 @@ namespace magic.lambda.crypto.slots.hash
                 case "md5":
                     using (var algo = MD5.Create())
                     {
-                        input.Value = GenerateHash(signaler, algo, data, format, isFile);
+                        input.Value = GenerateHash(algo, data, format, isFile);
                     }
                     break;
 
                 case "sha1":
                     using (var algo = SHA1Managed.Create())
                     {
-                        input.Value = GenerateHash(signaler, algo, data, format, isFile);
+                        input.Value = GenerateHash(algo, data, format, isFile);
                     }
                     break;
 
                 case "sha256":
                     using (var algo = SHA256Managed.Create())
                     {
-                        input.Value = GenerateHash(signaler, algo, data, format, isFile);
+                        input.Value = GenerateHash(algo, data, format, isFile);
                     }
                     break;
 
                 case "sha384":
                     using (var algo = SHA384Managed.Create())
                     {
-                        input.Value = GenerateHash(signaler, algo, data, format, isFile);
+                        input.Value = GenerateHash(algo, data, format, isFile);
                     }
                     break;
 
                 case "sha512":
                     using (var algo = SHA512Managed.Create())
                     {
-                        input.Value = GenerateHash(signaler, algo, data, format, isFile);
+                        input.Value = GenerateHash(algo, data, format, isFile);
                     }
                     break;
 
@@ -140,7 +139,6 @@ namespace magic.lambda.crypto.slots.hash
          * Actual implementation, responsible for creating hash, and returning it to caller.
          */
         object GenerateHash(
-            ISignaler signaler,
             HashAlgorithm algo,
             object data,
             string format,
