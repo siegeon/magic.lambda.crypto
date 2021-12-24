@@ -153,6 +153,7 @@ crypto.rsa.sign:x:@.data
    public-key:x:@crypto.rsa.create-key/*/public"));
         }
 
+        #pragma warning disable S2699
         [Fact]
         public void SignAndVerifyText()
         {
@@ -167,6 +168,7 @@ crypto.rsa.verify:x:@.data
    signature:x:@crypto.rsa.sign
 ");
         }
+        #pragma warning restore S2699
 
         #pragma warning disable S2699
         [Fact]
