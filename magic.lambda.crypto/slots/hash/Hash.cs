@@ -90,7 +90,7 @@ namespace magic.lambda.crypto.slots.hash
                  * MD5 and SHA1 are unfortunately necessary in order to support old legacy data,
                  * such as existing passwords in existing legacy databases
                  */
-                #pragma warning disable S2699
+                #pragma warning disable S4790
                 case "md5":
                     using (var algo = MD5.Create())
                     {
@@ -104,7 +104,7 @@ namespace magic.lambda.crypto.slots.hash
                         input.Value = GenerateHash(algo, data, format, isFile);
                     }
                     break;
-                #pragma warning restore S2699
+                #pragma warning restore S4790
 
                 case "sha256":
                     using (var algo = SHA256Managed.Create())
