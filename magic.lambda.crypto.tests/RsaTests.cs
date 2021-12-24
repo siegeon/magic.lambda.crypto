@@ -244,6 +244,7 @@ crypto.rsa.verify:x:@.data
         }
         #pragma warning restore S2699
 
+        #pragma warning disable S2699
         [Fact]
         public void SignAndVerifyText_Throws_01()
         {
@@ -259,6 +260,7 @@ crypto.rsa.verify:x:@.data2
    signature:x:@crypto.rsa.sign
 "));
         }
+        #pragma warning restore S2699
 
         [Fact]
         public void EncryptText()
