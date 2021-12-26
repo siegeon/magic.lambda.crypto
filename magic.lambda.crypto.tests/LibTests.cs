@@ -2,6 +2,7 @@
  * Magic Cloud, copyright Aista, Ltd. See the attached LICENSE file for details.
  */
 
+using System;
 using System.Text;
 using Xunit;
 using Org.BouncyCastle.Crypto;
@@ -44,9 +45,13 @@ namespace magic.lambda.crypto.tests
             var encrypted = encrypter.Encrypt(Encoding.UTF8.GetBytes("Hello World"));
 
             var decrypter = new Decrypter(key.PrivateKey);
-            var decrypted = decrypter.Decrypt(encrypted);
+            var decryptedBytes = decrypter.Decrypt(encrypted);
+            var decryptedString = decrypter.DecryptToString(encrypted);
+            var decryptedFromString = decrypter.Decrypt(Convert.ToBase64String(encrypted));
 
-            Assert.Equal("Hello World", Encoding.UTF8.GetString(decrypted));
+            Assert.Equal("Hello World", Encoding.UTF8.GetString(decryptedBytes));
+            Assert.Equal("Hello World", Encoding.UTF8.GetString(decryptedFromString));
+            Assert.Equal("Hello World", decryptedString);
         }
 
         [Fact]
