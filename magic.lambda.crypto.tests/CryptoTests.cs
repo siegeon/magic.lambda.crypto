@@ -113,6 +113,19 @@ crypto.random
         }
 
         [Fact]
+        public void Seed()
+        {
+            var lambda = Common.Evaluate(@"crypto.seed:qwertyuiop");
+            Assert.Null(lambda.Children.First().Value);
+        }
+
+        [Fact]
+        public void Seed_Throws()
+        {
+            Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"crypto.seed"));
+        }
+
+        [Fact]
         public void RandomBytes()
         {
             var lambda = Common.Evaluate(@"

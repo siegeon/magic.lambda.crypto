@@ -28,6 +28,7 @@ namespace magic.lambda.crypto.slots.misc
             var seed = Encoding.UTF8.GetBytes(seedStr);
             var rnd = new SecureRandom();
             rnd.SetSeed(seed);
+            input.Value = null;
         }
     }
 }
