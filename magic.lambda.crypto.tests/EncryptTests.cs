@@ -5,15 +5,16 @@
 using System.Linq;
 using System.Text;
 using Xunit;
+using magic.node.extensions;
 
 namespace magic.lambda.crypto.tests
 {
-    public class EncryptTests
-    {
-        [Fact]
-        public void SignAndEncrypt()
-        {
-            var lambda = Common.Evaluate(@"
+   public class EncryptTests
+   {
+      [Fact]
+      public void SignAndEncrypt()
+      {
+         var lambda = Common.Evaluate(@"
 
 // Recipient's key(s)
 crypto.rsa.create-key
@@ -33,16 +34,40 @@ crypto.encrypt:This is some super secret!
    signing-key:x:@crypto.rsa.create-key/*/private
    signing-key-fingerprint:x:@crypto.hash
 ");
-            var msg = lambda.Children.Skip(3).First().Value as string;
-            Assert.NotNull(msg);
-            Assert.True(msg.Length > 500 && msg.Length < 700);
-        }
+         var msg = lambda.Children.Skip(3).First().Value as string;
+         Assert.NotNull(msg);
+         Assert.True(msg.Length > 500 && msg.Length < 700);
+      }
 
-        #pragma warning disable S2699
-        [Fact]
-        public void SignOnly()
-        {
-            Common.Evaluate(@"
+      [Fact]
+      public void SignAndEncryptNoFingerprint_Throws()
+      {
+         Assert.Throws<HyperlambdaException>(() => Common.Evaluate(@"
+
+// Recipient's key(s)
+crypto.rsa.create-key
+   strength:1024
+
+// Sender's key(s).
+crypto.rsa.create-key
+   strength:1024
+
+// Fingerprint of key used to sign content.
+crypto.hash:x:@crypto.rsa.create-key/*/public
+   format:raw
+
+// Encrypting content
+crypto.encrypt:This is some super secret!
+   encryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
+   signing-key:x:@crypto.rsa.create-key/*/private
+"));
+      }
+
+      #pragma warning disable S2699
+      [Fact]
+      public void SignOnly()
+      {
+         Common.Evaluate(@"
 
 // Recipient's key(s)
 crypto.rsa.create-key
@@ -63,13 +88,13 @@ crypto.sign:This is some super secret!
 crypto.verify:x:-
    public-key:x:@crypto.rsa.create-key/*/public
 ");
-        }
-        #pragma warning restore S2699
+      }
+      #pragma warning restore S2699
 
-        [Fact]
-        public void VerifyFingerprint()
-        {
-            var lambda = Common.Evaluate(@"
+      [Fact]
+      public void VerifyFingerprint()
+      {
+         var lambda = Common.Evaluate(@"
 
 // Recipient's key(s)
 crypto.rsa.create-key
@@ -97,18 +122,18 @@ crypto.get-key:x:@crypto.encrypt
 crypto.hash:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/public
    format:fingerprint
 ");
-            var msg = lambda.Children.Skip(3).First().Value as string;
-            Assert.NotNull(msg);
-            Assert.True(msg.Length > 500 && msg.Length < 700);
-            Assert.Equal(
-               lambda.Children.Skip(4).First().Value,
-               lambda.Children.Skip(5).First().Value);
-        }
+         var msg = lambda.Children.Skip(3).First().Value as string;
+         Assert.NotNull(msg);
+         Assert.True(msg.Length > 500 && msg.Length < 700);
+         Assert.Equal(
+         lambda.Children.Skip(4).First().Value,
+         lambda.Children.Skip(5).First().Value);
+      }
 
-        [Fact]
-        public void SignAndEncrypt_Raw()
-        {
-            var lambda = Common.Evaluate(@"
+      [Fact]
+      public void SignAndEncrypt_Raw()
+      {
+         var lambda = Common.Evaluate(@"
 
 // Recipient's key(s)
 crypto.rsa.create-key
@@ -130,15 +155,15 @@ crypto.encrypt:This is some super secret!
    signing-key-fingerprint:x:@crypto.hash
    raw:true
 ");
-            var msg = lambda.Children.Skip(3).First().Value as byte[];
-            Assert.NotNull(msg);
-            Assert.True(msg.Length > 300 && msg.Length < 500);
-        }
+         var msg = lambda.Children.Skip(3).First().Value as byte[];
+         Assert.NotNull(msg);
+         Assert.True(msg.Length > 300 && msg.Length < 500);
+      }
 
-        [Fact]
-        public void SignEncryptDecryptAndVerify()
-        {
-            var lambda = Common.Evaluate(@"
+      [Fact]
+      public void SignEncryptDecryptAndVerify()
+      {
+         var lambda = Common.Evaluate(@"
 
 // Receiver's key(s).
 crypto.rsa.create-key
@@ -163,14 +188,14 @@ crypto.decrypt:x:-
    decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
    verify-key:x:@crypto.rsa.create-key/*/public
 ");
-            var msg = lambda.Children.Skip(4).First().Value as string;
-            Assert.Equal("This is some super secret!", msg);
-        }
+         var msg = lambda.Children.Skip(4).First().Value as string;
+         Assert.Equal("This is some super secret!", msg);
+      }
 
-        [Fact]
-        public void SignEncryptDecryptAndVerifyRaw()
-        {
-            var lambda = Common.Evaluate(@"
+      [Fact]
+      public void SignEncryptDecryptAndVerifyRaw()
+      {
+         var lambda = Common.Evaluate(@"
 
 // Receiver's key(s).
 crypto.rsa.create-key
@@ -196,14 +221,14 @@ crypto.decrypt:x:-
    decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
    verify-key:x:@crypto.rsa.create-key/*/public
 ");
-            var msg = lambda.Children.Skip(4).First().Value as byte[];
-            Assert.Equal("This is some super secret!", Encoding.UTF8.GetString(msg));
-        }
+         var msg = lambda.Children.Skip(4).First().Value as byte[];
+         Assert.Equal("This is some super secret!", Encoding.UTF8.GetString(msg));
+      }
 
-        [Fact]
-        public void SignEncryptDecryptNoVerify()
-        {
-            var lambda = Common.Evaluate(@"
+      [Fact]
+      public void SignEncryptDecryptNoVerify()
+      {
+         var lambda = Common.Evaluate(@"
 
 // Receiver's key(s).
 crypto.rsa.create-key
@@ -228,13 +253,13 @@ crypto.decrypt:x:-
    raw:false
    decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
 ");
-            Assert.Equal(typeof(string), lambda.Children.Skip(4).First().Value.GetType());
-        }
+         Assert.Equal(typeof(string), lambda.Children.Skip(4).First().Value.GetType());
+      }
 
-        [Fact]
-        public void SignEncryptDecryptNoVerifyRaw()
-        {
-            var lambda = Common.Evaluate(@"
+      [Fact]
+      public void SignEncryptDecryptNoVerifyRaw()
+      {
+         var lambda = Common.Evaluate(@"
 
 // Receiver's key(s).
 crypto.rsa.create-key
@@ -259,13 +284,13 @@ crypto.decrypt:x:-
    raw:true
    decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
 ");
-            Assert.Equal(typeof(byte[]), lambda.Children.Skip(4).First().Value.GetType());
-        }
+         Assert.Equal(typeof(byte[]), lambda.Children.Skip(4).First().Value.GetType());
+      }
 
-        [Fact]
-        public void SignEncryptDecryptAndVerify_Raw()
-        {
-            var lambda = Common.Evaluate(@"
+      [Fact]
+      public void SignEncryptDecryptAndVerify_Raw()
+      {
+         var lambda = Common.Evaluate(@"
 
 // Receiver's key(s).
 crypto.rsa.create-key
@@ -291,8 +316,8 @@ crypto.decrypt:x:-
    decryption-key:x:@crypto.rsa.create-key/@crypto.rsa.create-key/*/private
    verify-key:x:@crypto.rsa.create-key/*/public
 ");
-            var msg = lambda.Children.Skip(4).First().Value as string;
-            Assert.Equal("This is some super secret!", msg);
-        }
-    }
+         var msg = lambda.Children.Skip(4).First().Value as string;
+         Assert.Equal("This is some super secret!", msg);
+      }
+   }
 }
