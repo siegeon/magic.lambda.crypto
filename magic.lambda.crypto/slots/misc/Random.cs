@@ -43,6 +43,9 @@ namespace magic.lambda.crypto.slots.misc
 
             // Returning in the format requested by caller.
             input.Value = raw ? (object)bytes : string.Concat(bytes.Select(x => _alphabet[x % (_alphabet.Length)]));
+
+            // House cleaning.
+            input.Clear();
         }
     }
 }

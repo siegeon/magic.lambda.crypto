@@ -35,6 +35,9 @@ namespace magic.lambda.crypto.slots.hash
             var value = input.GetEx<string>();
 
             input.Value = bc.BCrypt.Verify(value, hash);
+
+            // House cleaning.
+            input.Clear();
         }
     }
 }
